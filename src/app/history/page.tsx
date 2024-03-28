@@ -7,37 +7,49 @@ import { useState, useEffect } from "react"
 
 export default function History() {
   const supabase = createClientComponentClient()
-  const [users, setUsers] = useState([])
+  const [accounts, setAccounts] = useState([])
 
-  const getUsers = async() => {
+  const getAccounts = async() => {
     try {
-      const { data, error } = await supabase.from("auth.users").select("*")
+      
+      const { data, error } = await supabase
+        .from('accounts')
+        .select(`
+          account_id,
+          account_name,
+          status,
+          amount_due,
+          amount_paid,
+          balance,
+          projects (
+            project_name,
+            amenities(
+              amenity_id,
+              amenity_name,
+              default_amount
+            )
+          )
+        `)
+
       if (error) {
+        console.log(error)
         throw error
       }
       if (data) {
-        setUsers(data)
+        console.log(data)
+        setAccounts(data)
       }
     } catch (error) {
-      console.error('Error fetching users:', error.message);
+      console.error('Error fetching accounts:', error.message);
     }
   }
 
   useEffect(() => {
-    getUsers()
+    getAccounts()
   }, [])
 
   return (
     <div className='align-center'>
-        <h2>Users</h2>
-        <ul>
-        {users.map(user => (
-          <li key={user.id}>
-            <div>User ID: {user.id}</div>
-            <div>Email: {user.email}</div>
-          </li>
-        ))}
-        </ul>
 
         <PaidTotal />
 
@@ -45,30 +57,38 @@ export default function History() {
 
         <h1>History</h1>
 
-        <table className="table-auto">
+        <h2 className='text-center'>Accounts:</h2>
+
+        <table className="table-auto border-separate border border-blue-600">
             <thead>
-                <tr>
-                <th>Song</th>
-                <th>Artist</th>
-                <th>Year</th>
-                </tr>
+              <tr>
+                <th className="border border-green-600 px-5">Account ID</th>
+                <th className="border border-green-600 px-5">Account</th>
+                <th className="border border-green-600 px-5">Amenity</th>
+                <th className="border border-green-600 px-5">Amount Due</th>
+                <th className="border border-green-600 px-5">Amount Paid</th>
+                <th className="border border-green-600 px-5">Balance</th>
+                <th className="border border-green-600 px-5">Start Date</th>
+                <th className="border border-green-600 px-5">Status</th>
+              </tr>
             </thead>
             <tbody>
-                <tr>
-                <td>The Sliding Mr. Bones (Next Stop, Pottersville)</td>
-                <td>Malcolm Lockyer</td>
-                <td>1961</td>
-                </tr>
-                <tr>
-                <td>Witchy Woman</td>
-                <td>The Eagles</td>
-                <td>1972</td>
-                </tr>
-                <tr>
-                <td>Shining Star</td>
-                <td>Earth, Wind, and Fire</td>
-                <td>1975</td>
-                </tr>
+              {accounts.map(account => (
+                account.projects.map(project => (
+                  project.amenities.map(amenity => (
+                    <tr key={`${account.account_id}-${project.project_name}-${amenity.amenity_name}`}>
+                      <td className="border border-green-600 px-5">{account.account_id}</td>
+                      <td className="border border-green-600 px-5">{account.account_name}</td>
+                      <td className="border border-green-600 px-5">{amenity.amenity_name}</td>
+                      <td className="border border-green-600 px-5">{amenity.default_amount}</td>
+                      <td className="border border-green-600 px-5">{account.amount_paid}</td>
+                      <td className="border border-green-600 px-5">{account.balance}</td>
+                      <td className="border border-green-600 px-5">{account.start_date}</td>
+                      <td className="border border-green-600 px-5">{account.status}</td>
+                    </tr>
+                  ))
+                ))
+              ))}
             </tbody>
         </table>
     </div>
