@@ -9,7 +9,13 @@ export default function Navigation() {
           <Link href="/home">Home</Link>
         </li>
         <li className="basis-1/4">
+          <Link href="/accounts">Accounts</Link>
+        </li>
+        <li className="basis-1/4">
           <Link href="/history">History</Link>
+        </li>
+        <li className="basis-1/4">
+          <Link href="/login">Login</Link>
         </li>
       </ul>
     </nav>

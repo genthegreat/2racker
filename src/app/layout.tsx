@@ -22,7 +22,7 @@ export default function RootLayout({
         <header>
           <Navigation />
         </header>
-        <h1 className="overline text-2xl mt-4">HOUSE MORTGAGE</h1>
+        <h1 className="overline text-2xl mt-4">Prince&#39;s Portfolio</h1>
         <main>
           {children}
         </main>

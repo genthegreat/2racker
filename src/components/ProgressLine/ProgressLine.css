@@ -1,0 +1,16 @@
+.progressVisualFull {
+    display: flex;
+    /* change the value if you want different thickness */
+    height: 2rem;
+    margin: 5px 0;
+}
+  
+  .progressVisualPart {
+    /* Number of the seconds for complete animation */
+    transition: width 5s;
+}
+  
+  .progressLabel {
+    font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+      "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
