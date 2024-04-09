@@ -6,9 +6,9 @@ import { login, signup } from './actions'
 export default function Login() {
   return (
     <div>
-        <div className="min-h-screen flex items-center justify-center w-full dark:bg-gray-950">
-            <div className="bg-white dark:bg-gray-900 shadow-md rounded-lg px-8 py-6 max-w-md">
-                <h1 className="text-2xl font-bold text-center mb-4 dark:text-gray-200">Welcome Back!</h1>
+        <div className="min-h-screen flex items-center justify-center w-full">
+            <div className="border-solid border-2 border-lime-900 rounded-lg px-8 py-6 max-w-md">
+                <h1 className="text-2xl font-bold text-center mb-4 dark:text-gray-200">Welcome</h1>
                 <form action="#">
                     <div className="mb-4">
                         <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address</label>

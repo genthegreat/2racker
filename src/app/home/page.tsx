@@ -5,6 +5,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useState, useEffect } from "react";
 import { formatCurrency } from '../utils';
 
+
 interface Account {
   account_id: any;
   account_name: any;

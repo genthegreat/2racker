@@ -2,13 +2,13 @@
 import { useCallback, useEffect, useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { type User } from '@supabase/supabase-js'
+import Avatar from './avatar'
 
 export default function ProfileForm({ user }: { user: User | null }) {
   const supabase = createClient()
   const [loading, setLoading] = useState(true)
   const [fullname, setFullname] = useState<string | null>(null)
   const [username, setUsername] = useState<string | null>(null)
-  const [website, setWebsite] = useState<string | null>(null)
   const [avatar_url, setAvatarUrl] = useState<string | null>(null)
 
   const getProfile = useCallback(async () => {
@@ -17,7 +17,7 @@ export default function ProfileForm({ user }: { user: User | null }) {
 
       const { data, error, status } = await supabase
         .from('profiles')
-        .select(`full_name, username, website, avatar_url`)
+        .select(`full_name, username, avatar_url`)
         .eq('id', user?.id)
         .single()
 
@@ -29,11 +29,11 @@ export default function ProfileForm({ user }: { user: User | null }) {
       if (data) {
         setFullname(data.full_name)
         setUsername(data.username)
-        setWebsite(data.website)
         setAvatarUrl(data.avatar_url)
       }
-    } catch (error) {
-      alert('Error loading user data!')
+    } catch (error: any) {
+      console.log(error.message)
+      alert(`${error.message}`)
     } finally {
       setLoading(false)
     }
@@ -45,12 +45,10 @@ export default function ProfileForm({ user }: { user: User | null }) {
 
   async function updateProfile({
     username,
-    website,
     avatar_url,
   }: {
     username: string | null
     fullname: string | null
-    website: string | null
     avatar_url: string | null
   }) {
     try {
@@ -60,7 +58,6 @@ export default function ProfileForm({ user }: { user: User | null }) {
         id: user?.id as string,
         full_name: fullname,
         username,
-        website,
         avatar_url,
         updated_at: new Date().toISOString(),
       })
@@ -75,6 +72,17 @@ export default function ProfileForm({ user }: { user: User | null }) {
 
   return (
     <div className="form-widget">
+      <div>
+        <Avatar
+            uid={user?.id ?? null}
+            url={avatar_url}
+            size={150}
+            onUpload={(url) => {
+                setAvatarUrl(url)
+                updateProfile({ fullname, username, avatar_url: url })
+            }}
+        />
+      </div>
       <div>
         <label htmlFor="email">Email</label>
         <input id="email" type="text" value={user?.email} disabled />
@@ -97,20 +105,11 @@ export default function ProfileForm({ user }: { user: User | null }) {
           onChange={(e) => setUsername(e.target.value)}
         />
       </div>
-      <div>
-        <label htmlFor="website">Website</label>
-        <input
-          id="website"
-          type="url"
-          value={website || ''}
-          onChange={(e) => setWebsite(e.target.value)}
-        />
-      </div>
 
       <div>
         <button
           className="button primary block"
-          onClick={() => updateProfile({ fullname, username, website, avatar_url })}
+          onClick={() => updateProfile({ fullname, username, avatar_url })}
           disabled={loading}
         >
           {loading ? 'Loading ...' : 'Update'}
