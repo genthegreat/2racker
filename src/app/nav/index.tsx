@@ -11,7 +11,7 @@ export default async function Navigation() {
     <nav>
       <ul className="flex flex-row py-4 px-2 bg-gray-900">
         <li className="basis-1/5">
-          <Link href="/home">Home</Link>
+          <Link href={user ? "/home" : "/"}>Home</Link>
         </li>
         <li className="basis-1/5">
           <Link href="/accounts">Accounts</Link>

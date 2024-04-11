@@ -4,6 +4,7 @@ import PaidTotal from "@/components/paidTotal/paidTotal"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useState, useEffect } from "react";
 import { formatCurrency } from '../utils';
+import Spinner from "@/components/spinner/Spinner";
 
 
 interface Account {
@@ -15,10 +16,12 @@ interface Account {
 export default function Home() {
   const supabase = createClientComponentClient()
   const [accounts, setAccounts] = useState<Account | null>(null)
+  const [loading, setLoading] = useState(true)
 
   const getAccounts = async() => {
     try {
-      
+      setLoading(true);
+
       const { data, error } = await supabase
         .from('accounts')
         .select(`
@@ -38,12 +41,16 @@ export default function Home() {
       }
     } catch (error:any) {
       console.error('Error fetching accounts:', error.message);
+    } finally {
+      setLoading(false);
     }
   }
 
   useEffect(() => {
     getAccounts()
-  }, [])
+  }, [supabase])
+
+  if (loading) return <Spinner />;
 
   return (
     <div className="flex flex-col text-center justify-center mx-auto">
