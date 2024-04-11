@@ -52,6 +52,9 @@ export const ProfileProvider = ({ children }: { children: React.ReactNode }) => 
         if (response.data?.user) { // Check if user exists within data
             fetchProfile(response.data.user.id); 
         }
+    }).catch(error => {
+      // Handle error if necessary
+      console.error('Error fetching user:', error);
     });
 }, []);
 
