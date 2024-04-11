@@ -22,7 +22,7 @@ const ProgressLine = ({
       color: "white"
     }
   ]
-}) => {
+}: ProgressLineProps) => {
   // Starting values needed for the animation
   // Mapped by "visualParts" so it can work with multiple values dynamically
   // It's an array of percentage widths
@@ -71,7 +71,7 @@ const ProgressLine = ({
               }}
               className="progressVisualPart"
             >
-              { parseInt(item.percentage) > 2 ? (<span className="text-xs flex text-center justify-center leading-loose">{parseInt(item.percentage)}%</span>) : null }
+              {parseInt(item.percentage) > 2 ? (<span className="text-xs flex text-center justify-center leading-loose">{parseInt(item.percentage)}%</span>) : null}
             </div>
           );
         })}
