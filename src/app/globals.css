@@ -452,3 +452,7 @@ button.primary,
     transform: rotate(360deg);
   }
 }
+
+.avatar.image{
+  background-color: white;
+}

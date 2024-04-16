@@ -9,6 +9,10 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "2racker App",
   description: "Payment Plane Tracker by Prince Kwesi",
+  icons: {
+    icon: "./favicon.ico",
+    apple: "../public/favicon/apple-touch-icon.png"
+  },
 };
 
 export default function RootLayout({
