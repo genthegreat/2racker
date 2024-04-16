@@ -20,7 +20,7 @@ const ProfileContext = createContext<ProfileContextData>({
   error: null,
 });
 
-export const ProfileProvider = ({ children }: { children: React.ReactNode }) => {
+export const ProfileContextProvider = ({ children }: { children: React.ReactNode }) => {
   const supabase = createClient()
   const [profile, setProfile] = useState<Profile>({ full_name: null, username: null, avatar_url: null });
   const [loading, setLoading] = useState(false);
@@ -49,14 +49,15 @@ export const ProfileProvider = ({ children }: { children: React.ReactNode }) => 
 
   useEffect(() => {
     supabase.auth.getUser().then((response: UserResponse) => {
-        if (response.data?.user) { // Check if user exists within data
-            fetchProfile(response.data.user.id); 
-        }
+      console.error(response);
+      if (response.data?.user) { // Check if user exists within data
+        fetchProfile(response.data.user.id);
+      }
     }).catch(error => {
       // Handle error if necessary
       console.error('Error fetching user:', error);
     });
-}, []);
+  }, []);
 
 
   return (
