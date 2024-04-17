@@ -1,16 +1,17 @@
-'use client'
+import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link';
 import './styles.css'
-import { useProfileContext } from '@/context/ProfileContext';
 
-export default function Navigation() {
-  const { profile } = useProfileContext();
+export default async function Navigation() {
+  const supabase = createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
 
   return (
     <nav>
       <ul className="flex flex-row py-4 px-2 bg-gray-900">
         <li className="basis-1/5">
-          <Link href={profile ? "/home" : "/"}>Home</Link>
+          <Link href={user ? "/home" : "/"}>Home</Link>
         </li>
         <li className="basis-1/5">
           <Link href="/accounts">Accounts</Link>
@@ -23,7 +24,7 @@ export default function Navigation() {
         </li>
         <li className="basis-1/5">
           {
-            profile
+            user
               ?
               <form action="/auth/signout" method="post">
                 <button className="p-0 border-none" type="submit">
