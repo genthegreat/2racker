@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { UserResponse } from '@supabase/supabase-js';
 
@@ -20,11 +20,16 @@ const ProfileContext = createContext<ProfileContextData>({
   error: null,
 });
 
+interface AuthState {
+  status: 'SIGNED_IN' | 'SIGNED_OUT' | null; // Explicit type definition
+}
+
 export const ProfileContextProvider = ({ children }: { children: React.ReactNode }) => {
   const supabase = createClient()
   const [profile, setProfile] = useState<Profile>({ full_name: null, username: null, avatar_url: null });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<any | null>(null);
+  const [authState, setAuthState] = useState<AuthState>({ status: null });  // State to track auth changes
 
   const fetchProfile = async (userId: string) => {
     setLoading(true);
@@ -47,16 +52,34 @@ export const ProfileContextProvider = ({ children }: { children: React.ReactNode
     }
   };
 
-  useEffect(() => {
-    supabase.auth.getUser().then((response: UserResponse) => {
-      console.error(response);
-      if (response.data?.user) { // Check if user exists within data
+   useEffect(() => {
+    // Listener to update auth state
+    const authListener = supabase.auth.onAuthStateChange((event, session) => {
+      setAuthState((prevState) => ({ 
+        status: session ? 'SIGNED_IN' : 'SIGNED_OUT'  
+      })); 
+    });
+
+    // Initial state
+    supabase.auth.getSession().then((data) => {
+      setAuthState((prevState) => ({
+        status: data.data.session ? 'SIGNED_IN' : 'SIGNED_OUT'
+      }));
+    });
+
+    // Get initial profile data if a user is already signed in
+     supabase.auth.getUser().then((response: UserResponse) => {
+      if (response.data?.user) { 
         fetchProfile(response.data.user.id);
       }
     }).catch(error => {
-      // Handle error if necessary
       console.error('Error fetching user:', error);
     });
+
+    // Cleanup function
+    return () => {
+      authListener.data.subscription.unsubscribe();
+    };
   }, []);
 
 
