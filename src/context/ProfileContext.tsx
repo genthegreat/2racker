@@ -27,7 +27,7 @@ interface AuthState {
 export const ProfileContextProvider = ({ children }: { children: React.ReactNode }) => {
   const supabase = createClient()
   const [profile, setProfile] = useState<Profile>({ full_name: null, username: null, avatar_url: null });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<any | null>(null);
   const [authState, setAuthState] = useState<AuthState>({ status: null });  // State to track auth changes
 
