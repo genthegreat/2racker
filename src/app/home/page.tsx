@@ -5,7 +5,6 @@ import PaidTotal, { PaidTotalProps } from "@/components/paidTotal/paidTotal"
 import { formatCurrency } from '@/utils/utils';
 import Spinner from "@/components/spinner/Spinner";
 import { getAccountData } from '@/utils/dbFunctions';
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 

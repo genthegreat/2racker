@@ -1,12 +1,13 @@
 "use client"
 
-import PaidTotal from '@/components/paidTotal/paidTotal'
+import PaidTotal, { PaidTotalProps } from '@/components/paidTotal/paidTotal'
 import React from 'react'
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { useState, useEffect } from "react"
-import { formatCurrency } from '../../utils/utils'
+import { formatCurrency } from '@/utils/utils'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
+import { getAccountData } from '@/utils/dbFunctions'
 
 interface Amenity {
   project_name?: any;
@@ -29,7 +30,9 @@ export default function Project() {
   const id = searchParams.get('id')
 
   // State
+  const [accounts, setAccounts] = useState<PaidTotalProps | null>(null)
   const [projects, setprojects] = useState<Project[]>([])
+  const [loading, setLoading] = useState(true)
 
   const getprojects = async() => {
     try {
@@ -61,7 +64,21 @@ export default function Project() {
   }
 
   useEffect(() => {
-    getprojects()
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const accountResult = await getAccountData();
+        getprojects()
+        
+        setAccounts(accountResult);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, [])
 
   return (
@@ -69,15 +86,16 @@ export default function Project() {
 
       <h2 className="overline text-2xl mt-4">YOUR PROJECTS - {id}</h2>
 
+      {accounts && <PaidTotal {...accounts} />}
+      
       <div>
         <table className="w-full table-auto border-separate border border-blue-600">
             <thead>
               <tr>
-                <th className="border border-green-600 px-5">project</th>
+                <th className="border border-green-600 px-5">Project</th>
                 <th className="border border-green-600 px-5">Amount Due</th>
                 <th className="border border-green-600 px-5">Amount Paid</th>
                 <th className="border border-green-600 px-5">Balance</th>
-                <th className="border border-green-600 px-5">description</th>
               </tr>
             </thead>
             <tbody>
@@ -87,7 +105,6 @@ export default function Project() {
                   <td className="border border-green-600 px-5">{formatCurrency(project.amount_due)}</td>
                   <td className="border border-green-600 px-5">{formatCurrency(project.amount_paid)}</td>
                   <td className="border border-green-600 px-5">{formatCurrency(project.balance)}</td>
-                  <td className="border border-green-600 px-5">{project.description}</td>
                 </tr>                
               ))}
             </tbody>
