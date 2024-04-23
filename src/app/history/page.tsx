@@ -4,7 +4,7 @@ import PaidTotal from '@/components/paidTotal/paidTotal'
 import React from 'react'
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { useState, useEffect } from "react"
-import { formatCurrency } from '../utils'
+import { formatCurrency } from '../../utils/utils'
 
 interface Transaction {
   transaction_id: any,

@@ -1,67 +1,53 @@
 "use client"
 
-import PaidTotal from "@/components/paidTotal/paidTotal"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useState, useEffect } from "react";
-import { formatCurrency } from '../utils';
+import PaidTotal, { PaidTotalProps } from "@/components/paidTotal/paidTotal"
+import { formatCurrency } from '@/utils/utils';
 import Spinner from "@/components/spinner/Spinner";
+import { getAccountData } from '@/utils/dbFunctions';
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
-
-interface Account {
-  account_id: any;
-  account_name: any;
-  balance: any;
-}
 
 export default function Home() {
-  const supabase = createClientComponentClient()
-  const [accounts, setAccounts] = useState<Account | null>(null)
+  const [accounts, setAccounts] = useState<PaidTotalProps | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const getAccounts = async() => {
-    try {
-      setLoading(true);
-
-      const { data, error } = await supabase
-        .from('accounts')
-        .select(`
-          account_id,
-          account_name,
-          balance
-        `)
-        .single()
-
-      if (error) {
-        console.log(error)
-        throw error
-      }
-      if (data) {
-        console.log(data)
-        setAccounts(data)
-      }
-    } catch (error:any) {
-      console.error('Error fetching accounts:', error.message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
   useEffect(() => {
-    getAccounts()
-  }, [supabase])
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const accountResult = await getAccountData();
+        setAccounts(accountResult);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [])
 
   if (loading) return <Spinner />;
 
   return (
-    <div className="flex flex-col text-center justify-center mx-auto">
-        <PaidTotal />
+    <>
+      {accounts
+        ?
+        ( // Check if accounts is not null or undefined
+          <div className="flex flex-col text-center justify-center mx-auto">
+            <PaidTotal {...accounts} />
 
-        {accounts && ( // Check if accounts is not null or undefined
-          <div className="text-center mt-5">
-            <h2>To Pay</h2>
-            <span className="text-8xl">{formatCurrency(accounts.balance || 0)}</span>
+            <div className="text-center mt-5">
+              <h2>To Pay</h2>
+              <span className="text-8xl">{formatCurrency(accounts.balance || 0)}</span>
+            </div>
           </div>
-        )}
-    </div>
+        )
+        :
+        redirect('/login')
+      }
+    </>
   )
 }
