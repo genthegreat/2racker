@@ -93,7 +93,7 @@ export default function History() {
   return (
     <div className='align-center'>
 
-        <PaidTotal />
+        {/* <PaidTotal {...accounts} /> */}
 
         <h1>Transaction History</h1>
 

@@ -16,7 +16,6 @@ export default function Home() {
         setLoading(true);
 
         const { data, error } = await supabase.auth.getSession()
-        let sess
 
         if (error) {
           // Handle error
