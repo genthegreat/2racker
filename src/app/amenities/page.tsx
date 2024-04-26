@@ -52,7 +52,7 @@ export default function Amenity() {
   return (
     <div className='align-center'>
 
-      <h2 className="overline text-2xl mt-4">YOUR AmenitieS - {id}</h2>
+      <h2 className="overline text-2xl mt-4">YOUR AMENITIES - {id}</h2>
 
       <div>
         <table className="w-full table-auto border-separate border border-blue-600">

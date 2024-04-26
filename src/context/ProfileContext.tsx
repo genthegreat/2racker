@@ -8,21 +8,23 @@ interface Profile {
   avatar_url: string | null;
 }
 
+interface AuthState {
+  status: 'SIGNED_IN' | 'SIGNED_OUT' | null; // Explicit type definition
+}
+
 interface ProfileContextData {
   profile: Profile;
   loading: boolean;
   error: any | null;
+  authState: AuthState;
 }
 
 const ProfileContext = createContext<ProfileContextData>({
   profile: { full_name: null, username: null, avatar_url: null },
   loading: false,
   error: null,
+  authState: { status: null },
 });
-
-interface AuthState {
-  status: 'SIGNED_IN' | 'SIGNED_OUT' | null; // Explicit type definition
-}
 
 export const ProfileContextProvider = ({ children }: { children: React.ReactNode }) => {
   const supabase = createClient()
@@ -40,51 +42,74 @@ export const ProfileContextProvider = ({ children }: { children: React.ReactNode
         .eq('id', userId)
         .single();
 
-      if (error && status !== 406) throw error;
+      if (error && status !== 406) {
+        console.log('fetchProfile inner error:', error)
+        setError(error);
+        throw error
+      };
 
       if (data) {
+        console.log(data)
         setProfile(data);
       }
     } catch (error) {
+      console.log('fetchProfile outer error:', error)
       setError(error);
     } finally {
       setLoading(false);
     }
   };
 
-   useEffect(() => {
+  useEffect(() => {
     // Listener to update auth state
     const authListener = supabase.auth.onAuthStateChange((event, session) => {
-      setAuthState((prevState) => ({ 
-        status: session ? 'SIGNED_IN' : 'SIGNED_OUT'  
-      })); 
+      console.log('onAuthStateChange event:', event)
+      setAuthState((prevState) => ({
+        status: session ? 'SIGNED_IN' : 'SIGNED_OUT'
+      }));
     });
 
     // Initial state
     supabase.auth.getSession().then((data) => {
+      console.log('Get session response:', data)
       setAuthState((prevState) => ({
-        status: data.data.session ? 'SIGNED_IN' : 'SIGNED_OUT'
+        status: (data.data.session ? 'SIGNED_IN' : 'SIGNED_OUT')
       }));
+      console.log('Session Set:', authState.status)
     });
 
     // Get initial profile data if a user is already signed in
-     supabase.auth.getUser().then((response: UserResponse) => {
-      if (response.data?.user) { 
-        fetchProfile(response.data.user.id);
+    supabase.auth.getUser().then(({ data, error }: UserResponse) => {
+      if(error) {
+        console.log('User is not authenticated:', error)
+        setAuthState((prevState) => ({
+          status: 'SIGNED_OUT'
+        }));
+        console.log('Session Set:', authState.status)
       }
+
+      if (data.user) {
+        console.log('Get user response:', data)
+        fetchProfile(data.user.id);
+      } 
+      
     }).catch(error => {
       console.error('Error fetching user:', error);
+    }).finally(() => {
+      setLoading(false)
     });
+
+    console.log('authState:', authState)
 
     // Cleanup function
     return () => {
       authListener.data.subscription.unsubscribe();
     };
-  }, []);
+  }, [supabase.auth]);
 
 
   return (
-    <ProfileContext.Provider value={{ profile, loading, error }}>
+    <ProfileContext.Provider value={{ profile, loading, error, authState }}>
       {children}
     </ProfileContext.Provider>
   );

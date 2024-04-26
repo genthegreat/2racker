@@ -101,7 +101,7 @@ export default function Project() {
             <tbody>
               {projects.map(project => (
                 <tr key={`${project.project_id}`}>
-                  <td className="border border-green-600 px-5">{project.project_name}</td>
+                  <td className="border border-green-600 px-5"><Link href={`/amenities?id=${project.project_id}`}>{project.project_name}</Link></td>
                   <td className="border border-green-600 px-5">{formatCurrency(project.amount_due)}</td>
                   <td className="border border-green-600 px-5">{formatCurrency(project.amount_paid)}</td>
                   <td className="border border-green-600 px-5">{formatCurrency(project.balance)}</td>
