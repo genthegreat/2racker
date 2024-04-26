@@ -57,7 +57,10 @@ export async function getFullAccountData() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data, error } = await supabase.from("accounts").select(`
+  const { data, error } = await supabase
+    .from("accounts")
+    .select(
+      `
         account_id,
         account_name,
         status,
@@ -81,8 +84,29 @@ export async function getFullAccountData() {
             )
           )
         )
-      `)
-      .eq("user_id", `${user?.id}`);
+      `
+    )
+    .eq("user_id", `${user?.id}`);
+
+  if (error) {
+    console.log(error);
+    throw error;
+  }
+
+  console.log(data);
+  return data;
+}
+
+export async function getProfileData() {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("full_name, username, avatar_url")
+    .eq("id", user?.id)
+    .single();
 
   if (error) {
     console.log(error);

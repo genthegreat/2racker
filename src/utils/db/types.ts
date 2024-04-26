@@ -22,3 +22,9 @@ export interface Account {
   start_date?: any;
   projects?: Project[];
 }
+
+export interface Profile {
+  full_name: string | null;
+  username: string | null;
+  avatar_url: string | null;
+}
