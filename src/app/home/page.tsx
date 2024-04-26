@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import PaidTotal, { PaidTotalProps } from "@/components/paidTotal/paidTotal"
 import { formatCurrency } from '@/utils/utils';
 import Spinner from "@/components/spinner/Spinner";
-import { getAccountData } from '@/utils/dbFunctions';
+import { getAccountData } from '@/utils/db/dbFunctions';
 import { redirect } from "next/navigation";
 
 

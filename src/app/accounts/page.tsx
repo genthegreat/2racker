@@ -6,21 +6,8 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { useState, useEffect } from "react"
 import { formatCurrency } from '../../utils/utils'
 import Link from 'next/link'
+import type { Account } from '@/utils/db/types'
 
-interface Project {
-  project_name?: any;
-}
-
-interface Account {
-  account_id: any;
-  account_name: any;
-  status: any;
-  amount_due: any;
-  amount_paid: any;
-  balance: any;
-  start_date?: any;
-  projects?: Project[];
-}
 
 export default function Account() {
   const supabase = createClientComponentClient()

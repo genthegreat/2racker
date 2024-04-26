@@ -7,21 +7,8 @@ import { useState, useEffect } from "react"
 import { formatCurrency } from '@/utils/utils'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { getAccountData } from '@/utils/dbFunctions'
-
-interface Amenity {
-  project_name?: any;
-}
-
-interface Project {
-  project_id: any;
-  project_name: any;
-  description: any;
-  amount_due: any;
-  amount_paid: any;
-  balance: any;
-  projects?: Project[];
-}
+import { getAccountData } from '@/utils/db/dbFunctions'
+import type { Project } from '@/utils/db/types'
 
 export default function Project() {
   const supabase = createClientComponentClient()

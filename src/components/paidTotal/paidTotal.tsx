@@ -1,8 +1,6 @@
 "use client"
 
 import React from 'react'
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
-import { useState, useEffect } from "react"
 import ProgressLine from '../ProgressLine/ProgressLine';
 import { formatCurrency } from '@/utils/utils';
 

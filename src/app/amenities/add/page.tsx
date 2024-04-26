@@ -1,22 +1,24 @@
 'use client'
 import React from 'react'
 import AddAmenityForm from './addamenityform'
-
-interface Account {
-    account_id: number,
-    user_id: string,
-    amount_paid: number,
-    start_date: string,
-    account_name: string,
-    status: string,
-    amount_due: number,
-    balance: number
-}
+import { useProfileContext } from '@/context/ProfileContext';
+import Spinner from '@/components/spinner/Spinner';
+import { redirect } from 'next/navigation';
 
 export default function AddAmenity() {
+  const { profile, loading, error, authState } = useProfileContext();
+
+  if (loading) return <Spinner />;
+
+  if (authState.status === 'SIGNED_OUT' || null || error) {
+    console.log('An error occured', error)
+    redirect('/')
+  }
+
   return (
     <div>
-        <AddAmenityForm />
+      <h1 className="overline text-2xl mt-4">{profile.full_name || 'Guest'}&#39;s Portfolio</h1>
+      <AddAmenityForm />
     </div>
   )
 }

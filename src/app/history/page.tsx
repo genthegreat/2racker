@@ -5,7 +5,7 @@ import React from 'react'
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { useState, useEffect } from "react"
 import { formatCurrency } from '../../utils/utils'
-import { getAccountData, getFullAccountData } from '@/utils/dbFunctions'
+import { getAccountData, getFullAccountData } from '@/utils/db/dbFunctions'
 import Spinner from '@/components/spinner/Spinner'
 import Link from 'next/link'
 
