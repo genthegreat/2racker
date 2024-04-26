@@ -17,7 +17,7 @@ export default async function Navigation() {
           <Link href="/accounts">Accounts</Link>
         </li>
         <li className="basis-1/5">
-          <Link href="/history">History</Link>
+          <Link href="/history">Transaction History</Link>
         </li>
         <li className="basis-1/5">
           <Link href="/profile">Profile</Link>

@@ -4,24 +4,12 @@ import PaidTotal from '@/components/paidTotal/paidTotal'
 import React from 'react'
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { useState, useEffect } from "react"
-import { formatCurrency } from '../utils'
+import { formatCurrency } from '../../utils/utils'
+import Link from 'next/link'
+import type { Account } from '@/utils/db/types'
 
-interface Project {
-  project_name?: any;
-}
 
-interface Account {
-  account_id: any;
-  account_name: any;
-  status: any;
-  amount_due: any;
-  amount_paid: any;
-  balance: any;
-  start_date?: any;
-  projects?: Project[];
-}
-
-export default function History() {
+export default function Account() {
   const supabase = createClientComponentClient()
   const [accounts, setAccounts] = useState<Account[]>([])
 
@@ -75,19 +63,21 @@ export default function History() {
             <tbody>
               {accounts.map(account => (
                 <tr key={`${account.account_id}`}>
-                  <td className="border border-green-600 px-5">{account.account_name}</td>
-                  <td className="border border-green-600 px-5">{formatCurrency(account.amount_due)}</td>
-                  <td className="border border-green-600 px-5">{formatCurrency(account.amount_paid)}</td>
-                  <td className="border border-green-600 px-5">{formatCurrency(account.balance)}</td>
-                  <td className="border border-green-600 px-5">{account.status}</td>
-                </tr>                
+                    <td className="border border-green-600 px-5"><Link href={`/projects?id=${account.account_id}`}>{account.account_name}</Link></td>
+                    <td className="border border-green-600 px-5">{formatCurrency(account.amount_due)}</td>
+                    <td className="border border-green-600 px-5">{formatCurrency(account.amount_paid)}</td>
+                    <td className="border border-green-600 px-5">{formatCurrency(account.balance)}</td>
+                    <td className="border border-green-600 px-5">{account.status}</td>                                 
+                  </tr> 
               ))}
             </tbody>
         </table>
       </div>
 
       <div className='flex justify-end pt-10'>
-        <button className="w-52 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Add New</button>
+        <Link href="/accounts/add">
+          <button className="w-52 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Add New</button>
+        </Link>
       </div>
     </div>
   )

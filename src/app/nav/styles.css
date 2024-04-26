@@ -1,3 +1,9 @@
 nav li {
     font-weight: 900;
 }
+
+nav li a{
+    font-weight:unset;
+    font-size: unset;
+    text-decoration:none;
+  }

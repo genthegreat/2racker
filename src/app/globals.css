@@ -452,3 +452,13 @@ button.primary,
     transform: rotate(360deg);
   }
 }
+
+.avatar.image{
+  background-color: white;
+}
+
+a{
+  font-weight: 500;
+  font-size: large;
+  text-decoration: underline;
+}
