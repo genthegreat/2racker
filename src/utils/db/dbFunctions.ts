@@ -1,4 +1,5 @@
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { Account } from "./types";
 
 const supabase = createClientComponentClient();
 
@@ -20,6 +21,35 @@ export async function getAccountData() {
 
   console.log(data);
   return data;
+}
+
+export async function fetchAccountDataById(id: number): Promise<Account[]>   {
+  const { data: account, error } = await supabase
+    .from("accounts").select("*").eq("account_id", `${id}`).single();
+
+  if (error) {
+    console.log(error);
+    throw error;
+  }
+
+  console.log(account);
+  return account;
+}
+
+export async function getAllAccounts(): Promise<Account[]>  {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data: accounts, error } = await supabase.from("accounts").select("*");
+
+  if (error) {
+    console.log(error);
+    throw error;
+  }
+
+  console.log(accounts);
+  return accounts;
 }
 
 export async function getProjectData(id: string) {

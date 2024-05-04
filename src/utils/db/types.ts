@@ -1,4 +1,9 @@
 export interface Amenity {
+  amenity_id: number;
+  amenity_name: string;
+  default_amount: number;
+  category: string;
+  project_id: number;
   project_name?: any;
 }
 
@@ -13,13 +18,13 @@ export interface Project {
 }
 
 export interface Account {
-  account_id: any;
-  account_name: any;
-  status: any;
-  amount_due: any;
-  amount_paid: any;
-  balance: any;
-  start_date?: any;
+  account_id: number;
+  account_name: string;
+  status: string;
+  amount_due: number;
+  amount_paid: number;
+  balance: number;
+  start_date?: string;
   projects?: Project[];
 }
 

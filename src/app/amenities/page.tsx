@@ -6,6 +6,7 @@ import { useState, useEffect } from "react"
 import { formatCurrency } from '../../utils/utils'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
+import { EyeIcon } from '@/components/icons'
 
 interface Amenity {
   amenity_id: number;
@@ -60,6 +61,7 @@ export default function Amenity() {
               <tr>
                 <th className="border border-green-600 px-5">Amenity</th>
                 <th className="border border-green-600 px-5">Amount Due</th>
+                <th className="border border-green-600 px-5">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -67,6 +69,11 @@ export default function Amenity() {
                 <tr key={`${amenity.amenity_id}`}>
                   <td className="border border-green-600 px-5">{amenity.amenity_name}</td>
                   <td className="border border-green-600 px-5">{formatCurrency(amenity.default_amount)}</td>
+                  <td className="border border-green-600 px-5">
+                  <Link href={`/amenities/${amenity.amenity_id}`}>
+                    <EyeIcon />
+                  </Link>
+                </td>
                 </tr>                
               ))}
             </tbody>
