@@ -1,43 +1,33 @@
-// pages/amenities/[amenity_id].tsx
-
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { formatCurrency } from '../../../utils/utils';
-
-interface Amenity {
-  amenity_id: number;
-  amenity_name: string;
-  default_amount: number;
-  category: string;
-  project_id: number;
-}
-
-interface AmenityDetailProps {
-  amenity: Amenity;
-}
-
-const supabase = createClientComponentClient();
+import { fetchAmenityDataById, getAmenities } from "@/utils/db/dbFunctions";
 
 export async function generateStaticParams() {
-  const { data: amenities } = await supabase.from('amenities').select('*')
+  const amenities = await getAmenities()
 
-  console.log(amenities)
-  
-  return amenities?.map((amenity) => ({
-    amenity_id: amenity.amenity_id,
-    default_amount: amenity.default_amount
+  // console.log(amenities)
+
+  return amenities.map((amenity) => ({
+    amenity_id: amenity.amenity_id.toString()
   }))
 }
 
-export default function AmenityDetail({ params }: any) {
-  const { amenity_id, default_amount } = params
+export default async function AmenityDetail({ params }: { params: { amenity_id: number } }) {
+  const { amenity_id } = params
 
-  console.log("params:", params)
+  const res = await fetchAmenityDataById(amenity_id)
+
+  if (!res.amenity_id) {
+    console.error("Error fetching account data!");
+    return <h1>Amenity not found!</h1>
+  }
+
+  console.log("account data", res)
 
   return (
     <div>
-      <h1>ID: {amenity_id}</h1>
-      <p>Amount Due: {default_amount}</p>
-      {/* Add other details you want to display */}
+      <h1>{res.amenity_name}</h1>
+      <h6>Amount due: {formatCurrency(res.default_amount)}</h6>
+      <h6>Category: {res.category}</h6>
     </div>
   );
 };

@@ -1,7 +1,78 @@
 import React from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { createClient } from '@/utils/supabase/client'
+import { type User } from '@supabase/supabase-js'
+import Spinner from '@/components/spinner/Spinner'
 
 export default function AddAmenityForm() {
-       
+    const supabase = createClient()
+    const [loading, setLoading] = useState(true)
+    const [name, setName] = useState<string | null>(null)
+    const [price, setPrice] = useState<string | null>(null)
+    const [category, setCategory] = useState<string | null>(null)
+    const [project, setProject] = useState<string | null>(null)
+
+    const getProfile = useCallback(async () => {
+        try {
+            setLoading(true)
+
+            const { data, error, status } = await supabase
+                .from('profiles')
+                .select(`full_name, username, avatar_url`)
+                .eq('id', user?.id)
+                .single()
+
+            if (error && status !== 406) {
+                console.log(error)
+                throw error
+            }
+
+            if (data) {
+                setFullname(data.full_name)
+                setUsername(data.username)
+                setAvatarUrl(data.avatar_url)
+            }
+        } catch (error: any) {
+            console.log(error.message)
+            alert(`${error.message}`)
+        } finally {
+            setLoading(false)
+        }
+    }, [user, supabase])
+
+    useEffect(() => {
+        getProfile()
+    }, [user, getProfile])
+
+    async function updateAmenity({
+        username,
+        avatar_url,
+      }: {
+        username: string | null
+        fullname: string | null
+        avatar_url: string | null
+      }) {
+        try {
+          setLoading(true)
+    
+          const { error } = await supabase.from('profiles').upsert({
+            id: user?.id as string,
+            full_name: fullname,
+            username,
+            avatar_url,
+            updated_at: new Date().toISOString(),
+          })
+          if (error) throw error
+          alert('Profile updated!')
+        } catch (error) {
+          alert('Error updating the data!')
+        } finally {
+          setLoading(false)
+        }
+    }
+    
+    if (loading) return <Spinner />;
+    
     return (
         <>
             <div>
@@ -14,7 +85,7 @@ export default function AddAmenityForm() {
                                     <div className="w-full sm:w-auto sm:ml-auto mt-3 sm:mt-0"></div>
                                 </div>
                                 <div className="mt-5">
-                                    <form action="#" className="form">
+                                    <div className="form">
                                         <div className="md:flex flex-row md:space-x-4 w-full text-xs">
                                             <div className="mb-3 space-y-2 w-full text-xs">
                                                 <label className="font-semibold text-gray-600 py-2">Amenity Name <abbr title="required">*</abbr></label>
@@ -48,7 +119,7 @@ export default function AddAmenityForm() {
                                             <button className="mb-2 md:mb-0 bg-white px-5 py-2 text-sm shadow-sm font-medium tracking-wider border text-gray-600 rounded-full hover:shadow-lg hover:bg-gray-100">Cancel</button>
                                             <button className="mb-2 md:mb-0 bg-green-400 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-green-500">Save</button>
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>

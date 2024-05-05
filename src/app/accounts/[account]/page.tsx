@@ -1,29 +1,37 @@
-import { getAllAccounts } from "@/utils/db/dbFunctions";
-import { Account } from "@/utils/db/types";
+import { fetchAccountDataById, getAllAccounts } from "@/utils/db/dbFunctions";
+import { formatCurrency } from "@/utils/utils";
 
 // Return a list of `params` to populate the [id] dynamic segment
 export async function generateStaticParams() {
     const accounts = await getAllAccounts();
 
-    console.log('accounts loaded', accounts)
+    // console.log('accounts loaded', accounts)
 
     return accounts.map((account) => ({
-        id: account.account_id,
-      }))
+        account: account.account_id.toString()
+    }))
 }
 
-export default function Page({ params }: any) { 
-    console.log("params", params)
-    const {account } = params
+export default async function Page({ params }: { params: { account: number } }) {
+    const { account } = params
 
-    if (!account) {
+    const res = await fetchAccountDataById(account)
+    
+    if (!res.account_id) {
+        console.error("Error fetching account data!");
         return <h1>Account not found!</h1>
     }
+    
+    console.log("account data", res)
 
     return (
         <>
-            <h1>My Name</h1>
-            <h6>{account}</h6>
+            <h1>Account: {account}</h1>
+            <h6>Account Name: {res.account_name}</h6>
+            <h6>Account Status: {res.status}</h6>
+            <h6>Amount due: {formatCurrency(res.amount_due)}</h6>
+            <h6>Amount Paid: {formatCurrency(res.amount_paid)}</h6>
+            <h6>Balance: {formatCurrency(res.balance)}</h6>
         </>
     )
 }

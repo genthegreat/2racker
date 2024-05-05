@@ -8,19 +8,6 @@ import { formatCurrency } from '../../utils/utils'
 import Link from 'next/link'
 import type { Account } from '@/utils/db/types'
 import { EyeIcon, PencilSquareIcon } from '@/components/icons'
-import { generateStaticParams } from "./[account]/page";
-import { fetchAccountDataById } from '@/utils/db/dbFunctions'
-
-// Example usage of generateStaticParams
-export async function getStaticPaths() {
-  const paths = await generateStaticParams();
-
-  console.log('paths:', paths)
-  return {
-      paths,
-      fallback: false, // Or true if you want to enable fallback behavior
-  };
-}
 
 export default function Account() {
   const supabase = createClientComponentClient()
@@ -28,9 +15,6 @@ export default function Account() {
 
   const getAccounts = async () => {
     try {
-      let tests = fetchAccountDataById(2);
-      console.log("test values:", tests)
-
       const { data, error } = await supabase
         .from('accounts')
         .select(`

@@ -7,14 +7,7 @@ import { formatCurrency } from '../../utils/utils'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { EyeIcon } from '@/components/icons'
-
-interface Amenity {
-  amenity_id: number;
-  amenity_name: string;
-  default_amount: number;
-  category: string;
-  project_id: number;
-}
+import type { Amenity } from '@/utils/db/types'
 
 export default function Amenity() {
   const supabase = createClientComponentClient()

@@ -1,5 +1,5 @@
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { Account } from "./types";
+import { Account, Amenity } from "./types";
 
 const supabase = createClientComponentClient();
 
@@ -23,13 +23,26 @@ export async function getAccountData() {
   return data;
 }
 
-export async function fetchAccountDataById(id: number): Promise<Account[]>   {
+export async function fetchAccountDataById(id: number) {
   const { data: account, error } = await supabase
     .from("accounts").select("*").eq("account_id", `${id}`).single();
 
   if (error) {
     console.log(error);
-    throw error;
+    return error;
+  }
+
+  console.log(account);
+  return account;
+}
+
+export async function fetchAmenityDataById(id: number) {
+  const { data: account, error } = await supabase
+    .from("amenities").select("*").eq("amenity_id", `${id}`).single();
+
+  if (error) {
+    console.log(error);
+    return error;
   }
 
   console.log(account);
@@ -89,32 +102,7 @@ export async function getFullAccountData() {
 
   const { data, error } = await supabase
     .from("accounts")
-    .select(
-      `
-        account_id,
-        account_name,
-        status,
-        start_date,
-        amount_due,
-        amount_paid,
-        balance,
-        projects (
-          project_name,
-          amenities(
-            amenity_id,
-            amenity_name,
-            default_amount,
-            transactions(
-              transaction_id,
-              amount_paid,
-              transaction_date,
-              platform,
-              receipt_info,
-              status
-            )
-          )
-        )
-      `
+    .select("*"
     )
     .eq("user_id", `${user?.id}`);
 
@@ -145,4 +133,20 @@ export async function getProfileData() {
 
   console.log(data);
   return data;
+}
+
+export async function getAmenities(): Promise<Amenity[]> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data: amenities, error } = await supabase.from('amenities').select('*')
+
+  if (error) {
+    console.log(error);
+    throw error;
+  }
+
+  console.log(amenities);
+  return amenities;
 }

@@ -4,7 +4,6 @@ export interface Amenity {
   default_amount: number;
   category: string;
   project_id: number;
-  project_name?: any;
 }
 
 export interface Project {
