@@ -3,7 +3,7 @@
 import { getAllAccounts } from "@/utils/db/dbFunctions";
 import { Account } from "@/utils/db/types";
 import { useEffect, useState } from "react";
-import { submit } from "./actions";
+import { submit } from "../actions";
 
 export default function AddaccountForm() {
     const [accountData, setAccountData] = useState<Account[] | null>(null)

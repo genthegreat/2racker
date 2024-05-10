@@ -1,5 +1,5 @@
 import Spinner from "@/components/spinner/Spinner";
-import { submit } from "./actions";
+import { submit } from "../actions";
 import { useState } from "react";
 
 export default function AddAccountForm({ id }: { id: string | null }) {
