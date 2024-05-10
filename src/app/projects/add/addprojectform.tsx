@@ -41,7 +41,7 @@ export default function AddaccountForm() {
                                     <div className="md:flex md:flex-row md:space-x-4 w-full text-xs">
                                         <div className="w-full flex flex-col mb-3">
                                             <label className="font-semibold text-gray-600 py-2">Account*</label>
-                                            <select name="accountId" id="accountId" className="appearance-none block w-full bg-gray-900 text-white border border-gray-900 rounded-lg h-10 px-4 md:w-full" required value={accountId} onChange={(e) => { { setAccountId(parseInt(e.target.value)); console.log(accountId); } }}>
+                                            <select name="accountId" id="accountId" className="appearance-none block w-full bg-gray-900 text-white border border-gray-900 rounded-lg h-10 px-4 md:w-full" required value={accountId} onChange={(e) => { setAccountId(parseInt(e.target.value)) }}>
                                                 <option value="">Select Account</option>
                                                 {accountData?.map(account => (
                                                     <option key={`${account.account_id}`} value={`${account.account_id}`}>{account.account_name}</option>

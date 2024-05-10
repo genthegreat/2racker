@@ -1,9 +1,26 @@
-import React from 'react'
+import { useEffect, useState } from 'react'
 import { useProfileContext } from '@/context/ProfileContext';
 import Spinner from '@/components/spinner/Spinner';
+import { getAmenities } from '@/utils/db/dbFunctions';
+import { Amenity } from '@/utils/db/types';
 
 export default function AddTransactionForm() {
     const { profile, loading } = useProfileContext();
+
+    const [amenityData, setAmenityData] = useState<Amenity[] | null>(null)
+    const [amenityId, setAmenityId] = useState<number | ''>('')
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setAmenityData(await getAmenities())
+            } catch (error) {
+                throw error
+            }
+        }
+        fetchData()
+    }, []
+    )
 
     return (
         <>
@@ -23,12 +40,17 @@ export default function AddTransactionForm() {
                                         <form className="form">
                                             <div className="md:flex flex-row md:space-x-4 w-full text-xs">
                                                 <div className="mb-3 space-y-2 w-full text-xs">
-                                                    <label className="font-semibold text-gray-600 py-2">Transaction*</label>
-                                                    <input placeholder="Deposit" className="appearance-none block w-full bg-gray-900 text-white border border-gray-900 rounded-lg h-10 px-4" required type="text" name="name" id="name" />
-                                                </div>
-                                                <div className="mb-3 space-y-2 w-full text-xs">
                                                     <label className="font-semibold text-gray-600 py-2">Date*</label>
                                                     <input placeholder="Transaction Name" className="appearance-none block w-full bg-gray-900 text-white border border-gray-900 rounded-lg h-10 px-4" required type="date" name="date" id="date" />
+                                                </div>
+                                                <div className="w-full flex flex-col mb-3">
+                                                    <label className="font-semibold text-gray-600 py-2">Transacting For?*</label>
+                                                    <select className="appearance-none block w-full bg-gray-900 text-white border border-gray-900 rounded-lg h-10 px-4 md:w-full" required name="platform" id="platform" value={amenityId} onChange={(e) => { setAmenityId(parseInt(e.target.value)) }}>
+                                                            <option value="">Select Amenity</option>
+                                                            {amenityData?.map(amenity => (
+                                                                <option key={`${amenity.amenity_id}`} value={`${amenity.amenity_id}`}>{amenity.amenity_name}</option>
+                                                        ))}
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div className="md:flex md:flex-row md:space-x-4 w-full text-xs">
@@ -49,6 +71,10 @@ export default function AddTransactionForm() {
                                             <div className="flex-auto w-full mb-1 text-xs space-y-2">
                                                 <label className="font-semibold text-gray-600 py-2">Receipt Number</label>
                                                 <input placeholder="Txn00004332123" className="appearance-none block w-full bg-gray-900 text-white border border-gray-900 rounded-lg h-10 px-4" required type="text" name="receipt" id="receipt" />
+                                            </div>
+                                            <div className="flex-auto w-full mb-1 text-xs space-y-2">
+                                                <label className="font-semibold text-gray-600 py-2">Notes*</label>
+                                                <input placeholder="Deposit" className="appearance-none block w-full bg-gray-900 text-white border border-gray-900 rounded-lg h-10 px-4" required type="text" name="name" id="name" />
                                             </div>
                                             <div className="flex-auto w-full mb-1 text-xs space-y-2">
                                                 <div className="w-full flex flex-col mb-3">

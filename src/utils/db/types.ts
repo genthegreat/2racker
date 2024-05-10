@@ -1,10 +1,12 @@
 interface Transaction {
-  transaction_id: any,
-  amount_paid: any,
-  transaction_date: any,
-  platform: any,
-  receipt_info: any,
-  status: any
+  transaction_id: number,
+  amount_paid: number,
+  transaction_date: string,
+  platform: string,
+  receipt_info: string,
+  status: string,
+  notes: string,
+  amenity_id: number;
 }
 
 export interface Amenity {
@@ -17,13 +19,13 @@ export interface Amenity {
 }
 
 export interface Project {
-  project_id: any;
+  project_id: number;
   account_id: number;
-  project_name: any;
-  description: any;
-  amount_due: any;
-  amount_paid: any;
-  balance: any;
+  project_name: string;
+  description: string;
+  amount_due: number;
+  amount_paid: number;
+  balance: number;
   projects?: Project[];
   amenities?: Amenity[];
 }
