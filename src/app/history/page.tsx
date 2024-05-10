@@ -2,48 +2,15 @@
 
 import PaidTotal, { PaidTotalProps } from '@/components/paidTotal/paidTotal'
 import React from 'react'
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { useState, useEffect } from "react"
 import { formatCurrency } from '../../utils/utils'
-import { getAccountData, getFullAccountData } from '@/utils/db/dbFunctions'
+import { getAccountData, getTransactionHistory } from '@/utils/db/dbFunctions'
 import Spinner from '@/components/spinner/Spinner'
 import Link from 'next/link'
-
-interface Transaction {
-  transaction_id: any,
-  amount_paid: any,
-  transaction_date: any,
-  platform: any,
-  receipt_info: any,
-  status: any
-}
-
-interface Amenity {
-  amenity_id: any;
-  amenity_name: any;
-  default_amount: any;
-  transactions: Transaction[];
-}
-
-interface Project {
-  project_name: any;
-  amenities: Amenity[];
-}
-
-interface Account {
-  account_id: any;
-  account_name: any;
-  status: any;
-  amount_due: any;
-  amount_paid: any;
-  balance: any;
-  start_date?: any;
-  projects: Project[];
-}
+import { Account } from '@/utils/db/types'
 
 export default function History() {
-  const supabase = createClientComponentClient()
-  const [accounts, setAccounts] = useState<Account[] | null>([])
+  const [transactions, setTransactions] = useState<Account[] | null>([])
   const [accountData, setAccountData] = useState<PaidTotalProps | null>(null);
   const [loading, setLoading] = useState(true)
 
@@ -53,8 +20,8 @@ export default function History() {
       try {
         setLoading(true);
 
-        const getAccounts = await getFullAccountData()
-        setAccounts(getAccounts)
+        const getTransactions = await getTransactionHistory()
+        setTransactions(getTransactions)
 
         const accountResult = await getAccountData();
         setAccountData(accountResult);
@@ -78,7 +45,7 @@ export default function History() {
 
       <h1>Transaction History</h1>
 
-      {accounts && (
+      {transactions && (
         <table className="w-full table-auto border-separate border border-blue-600">
           <thead>
             <tr>
@@ -92,10 +59,10 @@ export default function History() {
             </tr>
           </thead>
           <tbody>
-            {accounts.map(account => (
-              account.projects.map(project => (
-                project.amenities.map(amenity => (
-                  amenity.transactions.map(transaction => (
+            {transactions.map(account => (
+              account?.projects?.map(project => (
+                project?.amenities?.map(amenity => (
+                  amenity?.transactions?.map(transaction => (
                     <tr key={`${account.account_id}-${project.project_name}-${amenity.amenity_name}-${transaction.transaction_id}`}>
                       <td className="border border-green-600 px-5">{transaction.transaction_date}</td>
                       <td className="border border-green-600 px-5">{account.account_name}</td>

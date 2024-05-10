@@ -462,3 +462,7 @@ a{
   font-size: large;
   text-decoration: underline;
 }
+
+h1.next-error-h1, .next-error-h1 ~ div h2 {
+  color: black;
+}

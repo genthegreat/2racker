@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useFormStatus } from 'react-dom';
 import { getProjects } from '@/utils/db/dbFunctions';
 import { Project } from '@/utils/db/types';
-import { submit } from '../actions';
+import { submit } from '../../actions';
 
 export default function AddAmenityForm() {
 

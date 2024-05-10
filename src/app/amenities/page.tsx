@@ -6,14 +6,8 @@ import { useState, useEffect } from "react"
 import { formatCurrency } from '../../utils/utils'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-
-interface Amenity {
-  amenity_id: number;
-  amenity_name: string;
-  default_amount: number;
-  category: string;
-  project_id: number;
-}
+import { EyeIcon, PencilSquareIcon } from '@/components/icons'
+import type { Amenity } from '@/utils/db/types'
 
 export default function Amenity() {
   const supabase = createClientComponentClient()
@@ -60,6 +54,7 @@ export default function Amenity() {
               <tr>
                 <th className="border border-green-600 px-5">Amenity</th>
                 <th className="border border-green-600 px-5">Amount Due</th>
+                <th className="border border-green-600 px-5">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -67,6 +62,14 @@ export default function Amenity() {
                 <tr key={`${amenity.amenity_id}`}>
                   <td className="border border-green-600 px-5">{amenity.amenity_name}</td>
                   <td className="border border-green-600 px-5">{formatCurrency(amenity.default_amount)}</td>
+                  <td className="border border-green-600 px-5">
+                  <Link href={`/amenities/${amenity.amenity_id}`} className='flex flex-auto float-start mx-auto'>
+                    <EyeIcon />
+                  </Link>
+                  <Link href={`/amenities/update/${amenity.amenity_id}`} className='flex flex-auto float-end mx-auto'>
+                    <PencilSquareIcon />
+                  </Link>
+                </td>
                 </tr>                
               ))}
             </tbody>

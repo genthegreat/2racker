@@ -74,13 +74,13 @@ export default function ProfileForm({ user }: { user: User | null }) {
     <div className="form-widget">
       <div>
         <Avatar
-            uid={user?.id ?? null}
-            url={avatar_url}
-            size={150}
-            onUpload={(url) => {
-                setAvatarUrl(url)
-                updateProfile({ fullname, username, avatar_url: url })
-            }}
+          uid={user?.id ?? null}
+          url={avatar_url}
+          size={150}
+          onUpload={(url) => {
+            setAvatarUrl(url)
+            updateProfile({ fullname, username, avatar_url: url })
+          }}
         />
       </div>
       <div>

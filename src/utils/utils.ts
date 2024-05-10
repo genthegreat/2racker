@@ -1,3 +1,3 @@
 export function formatCurrency(amount: number): string {
-    return 'K' + amount.toLocaleString();
+    return amount !== null && amount !== undefined ? 'K' + amount.toLocaleString() : 'K0';
 }

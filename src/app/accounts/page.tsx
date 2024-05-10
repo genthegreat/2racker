@@ -7,15 +7,14 @@ import { useState, useEffect } from "react"
 import { formatCurrency } from '../../utils/utils'
 import Link from 'next/link'
 import type { Account } from '@/utils/db/types'
-
+import { EyeIcon, PencilSquareIcon } from '@/components/icons'
 
 export default function Account() {
   const supabase = createClientComponentClient()
   const [accounts, setAccounts] = useState<Account[]>([])
 
-  const getAccounts = async() => {
+  const getAccounts = async () => {
     try {
-      
       const { data, error } = await supabase
         .from('accounts')
         .select(`
@@ -35,7 +34,7 @@ export default function Account() {
         console.log(data)
         setAccounts(data)
       }
-    } catch (error:any) {
+    } catch (error: any) {
       console.error('Error fetching accounts:', error.message);
     }
   }
@@ -51,26 +50,35 @@ export default function Account() {
 
       <div>
         <table className="w-full table-auto border-separate border border-blue-600">
-            <thead>
-              <tr>
-                <th className="border border-green-600 px-5">Account</th>
-                <th className="border border-green-600 px-5">Amount Due</th>
-                <th className="border border-green-600 px-5">Amount Paid</th>
-                <th className="border border-green-600 px-5">Balance</th>
-                <th className="border border-green-600 px-5">Status</th>
+          <thead>
+            <tr>
+              <th className="border border-green-600 px-5">Account</th>
+              <th className="border border-green-600 px-5">Amount Due</th>
+              <th className="border border-green-600 px-5">Amount Paid</th>
+              <th className="border border-green-600 px-5">Balance</th>
+              <th className="border border-green-600 px-5">Status</th>
+              <th className="border border-green-600 px-5">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {accounts.map(account => (
+              <tr key={`${account.account_id}`}>
+                <td className="border border-green-600 px-5"><Link href={`/projects?id=${account.account_id}`}>{account.account_name}</Link></td>
+                <td className="border border-green-600 px-5">{formatCurrency(account.amount_due)}</td>
+                <td className="border border-green-600 px-5">{formatCurrency(account.amount_paid)}</td>
+                <td className="border border-green-600 px-5">{formatCurrency(account.balance)}</td>
+                <td className="border border-green-600 px-5">{account.status}</td>
+                <td className="border border-green-600 px-5 flex">
+                  <Link href={`/accounts/${account.account_id}`} className='flex flex-auto float-start'>
+                    <EyeIcon />
+                  </Link>
+                  <Link href={`/accounts/update/${account.account_id}`} className='flex flex-auto float-end'>
+                    <PencilSquareIcon />
+                  </Link>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {accounts.map(account => (
-                <tr key={`${account.account_id}`}>
-                    <td className="border border-green-600 px-5"><Link href={`/projects?id=${account.account_id}`}>{account.account_name}</Link></td>
-                    <td className="border border-green-600 px-5">{formatCurrency(account.amount_due)}</td>
-                    <td className="border border-green-600 px-5">{formatCurrency(account.amount_paid)}</td>
-                    <td className="border border-green-600 px-5">{formatCurrency(account.balance)}</td>
-                    <td className="border border-green-600 px-5">{account.status}</td>                                 
-                  </tr> 
-              ))}
-            </tbody>
+            ))}
+          </tbody>
         </table>
       </div>
 
