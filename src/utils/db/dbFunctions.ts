@@ -69,7 +69,9 @@ export async function getAllAccounts(): Promise<Account[]> {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: accounts, error } = await supabase.from("accounts").select("*").eq("user_id", `${user?.id}`);
+  const { data: accounts, error } = user
+    ? await supabase.from("accounts").select("*").eq("user_id", `${user.id}`)
+    : await supabase.from("accounts").select("*")
 
   if (error) {
     console.log(error);

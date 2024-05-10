@@ -5,7 +5,7 @@ import { formatCurrency } from "@/utils/utils";
 export async function generateStaticParams() {
     const accounts = await getAllAccounts();
 
-    // console.log('accounts loaded', accounts)
+    console.log('accounts loaded', accounts)
 
     return accounts.map((account) => ({
         account: account.account_id.toString()
