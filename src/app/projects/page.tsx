@@ -6,13 +6,16 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { useState, useEffect } from "react"
 import { formatCurrency } from '@/utils/utils'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
-import { getAccountData } from '@/utils/db/dbFunctions'
+import { redirect, useSearchParams } from 'next/navigation'
+import { getAccountData, getProjects } from '@/utils/db/dbFunctions'
 import type { Project } from '@/utils/db/types'
+import Spinner from "@/components/spinner/Spinner";
+import { EyeIcon, PencilSquareIcon } from '@/components/icons'
+import { useProfileContext } from '@/context/ProfileContext'
 
 export default function Project() {
-  const supabase = createClientComponentClient()
   const searchParams = useSearchParams()
+  const { profile, authState } = useProfileContext()
 
   const id = searchParams.get('id')
 
@@ -20,46 +23,24 @@ export default function Project() {
   const [accounts, setAccounts] = useState<PaidTotalProps | null>(null)
   const [projects, setprojects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
-
-  const getprojects = async() => {
-    try {
-      
-      const { data, error } = await supabase
-        .from('projects')
-        .select(`
-          project_id,
-          project_name,
-          description,
-          amount_due,
-          amount_paid,
-          balance,
-          account_id
-        `)
-        .eq('account_id', `${id}`)
-
-      if (error) {
-        console.log(error.message)
-        throw error
-      }
-      if (data) {
-        console.log(data)
-        setprojects(data)
-      }
-    } catch (error:any) {
-      console.error('Error fetching projects:', error.message);
-    }
-  }
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         const accountResult = await getAccountData();
-        getprojects()
-        
-        setAccounts(accountResult);
-      } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('accounts results:', accountResult);
+
+        const projectResult = await getProjects(id);
+
+        console.error('Project results:', projectResult);
+
+        setprojects(projectResult)
+        setAccounts(accountResult)
+      } catch (error: any) {
+        console.error('Error fetching data in useEffect:', error);
+        setError('Error fetching data in useEffect:'.concat(error.details,". ", error.message))
       } finally {
         setLoading(false);
       }
@@ -68,33 +49,54 @@ export default function Project() {
     fetchData();
   }, [])
 
+  if (loading) return <Spinner />
+
+  if (authState.status === 'SIGNED_OUT' || authState.status === null) {
+    console.log('An error occured', error)
+    // redirect('/')
+  }
+
   return (
     <div className='align-center'>
 
-      <h2 className="overline text-2xl mt-4">YOUR PROJECTS - {id}</h2>
+      <h2 className="overline text-2xl mt-4">{profile.full_name?.concat("'s") || 'YOUR'} PROJECTS - {id}</h2>
 
       {accounts && <PaidTotal {...accounts} />}
-      
+
       <div>
         <table className="w-full table-auto border-separate border border-blue-600">
-            <thead>
-              <tr>
-                <th className="border border-green-600 px-5">Project</th>
-                <th className="border border-green-600 px-5">Amount Due</th>
-                <th className="border border-green-600 px-5">Amount Paid</th>
-                <th className="border border-green-600 px-5">Balance</th>
-              </tr>
-            </thead>
-            <tbody>
-              {projects.map(project => (
+          <thead>
+            <tr>
+              <th className="border border-green-600 px-5">Project</th>
+              <th className="border border-green-600 px-5">Amount Due</th>
+              <th className="border border-green-600 px-5">Amount Paid</th>
+              <th className="border border-green-600 px-5">Balance</th>
+              <th className="border border-green-600 px-5">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {error
+              ?
+              <tr className='text-center'><p>Error fetching data: {error}</p></tr>
+              :
+              projects.map(project => (
                 <tr key={`${project.project_id}`}>
                   <td className="border border-green-600 px-5"><Link href={`/amenities?id=${project.project_id}`}>{project.project_name}</Link></td>
                   <td className="border border-green-600 px-5">{formatCurrency(project.amount_due)}</td>
                   <td className="border border-green-600 px-5">{formatCurrency(project.amount_paid)}</td>
                   <td className="border border-green-600 px-5">{formatCurrency(project.balance)}</td>
-                </tr>                
-              ))}
-            </tbody>
+                  <td className="border border-green-600 px-5 flex">
+                  <Link href={`/project/${project.project_id}`} className='flex flex-auto float-start'>
+                    <EyeIcon />
+                  </Link>
+                  <Link href={`/project/update/${project.project_id}`} className='flex flex-auto float-end'>
+                    <PencilSquareIcon />
+                  </Link>
+                </td>
+                </tr>
+              ))
+            }
+          </tbody>
         </table>
       </div>
 

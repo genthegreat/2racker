@@ -1,5 +1,4 @@
 'use client'
-import React from 'react'
 import AddAmenityForm from './addamenityform'
 import { useProfileContext } from '@/context/ProfileContext';
 import Spinner from '@/components/spinner/Spinner';

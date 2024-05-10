@@ -1,23 +1,22 @@
 'use client'
-import React from 'react'
-import AddAccountForm from './addaccountform'
-
-interface Account {
-    account_id: number,
-    user_id: string,
-    amount_paid: number,
-    start_date: string,
-    account_name: string,
-    status: string,
-    amount_due: number,
-    balance: number
-}
+import { useProfileContext } from '@/context/ProfileContext';
+import AddProjectForm from './addprojectform'
+import Spinner from '@/components/spinner/Spinner';
 
 export default function AddAccount() {
+  const { profile, loading } = useProfileContext();
+
   return (
-    <div>
-        <AddAccountForm />
-    </div>
+    <>
+      {loading ? (
+        <Spinner />
+      ) : (
+        <>
+          <h1 className="overline text-2xl mt-4">{profile.full_name || 'Guest'}&#39;s Portfolio</h1>
+          <AddProjectForm />
+        </>
+      )}
+    </>
   )
 }
 

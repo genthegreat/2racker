@@ -6,6 +6,7 @@ interface Profile {
   full_name: string | null;
   username: string | null;
   avatar_url: string | null;
+  id: string | null;
 }
 
 interface AuthState {
@@ -20,7 +21,7 @@ interface ProfileContextData {
 }
 
 const ProfileContext = createContext<ProfileContextData>({
-  profile: { full_name: null, username: null, avatar_url: null },
+  profile: { full_name: null, username: null, avatar_url: null, id: null },
   loading: false,
   error: null,
   authState: { status: null },
@@ -28,7 +29,7 @@ const ProfileContext = createContext<ProfileContextData>({
 
 export const ProfileContextProvider = ({ children }: { children: React.ReactNode }) => {
   const supabase = createClient()
-  const [profile, setProfile] = useState<Profile>({ full_name: null, username: null, avatar_url: null });
+  const [profile, setProfile] = useState<Profile>({ full_name: null, username: null, avatar_url: null, id: null });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<any | null>(null);
   const [authState, setAuthState] = useState<AuthState>({ status: null });  // State to track auth changes
@@ -38,7 +39,7 @@ export const ProfileContextProvider = ({ children }: { children: React.ReactNode
     try {
       const { data, error, status } = await supabase
         .from('profiles')
-        .select('full_name, username, avatar_url')
+        .select('*')
         .eq('id', userId)
         .single();
 

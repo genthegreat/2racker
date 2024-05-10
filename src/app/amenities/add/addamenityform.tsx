@@ -1,7 +1,31 @@
-import React from 'react'
+'use client'
+import { useEffect, useState } from 'react'
+import { useFormStatus } from 'react-dom';
+import { getProjects } from '@/utils/db/dbFunctions';
+import { Project } from '@/utils/db/types';
+import { submit } from './actions';
 
 export default function AddAmenityForm() {
-       
+
+    const { pending } = useFormStatus();
+    const [amenityName, setAmenityName] = useState<string | null>(null)
+    const [defaultAmount, setDefaultAmount] = useState<string | null>(null)
+    const [projectData, setProjectData] = useState<Project[] | null>(null)
+    const [projectId, setProjectId] = useState<number>(0)
+    const [category, setCategory] = useState<string | null>(null)
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setProjectData(await getProjects(null))
+            } catch (error) {
+                throw error
+            }
+        }
+        fetchData()
+    }, []
+    )
+
     return (
         <>
             <div>
@@ -17,36 +41,33 @@ export default function AddAmenityForm() {
                                     <form action="#" className="form">
                                         <div className="md:flex flex-row md:space-x-4 w-full text-xs">
                                             <div className="mb-3 space-y-2 w-full text-xs">
-                                                <label className="font-semibold text-gray-600 py-2">Amenity Name <abbr title="required">*</abbr></label>
-                                                <input placeholder="Amenity Name" className="appearance-none block w-full bg-gray-900 text-white border border-gray-900 rounded-lg h-10 px-4" required type="text" name="amenity_name" id="amenity_name" />
-                                                <p className="text-red text-xs hidden">Please fill out this field.</p>
+                                                <label className="font-semibold text-gray-600 py-2">Amenity Name*</label>
+                                                <input placeholder="Amenity Name" className="appearance-none block w-full bg-gray-900 text-white border border-gray-900 rounded-lg h-10 px-4" required type="text" name="amenityName" id="amenityName" onChange={(e) => setAmenityName(e.target.value)} />
                                             </div>
                                         </div>
                                         <div className="md:flex md:flex-row md:space-x-4 w-full text-xs">
                                             <div className="mb-3 space-y-2 w-full text-xs">
-                                                <label className="font-semibold text-gray-600 py-2">Price <abbr title="required">*</abbr></label>
-                                                <input placeholder="0" className="appearance-none block w-full bg-gray-900 text-white border border-gray-900 rounded-lg h-10 px-4" required type="text" name="default_amount" id="default_amount" />
-                                                <p className="text-red text-xs hidden">Please fill out this field.</p>
+                                                <label className="font-semibold text-gray-600 py-2">Price*</label>
+                                                <input placeholder="0" className="appearance-none block w-full bg-gray-900 text-white border border-gray-900 rounded-lg h-10 px-4" required type="number" name="defaultAmount" id="defaultAmount" onChange={(e) => setDefaultAmount(e.target.value)} />
                                             </div>
                                             <div className="w-full flex flex-col mb-3">
                                                 <label className="font-semibold text-gray-600 py-2">Project*</label>
-                                                <select className="appearance-none block w-full bg-gray-900 text-white border border-gray-900 rounded-lg h-10 px-4 md:w-full" required name="project_id" id="project_id">
-                                                    <option value="">Selected Project</option>
-                                                    <option value="">Cochin,KL</option>
-                                                    <option value="">Mumbai,MH</option>
-                                                    <option value="">Bangalore,KA</option>
+                                                <select className="appearance-none block w-full bg-gray-900 text-white border border-gray-900 rounded-lg h-10 px-4 md:w-full" required name="projectId" id="projectId" value={projectId} onChange={(e) => { { setProjectId(parseInt(e.target.value)); console.log(projectId);}}}>
+                                                    <option value={0}>Select Project</option>
+                                                    {projectData?.map(project => (
+                                                        <option key={`${project.project_id}`} value={`${project.project_id}`}>{project.project_name}</option>
+                                                    ))}
                                                 </select>
-                                                <p className="text-sm text-red-500 hidden mt-3" id="error">Please fill out this field.</p>
                                             </div>
                                         </div>
                                         <div className="flex-auto w-full mb-1 text-xs space-y-2">
                                             <label className="font-semibold text-gray-600 py-2">Category</label>
-                                            <input placeholder="Amenity Name" className="appearance-none block w-full bg-gray-900 text-white border border-gray-900 rounded-lg h-10 px-4" required type="text" name="category" id="category" />
+                                            <input placeholder="Category" className="appearance-none block w-full bg-gray-900 text-white border border-gray-900 rounded-lg h-10 px-4" type="text" name="category" id="category" onChange={(e) => setCategory(e.target.value)} />
                                         </div>
-                                        <p className="text-xs text-red-500 text-right my-3">Required fields are marked with an asterisk <abbr title="Required field">*</abbr></p>
+                                        <p className="text-xs text-red-500 text-right my-3">Required fields are marked with an asterisk*</p>
                                         <div className="mt-5 text-right md:space-x-3 md:block flex flex-col-reverse">
                                             <button className="mb-2 md:mb-0 bg-white px-5 py-2 text-sm shadow-sm font-medium tracking-wider border text-gray-600 rounded-full hover:shadow-lg hover:bg-gray-100">Cancel</button>
-                                            <button className="mb-2 md:mb-0 bg-green-400 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-green-500">Save</button>
+                                            <button formAction={submit} className="mb-2 md:mb-0 bg-green-400 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-green-500" disabled={pending}>{pending ? "Submitting..." : "Add"}</button>
                                         </div>
                                     </form>
                                 </div>
