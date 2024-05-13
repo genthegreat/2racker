@@ -86,7 +86,7 @@ export default function Project() {
                   <td className="border border-green-600 px-5">{formatCurrency(project.amount_paid)}</td>
                   <td className="border border-green-600 px-5">{formatCurrency(project.balance)}</td>
                   <td className="border border-green-600 px-5 flex">
-                  <Link href={`/project/${project.project_id}`} className='flex flex-auto float-start'>
+                  <Link href={`/projects/${project.project_id}`} className='flex flex-auto float-start'>
                     <EyeIcon />
                   </Link>
                   <Link href={`/project/update/${project.project_id}`} className='flex flex-auto float-end'>
