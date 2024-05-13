@@ -5,12 +5,13 @@ import Navigation from "./nav";
 import Footer from "./footer";
 import { Providers } from "@/components/provider/ProfileProvider";
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from '@vercel/analytics/react';
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "2racker App",
-  description: "Payment Plane Tracker by Prince Kwesi",
+  description: "Payment Plan Tracker by Prince Kwesi",
   icons: {
     icon: "./favicon.ico",
     apple: "../public/favicon/apple-touch-icon.png"
@@ -35,8 +36,9 @@ export default function RootLayout({
           <footer>
             <Footer />
           </footer>
+          <SpeedInsights />
+          <Analytics />
         </Providers>
-        <SpeedInsights />
       </body>
     </html>
   );
