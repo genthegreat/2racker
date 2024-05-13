@@ -49,7 +49,7 @@ export async function fetchAccountDataById(id: number) {
 }
 
 export async function fetchAmenityDataById(id: number) {
-  const { data: account, error } = await supabase
+  const { data: amenity, error } = await supabase
     .from("amenities")
     .select("*")
     .eq("amenity_id", `${id}`)
@@ -60,8 +60,8 @@ export async function fetchAmenityDataById(id: number) {
     return error;
   }
 
-  console.log(account);
-  return account;
+  console.log(amenity);
+  return amenity;
 }
 
 export async function getAllAccounts(): Promise<Account[]> {
@@ -204,11 +204,7 @@ export async function getProjects(id: string | null): Promise<Project[]> {
 }
 
 export async function getTransactions(id: number | null): Promise<Transaction[]> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const { data: transactions, error } = id
+  const { data: transaction, error } = id
     ? await supabase.from("transactions").select("*").eq("transaction_id", `${id}`).single()
     : await supabase.from("transactions").select("*");
 
@@ -217,6 +213,22 @@ export async function getTransactions(id: number | null): Promise<Transaction[]>
     throw error;
   }
 
-  console.log("Transaction", transactions);
-  return transactions;
+  console.log("Transaction", transaction);
+  return transaction;
+}
+
+export async function fetchTransactionDataById(id: number) {
+  const { data: transaction, error } = await supabase
+    .from("transactions")
+    .select("*")
+    .eq("transaction_id", `${id}`)
+    .single();
+
+  if (error) {
+    console.log(error);
+    return error;
+  }
+
+  console.log(transaction);
+  return transaction;
 }

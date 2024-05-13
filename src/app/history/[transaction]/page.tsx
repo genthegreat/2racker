@@ -1,4 +1,4 @@
-import { getTransactions } from "@/utils/db/dbFunctions";
+import { fetchTransactionDataById, getTransactions } from "@/utils/db/dbFunctions";
 import { formatCurrency } from "@/utils/utils";
 
 // Return a list of `params` to populate the [id] dynamic segment
@@ -15,8 +15,9 @@ export async function generateStaticParams() {
 export default async function Page({ params }: { params: { transaction: number } }) {
     const { transaction } = params
 
-    const res = await getTransactions(transaction)
-    
+    const res = await fetchTransactionDataById(transaction)
+    console.log(res)
+
     if (!res.transaction_id) {
         console.error("Error fetching transaction data!");
         return <h1>Transaction not found!</h1>
