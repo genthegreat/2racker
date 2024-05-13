@@ -17,11 +17,11 @@ export default async function AmenityDetail({ params }: { params: { amenity_id: 
   const res = await fetchAmenityDataById(amenity_id)
 
   if (!res.amenity_id) {
-    console.error("Error fetching account data!");
+    console.error("Error fetching amenity data!");
     return <h1>Amenity not found!</h1>
   }
 
-  console.log("account data", res)
+  console.log("amenity data", res)
 
   return (
     <div>

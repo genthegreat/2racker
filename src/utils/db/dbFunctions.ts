@@ -1,5 +1,5 @@
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { Account, Amenity, Project } from "./types";
+import { Account, Amenity, Project, Transaction } from "./types";
 
 const supabase = createClientComponentClient();
 
@@ -49,7 +49,7 @@ export async function fetchAccountDataById(id: number) {
 }
 
 export async function fetchAmenityDataById(id: number) {
-  const { data: account, error } = await supabase
+  const { data: amenity, error } = await supabase
     .from("amenities")
     .select("*")
     .eq("amenity_id", `${id}`)
@@ -60,8 +60,8 @@ export async function fetchAmenityDataById(id: number) {
     return error;
   }
 
-  console.log(account);
-  return account;
+  console.log(amenity);
+  return amenity;
 }
 
 export async function getAllAccounts(): Promise<Account[]> {
@@ -82,7 +82,7 @@ export async function getAllAccounts(): Promise<Account[]> {
   return accounts;
 }
 
-export async function getProjectData(id: string) {
+export async function getProjectData(id: number) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -90,7 +90,7 @@ export async function getProjectData(id: string) {
   const { data, error } = await supabase
     .from("projects")
     .select("*")
-    .eq("account_id", `${id}`)
+    .eq("project_id", `${id}`)
     .single();
 
   if (error) {
@@ -201,4 +201,34 @@ export async function getProjects(id: string | null): Promise<Project[]> {
 
   console.log("projects", projects);
   return projects;
+}
+
+export async function getTransactions(id: number | null): Promise<Transaction[]> {
+  const { data: transaction, error } = id
+    ? await supabase.from("transactions").select("*").eq("transaction_id", `${id}`).single()
+    : await supabase.from("transactions").select("*");
+
+  if (error) {
+    console.log(error);
+    throw error;
+  }
+
+  console.log("Transaction", transaction);
+  return transaction;
+}
+
+export async function fetchTransactionDataById(id: number) {
+  const { data: transaction, error } = await supabase
+    .from("transactions")
+    .select("*")
+    .eq("transaction_id", `${id}`)
+    .single();
+
+  if (error) {
+    console.log(error);
+    return error;
+  }
+
+  console.log(transaction);
+  return transaction;
 }

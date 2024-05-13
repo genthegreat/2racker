@@ -8,6 +8,7 @@ import { getAccountData, getTransactionHistory } from '@/utils/db/dbFunctions'
 import Spinner from '@/components/spinner/Spinner'
 import Link from 'next/link'
 import { Account } from '@/utils/db/types'
+import { EyeIcon } from '@/components/icons'
 
 export default function History() {
   const [transactions, setTransactions] = useState<Account[] | null>([])
@@ -56,6 +57,7 @@ export default function History() {
               <th className="border border-green-600 px-5">Amount Paid</th>
               <th className="border border-green-600 px-5">Start Date</th>
               <th className="border border-green-600 px-5">Status</th>
+              <th className="border border-green-600 px-5">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -71,6 +73,14 @@ export default function History() {
                       <td className="border border-green-600 px-5">{formatCurrency(transaction.amount_paid)}</td>
                       <td className="border border-green-600 px-5">{account.start_date}</td>
                       <td className="border border-green-600 px-5">{transaction.status}</td>
+                      <td className="border border-green-600 px-5 flex">
+                        <Link href={`/history/${transaction.transaction_id}`} className='flex flex-auto float-start'>
+                          <EyeIcon />
+                        </Link>
+                        {/* <Link href={`/project/update/${project.project_id}`} className='flex flex-auto float-end'>
+                          <PencilSquareIcon />
+                        </Link> */}
+                      </td>
                     </tr>
                   ))
                 ))
