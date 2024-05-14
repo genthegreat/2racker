@@ -2,7 +2,7 @@ import { formatCurrency } from '../../../utils/utils';
 import { fetchAmenityDataById, getAmenities } from "@/utils/db/dbFunctions";
 
 export async function generateStaticParams() {
-  const amenities = await getAmenities()
+  const amenities = await getAmenities(null)
 
   // console.log(amenities)
 

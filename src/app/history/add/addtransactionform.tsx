@@ -13,7 +13,7 @@ export default function AddTransactionForm() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                setAmenityData(await getAmenities())
+                setAmenityData(await getAmenities(null))
             } catch (error) {
                 throw error
             }

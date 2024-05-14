@@ -48,7 +48,7 @@ export async function fetchAccountDataById(id: number) {
   return account;
 }
 
-export async function fetchAmenityDataById(id: number) {
+export async function fetchAmenityDataById(id: number): Promise<Amenity> {
   const { data: amenity, error } = await supabase
     .from("amenities")
     .select("*")
@@ -57,11 +57,11 @@ export async function fetchAmenityDataById(id: number) {
 
   if (error) {
     console.log(error);
-    return error;
+    throw error;
   }
 
   console.log(amenity);
-  return amenity;
+  return amenity as Amenity;
 }
 
 export async function getAllAccounts(): Promise<Account[]> {
@@ -167,14 +167,14 @@ export async function getProfileData() {
   return data;
 }
 
-export async function getAmenities(): Promise<Amenity[]> {
+export async function getAmenities(id: string | null): Promise<Amenity[]> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: amenities, error } = await supabase
-    .from("amenities")
-    .select("*");
+  const { data: amenities, error } = id
+    ? await supabase.from("amenities").select("*").eq('project_id', `${id}`)
+    : await supabase.from("amenities").select("*")
 
   if (error) {
     console.log(error);
@@ -182,7 +182,7 @@ export async function getAmenities(): Promise<Amenity[]> {
   }
 
   console.log(amenities);
-  return amenities;
+  return amenities as Amenity[];
 }
 
 export async function getProjects(id: string | null): Promise<Project[]> {
