@@ -42,8 +42,8 @@ export interface Account {
 }
 
 export interface Profile {
-  id: string;
-  updated_at: string;
+  id?: string;
+  updated_at?: string;
   full_name: string | null;
   username: string | null;
   avatar_url: string | null;
