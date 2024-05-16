@@ -8,7 +8,7 @@ import { getAccountData, getTransactionHistory } from '@/utils/db/dbFunctions'
 import Spinner from '@/components/spinner/Spinner'
 import Link from 'next/link'
 import { Account } from '@/utils/db/types'
-import { EyeIcon } from '@/components/icons'
+import { EyeIcon, PencilSquareIcon } from '@/components/icons'
 
 export default function History() {
   const [transactions, setTransactions] = useState<Account[] | null>([])
@@ -77,9 +77,9 @@ export default function History() {
                         <Link href={`/history/${transaction.transaction_id}`} className='flex flex-auto float-start'>
                           <EyeIcon />
                         </Link>
-                        {/* <Link href={`/project/update/${project.project_id}`} className='flex flex-auto float-end'>
+                        <Link href={`/history/${transaction.transaction_id}/update`} className='flex flex-auto float-end'>
                           <PencilSquareIcon />
-                        </Link> */}
+                        </Link>
                       </td>
                     </tr>
                   ))

@@ -1,7 +1,5 @@
 "use client"
 
-import React from 'react'
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { useState, useEffect } from "react"
 import { formatCurrency } from '../../utils/utils'
 import Link from 'next/link'
@@ -68,8 +66,10 @@ export default function Amenity() {
                 </td>
               </tr>
             ))}
+            {amenities.length < 1 && <tr><td className='text-center'><p>This Project has no amenities</p></td></tr>}
           </tbody>
         </table>
+
       </div>
 
       <div className='flex justify-end pt-10'>

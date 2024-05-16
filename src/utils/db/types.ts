@@ -25,7 +25,6 @@ export interface Project {
   description: string;
   amount_due: number;
   amount_paid: number;
-  balance: number;
   projects?: Project[];
   amenities?: Amenity[];
 }
@@ -43,6 +42,8 @@ export interface Account {
 }
 
 export interface Profile {
+  id: string;
+  updated_at: string;
   full_name: string | null;
   username: string | null;
   avatar_url: string | null;

@@ -2,11 +2,10 @@
 
 import PaidTotal, { PaidTotalProps } from '@/components/paidTotal/paidTotal'
 import React from 'react'
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { useState, useEffect } from "react"
 import { formatCurrency } from '@/utils/utils'
 import Link from 'next/link'
-import { redirect, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { getAccountData, getProjects } from '@/utils/db/dbFunctions'
 import type { Project } from '@/utils/db/types'
 import Spinner from "@/components/spinner/Spinner";
@@ -40,14 +39,14 @@ export default function Project() {
         setAccounts(accountResult)
       } catch (error: any) {
         console.error('Error fetching data in useEffect:', error);
-        setError('Error fetching data in useEffect:'.concat(error.details,". ", error.message))
+        setError('Error fetching data in useEffect:'.concat(error.details, ". ", error.message))
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [])
+  }, [id])
 
   if (loading) return <Spinner />
 
@@ -79,25 +78,30 @@ export default function Project() {
               ?
               <tr className='text-center'><p>Error fetching data: {error}</p></tr>
               :
-              projects.map(project => (
-                <tr key={`${project.project_id}`}>
-                  <td className="border border-green-600 px-5"><Link href={`/amenities?id=${project.project_id}`}>{project.project_name}</Link></td>
-                  <td className="border border-green-600 px-5">{formatCurrency(project.amount_due)}</td>
-                  <td className="border border-green-600 px-5">{formatCurrency(project.amount_paid)}</td>
-                  <td className="border border-green-600 px-5">{formatCurrency(project.balance)}</td>
-                  <td className="border border-green-600 px-5 flex">
-                  <Link href={`/projects/${project.project_id}`} className='flex flex-auto float-start'>
-                    <EyeIcon />
-                  </Link>
-                  <Link href={`/project/update/${project.project_id}`} className='flex flex-auto float-end'>
-                    <PencilSquareIcon />
-                  </Link>
-                </td>
-                </tr>
-              ))
+              projects.length > 1
+                ?
+                projects.map(project => (
+                  <tr key={`${project.project_id}`}>
+                    <td className="border border-green-600 px-5"><Link href={`/amenities?id=${project.project_id}`}>{project.project_name}</Link></td>
+                    <td className="border border-green-600 px-5">{formatCurrency(project.amount_due)}</td>
+                    <td className="border border-green-600 px-5">{formatCurrency(project.amount_paid)}</td>
+                    <td className="border border-green-600 px-5">{formatCurrency(project.amount_paid - project.amount_due)}</td>
+                    <td className="border border-green-600 px-5 flex">
+                      <Link href={`/projects/${project.project_id}`} className='flex flex-auto float-start'>
+                        <EyeIcon />
+                      </Link>
+                      <Link href={`/project/update/${project.project_id}`} className='flex flex-auto float-end'>
+                        <PencilSquareIcon />
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+                :
+                <tr className='text-center'><p>This Project has no amenities</p></tr>
             }
           </tbody>
         </table>
+        {projects.length > 0 && <p>This Project has no amenities</p>}
       </div>
 
       <div className='flex justify-end pt-10'>

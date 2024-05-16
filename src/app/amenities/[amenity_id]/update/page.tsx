@@ -5,13 +5,15 @@ import { fetchAmenityDataById, getProjects } from '@/utils/db/dbFunctions';
 import { Project } from '@/utils/db/types';
 import { update } from '../../actions';
 import Spinner from '@/components/spinner/Spinner';
-import { redirect } from 'next/navigation';
+import { useRouter  } from 'next/navigation';
 
 export default function AddAmenityForm({ params }: { params: { amenity_id: number } }) {
     const { amenity_id } = params
+    const router = useRouter()
 
     const { pending } = useFormStatus();
     const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
     const [amenityName, setAmenityName] = useState<string | null>(null)
     const [defaultAmount, setDefaultAmount] = useState<number | null>(null)
     const [projectData, setProjectData] = useState<Project[] | null>(null)
@@ -54,10 +56,11 @@ export default function AddAmenityForm({ params }: { params: { amenity_id: numbe
         if (response.success) {
             console.log("Amenity updated successfully!");
             setLoading(false)
-            redirect(`/amenities`);
+            router.push('/amenities')
         } else {
             console.error("Error updating amenity:", response.error);
             setLoading(false)
+            setError(response.error)
         }
     }
 
@@ -103,6 +106,7 @@ export default function AddAmenityForm({ params }: { params: { amenity_id: numbe
                                             <input type="hidden" name="id" id="id" value={amenity_id} />
                                         </div>
                                         <p className="text-xs text-red-500 text-right my-3">Required fields are marked with an asterisk*</p>
+                                        {error && <p className="text-base text-red-500 text-right my-3">An error occured { error }</p>}
                                         <div className="mt-5 text-right md:space-x-3 md:block flex flex-col-reverse">
                                             <button className="mb-2 md:mb-0 bg-white px-5 py-2 text-sm shadow-sm font-medium tracking-wider border text-gray-600 rounded-full hover:shadow-lg hover:bg-gray-100">Cancel</button>
                                             <button formAction={handleSubmit} className="mb-2 md:mb-0 bg-green-400 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-green-500" disabled={pending}>{pending ? "Updating..." : "Update"}</button>
