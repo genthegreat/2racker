@@ -19,8 +19,8 @@ export async function getAccountData() {
     .eq("user_id", `${user?.id}`);
 
   if (error) {
-    console.log(error);
-    throw error;
+    console.error(error);
+    throw error
   }
 
   const summedValues = data.reduce((acc: any, obj: any) => {
@@ -62,7 +62,7 @@ export async function fetchAmenityDataById(id: number): Promise<Amenity> {
 
   if (error) {
     console.log(error);
-    throw error;
+    console.error(error)
   }
 
   console.log(amenity);
@@ -79,12 +79,11 @@ export async function getAllAccounts(): Promise<Account[]> {
     : await supabase.from("accounts").select("*")
 
   if (error) {
-    console.log(error);
-    throw error;
+    console.error(error)
   }
 
   console.log(accounts);
-  return accounts;
+  return accounts as Account[];
 }
 
 export async function getProjectData(id: number) {
@@ -100,7 +99,7 @@ export async function getProjectData(id: number) {
 
   if (error) {
     console.log(error);
-    throw error;
+    console.error(error)
   }
 
   console.log('Project', data);
@@ -144,8 +143,7 @@ export async function getTransactionHistory(): Promise<Account[]> {
     .eq("user_id", `${user?.id}`);
 
   if (error) {
-    console.log(error);
-    throw error;
+    console.error(error)
   }
 
   console.log("Transaction History", accounts);
@@ -165,7 +163,7 @@ export async function getProfileData() {
 
   if (error) {
     console.log(error);
-    throw error;
+    console.error(error)
   }
 
   console.log(data);
@@ -182,8 +180,7 @@ export async function getAmenities(id: string | null): Promise<Amenity[]> {
     : await supabase.from("amenities").select("*")
 
   if (error) {
-    console.log(error);
-    throw error;
+    console.error(error)
   }
 
   console.log(amenities);
@@ -196,12 +193,11 @@ export async function getProjects(id: number |string | null): Promise<Project[]>
     : await supabase.from("projects").select("*");
 
   if (error) {
-    console.log(error);
-    throw error;
+    console.error(error)
   }
 
   console.log("projects", projects);
-  return projects;
+  return projects as Project[];
 }
 
 export async function getTransactions(id: number | null): Promise<Transaction[]> {
@@ -210,8 +206,7 @@ export async function getTransactions(id: number | null): Promise<Transaction[]>
     : await supabase.from("transactions").select("*");
 
   if (error) {
-    console.log(error);
-    throw error;
+    console.error(error)
   }
 
   console.log("Transaction", transaction);
