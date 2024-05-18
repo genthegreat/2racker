@@ -20,7 +20,7 @@ export default function Project() {
 
   // State
   const [accounts, setAccounts] = useState<PaidTotalProps | null>(null)
-  const [projects, setprojects] = useState<Project[]>([])
+  const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -28,15 +28,15 @@ export default function Project() {
     const fetchData = async () => {
       try {
         setLoading(true);
+        
         const accountResult = await getAccountData();
-        console.error('accounts results:', accountResult);
-
-        const projectResult = await getProjects(id);
-
-        console.error('Project results:', projectResult);
-
-        setprojects(projectResult)
+        console.log('accounts results:', accountResult);
         setAccounts(accountResult)
+        
+        const projectResult = await getProjects(id);
+        console.log('Project results:', projectResult);
+        setProjects(projectResult)
+
       } catch (error: any) {
         console.error('Error fetching data in useEffect:', error);
         setError('Error fetching data in useEffect:'.concat(error.details, ". ", error.message))
@@ -78,19 +78,19 @@ export default function Project() {
               ?
               <tr className='text-center'><p>Error fetching data: {error}</p></tr>
               :
-              projects.length > 1
+              projects.length > 0
                 ?
                 projects.map(project => (
                   <tr key={`${project.project_id}`}>
                     <td className="border border-green-600 px-5"><Link href={`/amenities?id=${project.project_id}`}>{project.project_name}</Link></td>
                     <td className="border border-green-600 px-5">{formatCurrency(project.amount_due)}</td>
                     <td className="border border-green-600 px-5">{formatCurrency(project.amount_paid)}</td>
-                    <td className="border border-green-600 px-5">{formatCurrency(project.amount_paid - project.amount_due)}</td>
+                    <td className="border border-green-600 px-5">{formatCurrency(project.amount_due - project.amount_paid)}</td>
                     <td className="border border-green-600 px-5 flex">
                       <Link href={`/projects/${project.project_id}`} className='flex flex-auto float-start'>
                         <EyeIcon />
                       </Link>
-                      <Link href={`/project/update/${project.project_id}`} className='flex flex-auto float-end'>
+                      <Link href={`/projects/${project.project_id}/update`} className='flex flex-auto float-end'>
                         <PencilSquareIcon />
                       </Link>
                     </td>
@@ -101,7 +101,6 @@ export default function Project() {
             }
           </tbody>
         </table>
-        {projects.length > 0 && <p>This Project has no amenities</p>}
       </div>
 
       <div className='flex justify-end pt-10'>

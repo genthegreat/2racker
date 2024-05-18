@@ -25,7 +25,6 @@ export interface Project {
   description: string;
   amount_due: number;
   amount_paid: number;
-  projects?: Project[];
   amenities?: Amenity[];
 }
 

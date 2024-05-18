@@ -5,7 +5,7 @@ import { Account } from "@/utils/db/types";
 import { useEffect, useState } from "react";
 import { submit } from "../actions";
 
-export default function AddaccountForm() {
+export default function AddProjectForm() {
     const [accountData, setAccountData] = useState<Account[] | null>(null)
     const [accountId, setAccountId] = useState<number | ''>('')
 

@@ -1,52 +1,41 @@
 "use client"
 
-import PaidTotal from '@/components/paidTotal/paidTotal'
-import React from 'react'
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import PaidTotal, { PaidTotalProps } from '@/components/paidTotal/paidTotal'
 import { useState, useEffect } from "react"
 import { formatCurrency } from '../../utils/utils'
 import Link from 'next/link'
 import type { Account } from '@/utils/db/types'
 import { EyeIcon, PencilSquareIcon } from '@/components/icons'
+import { getAccountData, getAllAccounts } from '@/utils/db/dbFunctions'
 
 export default function Account() {
-  const supabase = createClientComponentClient()
   const [accounts, setAccounts] = useState<Account[]>([])
+  const [total, setTotal] = useState<PaidTotalProps | null>(null)
 
-  const getAccounts = async () => {
+  const fetchData = async () => {
     try {
-      const { data, error } = await supabase
-        .from('accounts')
-        .select(`
-          account_id,
-          account_name,
-          status,
-          amount_due,
-          amount_paid,
-          balance
-        `)
+      const accountResult = await getAllAccounts();
+      console.log('accounts results:', accountResult);
+      setAccounts(accountResult)
 
-      if (error) {
-        console.log(error)
-        throw error
-      }
-      if (data) {
-        console.log(data)
-        setAccounts(data)
-      }
+      const accountData = await getAccountData();
+      console.log('accounts totaled:', accountData);
+      setTotal(accountData)
     } catch (error: any) {
       console.error('Error fetching accounts:', error.message);
     }
   }
 
   useEffect(() => {
-    getAccounts()
+    fetchData()
   }, [])
 
   return (
     <div className='align-center'>
 
       <h2 className="overline text-2xl mt-4">YOUR ACCOUNTS</h2>
+
+      {total && <PaidTotal {...total} />}
 
       <div>
         <table className="w-full table-auto border-separate border border-blue-600">

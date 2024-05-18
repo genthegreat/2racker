@@ -3,6 +3,11 @@ import { Account, Amenity, Project, Transaction } from "./types";
 
 const supabase = createClientComponentClient();
 
+/* 
+Note to self: 
+- Standardize function names. use 'get' for mulitple and 'fetch' for singular returns
+*/
+
 export async function getAccountData() {
   const {
     data: { user },
@@ -98,7 +103,7 @@ export async function getProjectData(id: number) {
     throw error;
   }
 
-  console.log(data);
+  console.log('Project', data);
   return data;
 }
 
@@ -185,11 +190,7 @@ export async function getAmenities(id: string | null): Promise<Amenity[]> {
   return amenities as Amenity[];
 }
 
-export async function getProjects(id: string | null): Promise<Project[]> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+export async function getProjects(id: number |string | null): Promise<Project[]> {
   const { data: projects, error } = id
     ? await supabase.from("projects").select("*").eq("account_id", `${id}`)
     : await supabase.from("projects").select("*");
