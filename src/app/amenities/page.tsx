@@ -1,47 +1,41 @@
 "use client"
 
-import React from 'react'
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { useState, useEffect } from "react"
 import { formatCurrency } from '../../utils/utils'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { EyeIcon, PencilSquareIcon } from '@/components/icons'
 import type { Amenity } from '@/utils/db/types'
+import { getAmenities } from '@/utils/db/dbFunctions'
+import Spinner from '@/components/spinner/Spinner'
 
 export default function Amenity() {
-  const supabase = createClientComponentClient()
   const searchParams = useSearchParams()
 
   const id = searchParams.get('id')
 
   // State
   const [amenities, setAmenities] = useState<Amenity[]>([])
-
-  async function getAmenities() {
-        try {
-
-            const { data, error } = await supabase
-                .from('amenities')
-                .select('*')
-                .eq('project_id', `${id}`)
-
-            if (error) {
-                console.log(error.message)
-                throw error
-            }
-            if (data) {
-                console.log(data)
-                setAmenities(data)
-            }
-        } catch (error: any) {
-            console.error('Error fetching amenities:', error.message)
-        }
-    }
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    getAmenities()
-  }, [])
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+
+        const getData = await getAmenities(id)
+        setAmenities(getData)
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData()
+  }, [id])
+
+  if (loading) return <Spinner />
 
   return (
     <div className='align-center'>
@@ -50,30 +44,32 @@ export default function Amenity() {
 
       <div>
         <table className="w-full table-auto border-separate border border-blue-600">
-            <thead>
-              <tr>
-                <th className="border border-green-600 px-5">Amenity</th>
-                <th className="border border-green-600 px-5">Amount Due</th>
-                <th className="border border-green-600 px-5">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {amenities.map(amenity => (
-                <tr key={`${amenity.amenity_id}`}>
-                  <td className="border border-green-600 px-5">{amenity.amenity_name}</td>
-                  <td className="border border-green-600 px-5">{formatCurrency(amenity.default_amount)}</td>
-                  <td className="border border-green-600 px-5">
+          <thead>
+            <tr>
+              <th className="border border-green-600 px-5">Amenity</th>
+              <th className="border border-green-600 px-5">Amount Due</th>
+              <th className="border border-green-600 px-5">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {amenities.map(amenity => (
+              <tr key={`${amenity.amenity_id}`}>
+                <td className="border border-green-600 px-5">{amenity.amenity_name}</td>
+                <td className="border border-green-600 px-5">{formatCurrency(amenity.default_amount)}</td>
+                <td className="border border-green-600 px-5">
                   <Link href={`/amenities/${amenity.amenity_id}`} className='flex flex-auto float-start mx-auto'>
                     <EyeIcon />
                   </Link>
-                  <Link href={`/amenities/update/${amenity.amenity_id}`} className='flex flex-auto float-end mx-auto'>
+                  <Link href={`/amenities/${amenity.amenity_id}/update`} className='flex flex-auto float-end mx-auto'>
                     <PencilSquareIcon />
                   </Link>
                 </td>
-                </tr>                
-              ))}
-            </tbody>
+              </tr>
+            ))}
+            {amenities.length < 1 && <tr><td className='text-center'><p>This Project has no amenities</p></td></tr>}
+          </tbody>
         </table>
+
       </div>
 
       <div className='flex justify-end pt-10'>

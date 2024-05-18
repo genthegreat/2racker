@@ -2,11 +2,10 @@
 
 import PaidTotal, { PaidTotalProps } from '@/components/paidTotal/paidTotal'
 import React from 'react'
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { useState, useEffect } from "react"
 import { formatCurrency } from '@/utils/utils'
 import Link from 'next/link'
-import { redirect, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { getAccountData, getProjects } from '@/utils/db/dbFunctions'
 import type { Project } from '@/utils/db/types'
 import Spinner from "@/components/spinner/Spinner";
@@ -21,7 +20,7 @@ export default function Project() {
 
   // State
   const [accounts, setAccounts] = useState<PaidTotalProps | null>(null)
-  const [projects, setprojects] = useState<Project[]>([])
+  const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -29,25 +28,25 @@ export default function Project() {
     const fetchData = async () => {
       try {
         setLoading(true);
+        
         const accountResult = await getAccountData();
-        console.error('accounts results:', accountResult);
-
-        const projectResult = await getProjects(id);
-
-        console.error('Project results:', projectResult);
-
-        setprojects(projectResult)
+        console.log('accounts results:', accountResult);
         setAccounts(accountResult)
+        
+        const projectResult = await getProjects(id);
+        console.log('Project results:', projectResult);
+        setProjects(projectResult)
+
       } catch (error: any) {
         console.error('Error fetching data in useEffect:', error);
-        setError('Error fetching data in useEffect:'.concat(error.details,". ", error.message))
+        setError('Error fetching data in useEffect:'.concat(error.details, ". ", error.message))
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [])
+  }, [id])
 
   if (loading) return <Spinner />
 
@@ -79,22 +78,26 @@ export default function Project() {
               ?
               <tr className='text-center'><p>Error fetching data: {error}</p></tr>
               :
-              projects.map(project => (
-                <tr key={`${project.project_id}`}>
-                  <td className="border border-green-600 px-5"><Link href={`/amenities?id=${project.project_id}`}>{project.project_name}</Link></td>
-                  <td className="border border-green-600 px-5">{formatCurrency(project.amount_due)}</td>
-                  <td className="border border-green-600 px-5">{formatCurrency(project.amount_paid)}</td>
-                  <td className="border border-green-600 px-5">{formatCurrency(project.balance)}</td>
-                  <td className="border border-green-600 px-5 flex">
-                  <Link href={`/projects/${project.project_id}`} className='flex flex-auto float-start'>
-                    <EyeIcon />
-                  </Link>
-                  <Link href={`/project/update/${project.project_id}`} className='flex flex-auto float-end'>
-                    <PencilSquareIcon />
-                  </Link>
-                </td>
-                </tr>
-              ))
+              projects.length > 0
+                ?
+                projects.map(project => (
+                  <tr key={`${project.project_id}`}>
+                    <td className="border border-green-600 px-5"><Link href={`/amenities?id=${project.project_id}`}>{project.project_name}</Link></td>
+                    <td className="border border-green-600 px-5">{formatCurrency(project.amount_due)}</td>
+                    <td className="border border-green-600 px-5">{formatCurrency(project.amount_paid)}</td>
+                    <td className="border border-green-600 px-5">{formatCurrency(project.amount_due - project.amount_paid)}</td>
+                    <td className="border border-green-600 px-5 flex">
+                      <Link href={`/projects/${project.project_id}`} className='flex flex-auto float-start'>
+                        <EyeIcon />
+                      </Link>
+                      <Link href={`/projects/${project.project_id}/update`} className='flex flex-auto float-end'>
+                        <PencilSquareIcon />
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+                :
+                <tr className='text-center'><p>This Project has no amenities</p></tr>
             }
           </tbody>
         </table>

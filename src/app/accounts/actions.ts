@@ -4,24 +4,54 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 
-export async function submit(id: string, formData: FormData) {
-  const supabase = createClient();
+const supabase = createClient();
 
+export async function submit(id: string, formData: FormData) {
   const data = {
     account_name: formData.get("name") as string,
     start_date: formData.get("startDate") as string,
-    status: (formData.get("status")  as string).toLowerCase(),
+    status: (formData.get("status") as string).toLowerCase(),
     user_id: id,
   };
 
   console.log(data);
 
   const { error } = await supabase.from("accounts").insert([data]);
-  
+
   if (error) {
     redirect("/error?message=" + encodeURIComponent(error.message));
   }
 
-  //   revalidatePath("/", "layout");
+  revalidatePath("/", "layout");
   redirect("/accounts");
+}
+
+export async function update(formData: FormData) {
+  try {
+    const account_id = formData.get("id");
+
+    const form = {
+      account_name: formData.get("name") as string,
+      start_date: formData.get("date") as string,
+      status: (formData.get("status") as string).toLowerCase(),
+    };
+
+    console.log(form);
+
+    const { data, error, status } = await supabase
+      .from("accounts")
+      .update(form)
+      .eq("account_id", account_id)
+      .select();
+
+    console.log("status code", status);
+
+    if (error) throw error;
+
+    if (data) console.log("Account Updated!", data);
+    return { success: true, data, status };
+  } catch (error: any) {
+    console.log("An error occured!", error);
+    return { success: false, error: error.message };
+  }
 }

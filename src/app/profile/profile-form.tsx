@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { type User } from '@supabase/supabase-js'
 import Avatar from './avatar'
+import Spinner from '@/components/spinner/Spinner'
 
 export default function ProfileForm({ user }: { user: User | null }) {
   const supabase = createClient()
@@ -70,6 +71,8 @@ export default function ProfileForm({ user }: { user: User | null }) {
     }
   }
 
+  if (loading) return <Spinner />
+  
   return (
     <div className="form-widget">
       <div>
