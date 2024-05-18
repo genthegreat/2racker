@@ -22,7 +22,7 @@ export async function submit(formData: FormData) {
     redirect("/error?message=" + encodeURIComponent(error.message));
   }
 
-  //   revalidatePath("/", "layout");
+  revalidatePath("/", "layout");
   redirect("/accounts");
 }
 

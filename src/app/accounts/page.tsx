@@ -61,7 +61,7 @@ export default function Account() {
                   <Link href={`/accounts/${account.account_id}`} className='flex flex-auto float-start'>
                     <EyeIcon />
                   </Link>
-                  <Link href={`/accounts/update/${account.account_id}`} className='flex flex-auto float-end'>
+                  <Link href={`/accounts/${account.account_id}/update`} className='flex flex-auto float-end'>
                     <PencilSquareIcon />
                   </Link>
                 </td>
