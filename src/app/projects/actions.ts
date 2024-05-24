@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/utils/supabase/server";
+import { serializeError } from "@/utils/utils";
 
 const supabase = createClient();
 
@@ -18,9 +19,7 @@ export async function submit(formData: FormData) {
 
   const { error } = await supabase.from("projects").insert([data]).select();
 
-  if (error) {
-    redirect("/error?message=" + encodeURIComponent(error.message));
-  }
+  if (error) redirect('/error?error=' + encodeURIComponent(serializeError(error)))
 
   revalidatePath("/", "layout");
   redirect("/accounts");
@@ -53,5 +52,23 @@ export async function update(formData: FormData) {
   } catch (error: any) {
     console.log("An error occured!", error);
     return { success: false, error: error.message };
+  }
+}
+
+export async function del(id: number) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    const { error } = await supabase
+      .from("amenities")
+      .delete()
+      .eq("amenity_id", id);
+
+    if (error) redirect('/error?error=' + encodeURIComponent(serializeError(error)))
+
+    revalidatePath("/", "layout");
+    redirect("/history");
   }
 }
