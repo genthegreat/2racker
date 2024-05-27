@@ -7,10 +7,18 @@ import Link from 'next/link'
 import type { Account } from '@/utils/db/types'
 import { EyeIcon, PencilSquareIcon } from '@/components/icons'
 import { getAccountData, getAllAccounts } from '@/utils/db/dbFunctions'
+import { useProfileContext } from '@/context/ProfileContext'
+import { redirect } from 'next/navigation'
 
 export default function Account() {
   const [accounts, setAccounts] = useState<Account[]>([])
   const [total, setTotal] = useState<PaidTotalProps | null>(null)
+  const { profile, error, authState } = useProfileContext();
+
+  if (authState.status === 'SIGNED_OUT' || authState.status === null || error) {
+    console.log('An error occured', error)
+    redirect('/login')
+  }
 
   const fetchData = async () => {
     try {
