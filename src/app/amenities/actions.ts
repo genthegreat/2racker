@@ -56,20 +56,27 @@ export async function update(formData: FormData) {
   }
 }
 
-export async function del(id: number) {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+export async function del(amenity_id: number) {
+  const { data: { user }, error } = await supabase.auth.getUser();
 
-  if (user) {
-    const { error, status } = await supabase
-      .from("amenities")
-      .delete()
-      .eq("amenity_id", id);
+  if (error || !user) {
+    console.error("User not logged in or unexpected error:", error);
+    redirect("/login");
+  }
 
-    if (error) redirect('/error?error=' + encodeURIComponent(serializeError(error)))
+  try {
+    const { data, error } = await supabase.rpc("delete_amenity", { amenity_id });
 
-    revalidatePath("/", "layout");
-    redirect("/history");
+    if (error) {
+      console.error("Error deleting amenity:", error.message);
+      redirect("/error?error=" + encodeURIComponent(serializeError(error)));
+    } else {
+      console.log("Amenity deleted successfully:", data);
+      revalidatePath("/", "layout");
+      redirect("/amenities");
+    }
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    redirect("/error?error=" + encodeURIComponent(serializeError(error)));
   }
 }

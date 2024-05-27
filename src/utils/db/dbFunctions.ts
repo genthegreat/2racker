@@ -20,7 +20,7 @@ export async function getAccountData() {
 
   if (error) {
     console.error(error);
-    throw error
+    throw error;
   }
 
   const summedValues = data.reduce((acc: any, obj: any) => {
@@ -62,7 +62,7 @@ export async function fetchAmenityDataById(id: number): Promise<Amenity> {
 
   if (error) {
     console.log(error);
-    console.error(error)
+    console.error(error);
   }
 
   console.log(amenity);
@@ -76,10 +76,10 @@ export async function getAllAccounts(): Promise<Account[]> {
 
   const { data: accounts, error } = user
     ? await supabase.from("accounts").select("*").eq("user_id", `${user.id}`)
-    : await supabase.from("accounts").select("*")
+    : await supabase.from("accounts").select("*");
 
   if (error) {
-    console.error(error)
+    console.error(error);
   }
 
   console.log(accounts);
@@ -99,10 +99,10 @@ export async function getProjectData(id: number) {
 
   if (error) {
     console.log(error);
-    console.error(error)
+    console.error(error);
   }
 
-  console.log('Project', data);
+  console.log("Project", data);
   return data;
 }
 
@@ -143,7 +143,7 @@ export async function getTransactionHistory(): Promise<Account[]> {
     .eq("user_id", `${user?.id}`);
 
   if (error) {
-    console.error(error)
+    console.error(error);
   }
 
   console.log("Transaction History", accounts);
@@ -163,7 +163,7 @@ export async function getProfileData() {
 
   if (error) {
     console.log(error);
-    console.error(error)
+    console.error(error);
   }
 
   console.log(data);
@@ -176,37 +176,45 @@ export async function getAmenities(id: string | null): Promise<Amenity[]> {
   } = await supabase.auth.getUser();
 
   const { data: amenities, error } = id
-    ? await supabase.from("amenities").select("*").eq('project_id', `${id}`)
-    : await supabase.from("amenities").select("*")
+    ? await supabase.from("amenities").select("*").eq("project_id", `${id}`)
+    : await supabase.from("amenities").select("*");
 
   if (error) {
-    console.error(error)
+    console.error(error);
   }
 
   console.log(amenities);
   return amenities as Amenity[];
 }
 
-export async function getProjects(id: number |string | null): Promise<Project[]> {
+export async function getProjects(
+  id: number | string | null
+): Promise<Project[]> {
   const { data: projects, error } = id
     ? await supabase.from("projects").select("*").eq("account_id", `${id}`)
     : await supabase.from("projects").select("*");
 
   if (error) {
-    console.error(error)
+    console.error(error);
   }
 
   console.log("projects", projects);
   return projects as Project[];
 }
 
-export async function getTransactions(id: number | null): Promise<Transaction[]> {
+export async function getTransactions(
+  id: number | null
+): Promise<Transaction[]> {
   const { data: transaction, error } = id
-    ? await supabase.from("transactions").select("*").eq("transaction_id", `${id}`).single()
+    ? await supabase
+        .from("transactions")
+        .select("*")
+        .eq("transaction_id", `${id}`)
+        .single()
     : await supabase.from("transactions").select("*");
 
   if (error) {
-    console.error(error)
+    console.error(error);
   }
 
   console.log("Transaction", transaction);
