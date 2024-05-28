@@ -1,5 +1,6 @@
 import { formatCurrency } from '../../../utils/utils';
 import { fetchAmenityDataById, getAmenities } from "@/utils/db/dbFunctions";
+import DeleteButton from '../deleteButton';
 
 export async function generateStaticParams() {
   const amenities = await getAmenities(null)
@@ -28,6 +29,10 @@ export default async function AmenityDetail({ params }: { params: { amenity_id: 
       <h1>{res.amenity_name}</h1>
       <h6>Amount due: {formatCurrency(res.default_amount)}</h6>
       <h6>Category: {res.category}</h6>
+
+      <div className='pt-10'>
+        <DeleteButton amenity={amenity_id} />
+      </div>
     </div>
   );
 };

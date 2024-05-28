@@ -1,5 +1,6 @@
 import { getProjectData, getProjects } from "@/utils/db/dbFunctions";
 import { formatCurrency } from "@/utils/utils";
+import DeleteButton from "../deleteButton";
 
 // Return a list of `params` to populate the [id] dynamic segment
 export async function generateStaticParams() {
@@ -19,7 +20,7 @@ export default async function Page({ params }: { params: { project: number } }) 
     
     if (!res.project_id) {
         console.error("Error fetching project data!");
-        return <h1>project not found!</h1>
+        return <h1>Project not found!</h1>
     }
     
     console.log("project data", res)
@@ -32,6 +33,10 @@ export default async function Page({ params }: { params: { project: number } }) 
             <h6>Amount due: {formatCurrency(res.amount_due)}</h6>
             <h6>Amount Paid: {formatCurrency(res.amount_paid)}</h6>
             <h6>Balance: {formatCurrency(res.balance)}</h6>
+
+            <div className='pt-10'>
+                <DeleteButton project={project} />
+            </div>
         </>
     )
 }

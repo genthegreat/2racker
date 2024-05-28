@@ -1,5 +1,6 @@
 import { fetchAccountDataById, getAllAccounts } from "@/utils/db/dbFunctions";
 import { formatCurrency } from "@/utils/utils";
+import DeleteButton from "../deleteButton";
 
 // Return a list of `params` to populate the [id] dynamic segment
 export async function generateStaticParams() {
@@ -16,12 +17,12 @@ export default async function Page({ params }: { params: { account: number } }) 
     const { account } = params
 
     const res = await fetchAccountDataById(account)
-    
+
     if (!res.account_id) {
         console.error("Error fetching account data!");
         return <h1>Account not found!</h1>
     }
-    
+
     console.log("account data", res)
 
     return (
@@ -32,6 +33,10 @@ export default async function Page({ params }: { params: { account: number } }) 
             <h6>Amount due: {formatCurrency(res.amount_due)}</h6>
             <h6>Amount Paid: {formatCurrency(res.amount_paid)}</h6>
             <h6>Balance: {formatCurrency(res.balance)}</h6>
+
+            <div className='pt-10'>
+                <DeleteButton account={account} />
+            </div>
         </>
     )
 }

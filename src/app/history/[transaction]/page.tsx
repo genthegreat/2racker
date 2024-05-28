@@ -1,6 +1,6 @@
 import { fetchTransactionDataById, getTransactions } from "@/utils/db/dbFunctions";
 import { formatCurrency } from "@/utils/utils";
-import DeleteButton from "../add/deleteButton";
+import DeleteButton from "../deleteButton";
 
 // Return a list of `params` to populate the [id] dynamic segment
 export async function generateStaticParams() {
@@ -35,7 +35,6 @@ export default async function Page({ params }: { params: { transaction: number }
             <h6>Platform: {res.platform}</h6>
             <h6>Receipt No.: {res.receipt_info}</h6>
             <h6>Status.: {res.status}</h6>
-
 
             <div className='pt-10'>
                 <DeleteButton transaction={transaction} />

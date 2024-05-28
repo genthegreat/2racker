@@ -1,6 +1,6 @@
 'use client'
 
-import { del } from "../actions"
+import { del } from "./actions"
 
 export default function DeleteButton({ transaction }: { transaction: number }) {
     async function handleClick() {
