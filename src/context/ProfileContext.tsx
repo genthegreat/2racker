@@ -1,6 +1,8 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { UserResponse } from '@supabase/supabase-js';
+
+// Supabase client should be created outside of any component to ensure it's only instantiated once.
+const supabase = createClient();
 
 interface Profile {
   full_name: string | null;
@@ -10,7 +12,7 @@ interface Profile {
 }
 
 interface AuthState {
-  status: 'SIGNED_IN' | 'SIGNED_OUT' | null; // Explicit type definition
+  status: 'SIGNED_IN' | 'SIGNED_OUT' | null;
 }
 
 interface ProfileContextData {
@@ -28,86 +30,67 @@ const ProfileContext = createContext<ProfileContextData>({
 });
 
 export const ProfileContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const supabase = createClient()
+  // States
   const [profile, setProfile] = useState<Profile>({ full_name: null, username: null, avatar_url: null, id: null });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<any | null>(null);
-  const [authState, setAuthState] = useState<AuthState>({ status: null });  // State to track auth changes
-
-  const fetchProfile = async (userId: string) => {
-    setLoading(true);
-    try {
-      const { data, error, status } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-
-      if (error && status !== 406) {
-        console.log('fetchProfile inner error:', error)
-        setError(error);
-        throw error
-      };
-
-      if (data) {
-        console.log(data)
-        setProfile(data);
-      }
-    } catch (error) {
-      console.log('fetchProfile outer error:', error)
-      setError(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [authState, setAuthState] = useState<AuthState>({ status: null });
 
   useEffect(() => {
-    // Listener to update auth state
-    const authListener = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('onAuthStateChange event:', event)
-      setAuthState((prevState) => ({
-        status: session ? 'SIGNED_IN' : 'SIGNED_OUT'
-      }));
-    });
+    const fetchProfile = async (userId: string) => {
+      setLoading(true);
+      try {
+        console.log('Fetching profile at:', new Date().toLocaleTimeString());
+        const { data, error, status } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', userId)
+          .single();
 
-    // Initial state
-    supabase.auth.getSession().then((data) => {
-      console.log('Get session response:', data)
-      setAuthState((prevState) => ({
-        status: (data.data.session ? 'SIGNED_IN' : 'SIGNED_OUT')
-      }));
-      console.log('Session Set:', authState.status)
-    });
+        if (error && status !== 406) {
+          console.log('fetchProfile inner error:', error);
+          setError(error);
+          throw error;
+        }
 
-    // Get initial profile data if a user is already signed in
-    supabase.auth.getUser().then(({ data, error }: UserResponse) => {
-      if(error) {
-        console.log('User is not authenticated:', error)
-        setAuthState((prevState) => ({
-          status: 'SIGNED_OUT'
-        }));
-        console.log('Session Set:', authState.status)
+        if (data) {
+          console.log('Profile data:', data);
+          setProfile(data);
+        }
+      } catch (error) {
+        console.log('fetchProfile outer error:', error);
+        setError(error);
+      } finally {
+        setLoading(false);
       }
+    };
 
-      if (data.user) {
-        console.log('Get user response:', data)
-        fetchProfile(data.user.id);
-      } 
-      
-    }).catch(error => {
-      console.error('Error fetching user:', error);
-    }).finally(() => {
-      setLoading(false)
+    // Function to handle authentication state changes
+    const handleAuthChange = (event: string, session: any) => {
+      console.log('onAuthStateChange event at:', new Date().toLocaleTimeString(), 'event:', event);
+      // Update the authentication state based on whether a session exists
+      setAuthState({ status: session ? 'SIGNED_IN' : 'SIGNED_OUT' });
+    };
+
+    // Subscribe to authentication state changes
+    const authListener = supabase.auth.onAuthStateChange(handleAuthChange);
+
+    // Check the current authentication session when the component mounts
+    supabase.auth.getSession().then(({ data }) => {
+      console.log('Get session response at:', new Date().toLocaleTimeString(), 'data:', data);
+      // Update the authentication state based on whether a session exists
+      setAuthState({ status: data.session ? 'SIGNED_IN' : 'SIGNED_OUT' });
+      // If there is a session, fetch the user profile
+      if (data.session) {
+        fetchProfile(data.session.user.id);
+      }
     });
 
-    console.log('authState:', authState)
-
-    // Cleanup function
+    // Cleanup function to unsubscribe from the auth state listener when the component unmounts
     return () => {
       authListener.data.subscription.unsubscribe();
     };
-  }, [supabase.auth]);
-
+  }, []);
 
   return (
     <ProfileContext.Provider value={{ profile, loading, error, authState }}>

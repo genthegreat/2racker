@@ -4,9 +4,9 @@ import { createClient  } from '@/utils/supabase/client';
 
 // create a context for authentication
 const AuthContext = createContext<{ session: Session | null | undefined, user: User | null | undefined, signOut: () => void }>({ session: null, user: null, signOut: () => {} });
+const supabase = createClient()
 
 export const AuthProvider = ({ children }: any) => {
-    const supabase = createClient()
     const [user, setUser] = useState<User>()
     const [session, setSession] = useState<Session | null>();
     const [loading, setLoading] = useState(true);
