@@ -9,12 +9,19 @@ import Spinner from '@/components/spinner/Spinner'
 import Link from 'next/link'
 import { Account } from '@/utils/db/types'
 import { EyeIcon, PencilSquareIcon } from '@/components/icons'
+import { useProfileContext } from '@/context/ProfileContext'
+import { redirect } from 'next/navigation'
 
 export default function History() {
   const [transactions, setTransactions] = useState<Account[] | null>([])
   const [accountData, setAccountData] = useState<PaidTotalProps | null>(null);
   const [loading, setLoading] = useState(true)
+  const { profile, error, authState } = useProfileContext();
 
+  if (authState.status === 'SIGNED_OUT' || authState.status === null || error) {
+    console.log('An error occured', error)
+    redirect('/login')
+  }
 
   useEffect(() => {
     const fetchData = async () => {

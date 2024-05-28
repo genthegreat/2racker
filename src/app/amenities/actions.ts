@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/utils/supabase/server";
+import { serializeError } from "@/utils/utils";
 
 const supabase = createClient();
 export async function submit(formData: FormData) {
@@ -20,9 +21,7 @@ export async function submit(formData: FormData) {
 
   const { error } = await supabase.from("amenities").insert([data]).select();
 
-  if (error) {
-    redirect("/error?message=" + encodeURIComponent(error.message));
-  }
+  if (error) redirect('/error?error=' + encodeURIComponent(serializeError(error)))
 
   //   revalidatePath("/", "layout");
   redirect(`/amenities?id=${id}`);
@@ -54,5 +53,30 @@ export async function update(formData: FormData) {
   } catch (error: any) {
     console.log("An error occured!", error);
     return { success: false, error: error.message, status};
+  }
+}
+
+export async function del(amenity_id: number) {
+  const { data: { user }, error } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    console.error("User not logged in or unexpected error:", error);
+    redirect("/login");
+  }
+
+  try {
+    const { data, error } = await supabase.rpc("delete_amenity", { amenity_id });
+
+    if (error) {
+      console.error("Error deleting amenity:", error.message);
+      redirect("/error?error=" + encodeURIComponent(serializeError(error)));
+    } else {
+      console.log("Amenity deleted successfully:", data);
+      revalidatePath("/", "layout");
+      redirect("/amenities");
+    }
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    redirect("/error?error=" + encodeURIComponent(serializeError(error)));
   }
 }

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
+import { serializeError } from "@/utils/utils";
 
 const supabase = createClient();
 
@@ -19,7 +20,7 @@ export async function submit(id: string, formData: FormData) {
   const { error } = await supabase.from("accounts").insert([data]);
 
   if (error) {
-    redirect("/error?message=" + encodeURIComponent(error.message));
+    redirect('/error?error=' + encodeURIComponent(serializeError(error)))
   }
 
   revalidatePath("/", "layout");
@@ -53,5 +54,30 @@ export async function update(formData: FormData) {
   } catch (error: any) {
     console.log("An error occured!", error);
     return { success: false, error: error.message };
+  }
+}
+
+export async function del(accountId: number) {
+  const { data: { user }, error } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    console.error('User not logged in or unexpected error:', error);
+    redirect('/login');
+  }
+
+  try {
+    const { data, error: deleteAccountError } = await supabase.rpc('delete_account', { account_id: accountId });
+
+    if (deleteAccountError) {
+      console.error('Error deleting account:', deleteAccountError.message);
+      redirect('/error?error=' + encodeURIComponent(serializeError(deleteAccountError)));
+    } else {
+      console.log('Account deleted successfully:', data);
+      revalidatePath('/', 'layout');
+      redirect('/accounts');
+    }
+  } catch (error) {
+    console.error('Unexpected error:', error);
+    redirect('/error?error=' + encodeURIComponent(serializeError(error)));
   }
 }

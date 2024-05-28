@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import Spinner from '@/components/spinner/Spinner';
 import { getAmenities, fetchTransactionDataById } from '@/utils/db/dbFunctions';
 import { Amenity } from '@/utils/db/types';
-import { update } from '../../actions';
+import { del, update } from '../../actions';
 import { useRouter } from 'next/navigation';
 
 export default function UpdateTransactionForm({ transaction }: { transaction: number }) {
@@ -63,6 +63,17 @@ export default function UpdateTransactionForm({ transaction }: { transaction: nu
             setError(response.error)
         }
         setLoading(false)
+    }
+
+    async function handleClick() {
+        try {
+            setLoading(true)
+            await del(transaction)
+        } catch (error) {
+            console.error('Failed to delete transaction:', error)
+        } finally {
+            setLoading(false)
+        }
     }
 
     if (loading) return <Spinner />
@@ -132,6 +143,7 @@ export default function UpdateTransactionForm({ transaction }: { transaction: nu
                                         <p className="text-xs text-red-500 text-right my-3">Required fields are marked with an asterisk*</p>
                                         <div className="mt-5 text-right md:space-x-3 md:block flex flex-col-reverse">
                                             <button onClick={() => router.back()} className="mb-2  bg-white px-5 py-2 text-sm shadow-sm font-medium tracking-wider border text-gray-600 rounded-full hover:shadow-lg hover:bg-gray-100">Cancel</button>
+                                            <button formAction={handleClick} className="mb-2 md:mb-0 bg-red-400 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-red-500" >Delete</button>
                                             <button formAction={handleSubmit} className="mb-2 md:mb-0 bg-green-400 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-green-500" >Save</button>
                                         </div>
                                     </form>
