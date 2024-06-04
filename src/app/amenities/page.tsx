@@ -3,11 +3,12 @@
 import { useState, useEffect } from "react"
 import { formatCurrency } from '../../utils/utils'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { redirect, useSearchParams } from 'next/navigation'
 import { EyeIcon, PencilSquareIcon } from '@/components/icons'
 import type { Amenity } from '@/utils/db/types'
 import { getAmenities } from '@/utils/db/dbFunctions'
 import Spinner from '@/components/spinner/Spinner'
+import { useProfileContext } from "@/context/ProfileContext"
 
 export default function Amenity() {
   const searchParams = useSearchParams()
@@ -17,6 +18,12 @@ export default function Amenity() {
   // State
   const [amenities, setAmenities] = useState<Amenity[]>([])
   const [loading, setLoading] = useState(true)
+  const { profile, error, authState } = useProfileContext();
+
+  if (authState.status === 'SIGNED_OUT' || authState.status === null || error) {
+    console.log('An error occured', error, ' Auth State:', authState.status)
+    redirect('/login')
+  }
 
   useEffect(() => {
     const fetchData = async () => {

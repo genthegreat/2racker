@@ -5,7 +5,7 @@ import React from 'react'
 import { useState, useEffect } from "react"
 import { formatCurrency } from '@/utils/utils'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { redirect, useSearchParams } from 'next/navigation'
 import { getAccountData, getProjects } from '@/utils/db/dbFunctions'
 import type { Project } from '@/utils/db/types'
 import Spinner from "@/components/spinner/Spinner";
@@ -52,7 +52,7 @@ export default function Project() {
 
   if (authState.status === 'SIGNED_OUT' || authState.status === null) {
     console.log('An error occured', error)
-    // redirect('/')
+    redirect('/')
   }
 
   return (
