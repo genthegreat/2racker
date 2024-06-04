@@ -13,7 +13,7 @@ import { EyeIcon, PencilSquareIcon } from '@/components/icons'
 import { useProfileContext } from '@/context/ProfileContext'
 import { Suspense } from 'react'
 
-export default function Project() {
+function Project() {
   const searchParams = useSearchParams()
   const { profile, authState } = useProfileContext()
 
@@ -59,7 +59,6 @@ export default function Project() {
   return (
     <div className='align-center'>
 
-      <Suspense fallback={<Spinner />}>
         <h2 className="overline text-2xl mt-4">{profile.full_name?.concat("'s") || 'YOUR'} PROJECTS - {id}</h2>
 
         {accounts && <PaidTotal {...accounts} />}
@@ -110,7 +109,14 @@ export default function Project() {
             <button className="w-52 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Add New</button>
           </Link>
         </div>
-      </Suspense>
     </div>
+  )
+}
+
+export default function ProjectPage() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      <Project />
+    </Suspense>
   )
 }

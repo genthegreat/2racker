@@ -11,7 +11,7 @@ import Spinner from '@/components/spinner/Spinner'
 import { useProfileContext } from "@/context/ProfileContext"
 import { Suspense } from 'react'
 
-export default function Amenity() {
+function Amenity() {
   const searchParams = useSearchParams()
 
   const id = searchParams.get('id')
@@ -48,7 +48,6 @@ export default function Amenity() {
   return (
     <div className='align-center'>
 
-      <Suspense fallback={<Spinner />}>
         <h2 className="overline text-2xl mt-4">YOUR AMENITIES - {id}</h2>
 
         <div>
@@ -86,7 +85,14 @@ export default function Amenity() {
             <button className="w-52 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Add New</button>
           </Link>
         </div>
-      </Suspense>
     </div>
+  )
+}
+
+export default function AmenitiesPage() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      <Amenity />
+    </Suspense>
   )
 }

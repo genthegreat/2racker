@@ -12,7 +12,7 @@ interface ErrorObject {
   status?: string;
 }
 
-export default function ErrorPage() {
+function Err() {
   const searchParams = useSearchParams();
 
   const [error, setError] = useState<ErrorObject | null>(null);
@@ -35,13 +35,19 @@ export default function ErrorPage() {
 
   return (
     <div>
-      <Suspense fallback={<Spinner />}>
         <h1>Error: {error.name}</h1>
         <p>Message: {error.message}</p>
         {error.code && <p>Code: {error.code}</p>}
         {error.cause && <p>Cause: {error.cause}</p>}
         {error.status && <p>Status: {error.status}</p>}
-      </Suspense>
     </div>
   );
+}
+
+export default function ErrorPage() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      <Err />
+    </Suspense>
+  )
 }
