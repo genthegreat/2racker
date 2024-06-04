@@ -5,7 +5,9 @@ import { del } from "./actions"
 export default function DeleteButton({ transaction }: { transaction: number }) {
     async function handleClick() {
         try {
-            await del(transaction)
+            if(confirm(`Are you sure you want to delete this transaction: ${transaction}`)) {
+                await del(transaction)
+            }
         } catch (error) {
             console.error('Failed to delete transaction:', error)
         }

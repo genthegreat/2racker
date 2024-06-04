@@ -68,7 +68,11 @@ export default function UpdateTransactionForm({ transaction }: { transaction: nu
     async function handleClick() {
         try {
             setLoading(true)
-            await del(transaction)
+            if(confirm(`Are you sure you want to delete this transaction: ${transaction}`)) {
+                await del(transaction)
+            } else {
+                router.refresh()
+            }
         } catch (error) {
             console.error('Failed to delete transaction:', error)
         } finally {
@@ -143,7 +147,7 @@ export default function UpdateTransactionForm({ transaction }: { transaction: nu
                                         <p className="text-xs text-red-500 text-right my-3">Required fields are marked with an asterisk*</p>
                                         <div className="mt-5 text-right md:space-x-3 md:block flex flex-col-reverse">
                                             <button onClick={() => router.back()} className="mb-2  bg-white px-5 py-2 text-sm shadow-sm font-medium tracking-wider border text-gray-600 rounded-full hover:shadow-lg hover:bg-gray-100">Cancel</button>
-                                            <button formAction={handleClick} className="mb-2 md:mb-0 bg-red-400 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-red-500" >Delete</button>
+                                            <button onClick={handleClick} className="mb-2 md:mb-0 bg-red-400 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-red-500" >Delete</button>
                                             <button formAction={handleSubmit} className="mb-2 md:mb-0 bg-green-400 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-green-500" >Save</button>
                                         </div>
                                     </form>
