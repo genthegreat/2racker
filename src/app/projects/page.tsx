@@ -11,6 +11,7 @@ import type { Project } from '@/utils/db/types'
 import Spinner from "@/components/spinner/Spinner";
 import { EyeIcon, PencilSquareIcon } from '@/components/icons'
 import { useProfileContext } from '@/context/ProfileContext'
+import { Suspense } from 'react'
 
 export default function Project() {
   const searchParams = useSearchParams()
@@ -28,11 +29,11 @@ export default function Project() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        
+
         const accountResult = await getAccountData();
         console.log('accounts results:', accountResult);
         setAccounts(accountResult)
-        
+
         const projectResult = await getProjects(id);
         console.log('Project results:', projectResult);
         setProjects(projectResult)
@@ -58,7 +59,9 @@ export default function Project() {
   return (
     <div className='align-center'>
 
-      <h2 className="overline text-2xl mt-4">{profile.full_name?.concat("'s") || 'YOUR'} PROJECTS - {id}</h2>
+      <Suspense fallback={<Spinner />}>
+        <h2 className="overline text-2xl mt-4">{profile.full_name?.concat("'s") || 'YOUR'} PROJECTS - {id}</h2>
+      </Suspense>
 
       {accounts && <PaidTotal {...accounts} />}
 
@@ -74,31 +77,33 @@ export default function Project() {
             </tr>
           </thead>
           <tbody>
-            {error
-              ?
-              <tr className='text-center'><p>Error fetching data: {error}</p></tr>
-              :
-              projects.length > 0
+            <Suspense fallback={<Spinner />}>
+              {error
                 ?
-                projects.map(project => (
-                  <tr key={`${project.project_id}`}>
-                    <td className="border border-green-600 px-5"><Link href={`/amenities?id=${project.project_id}`}>{project.project_name}</Link></td>
-                    <td className="border border-green-600 px-5">{formatCurrency(project.amount_due)}</td>
-                    <td className="border border-green-600 px-5">{formatCurrency(project.amount_paid)}</td>
-                    <td className="border border-green-600 px-5">{formatCurrency(project.amount_due - project.amount_paid)}</td>
-                    <td className="border border-green-600 px-5 flex">
-                      <Link href={`/projects/${project.project_id}`} className='flex flex-auto float-start'>
-                        <EyeIcon />
-                      </Link>
-                      <Link href={`/projects/${project.project_id}/update`} className='flex flex-auto float-end'>
-                        <PencilSquareIcon />
-                      </Link>
-                    </td>
-                  </tr>
-                ))
+                <tr className='text-center'><p>Error fetching data: {error}</p></tr>
                 :
-                <tr className='text-center'><p>This Project has no amenities</p></tr>
-            }
+                projects.length > 0
+                  ?
+                  projects.map(project => (
+                    <tr key={`${project.project_id}`}>
+                      <td className="border border-green-600 px-5"><Link href={`/amenities?id=${project.project_id}`}>{project.project_name}</Link></td>
+                      <td className="border border-green-600 px-5">{formatCurrency(project.amount_due)}</td>
+                      <td className="border border-green-600 px-5">{formatCurrency(project.amount_paid)}</td>
+                      <td className="border border-green-600 px-5">{formatCurrency(project.amount_due - project.amount_paid)}</td>
+                      <td className="border border-green-600 px-5 flex">
+                        <Link href={`/projects/${project.project_id}`} className='flex flex-auto float-start'>
+                          <EyeIcon />
+                        </Link>
+                        <Link href={`/projects/${project.project_id}/update`} className='flex flex-auto float-end'>
+                          <PencilSquareIcon />
+                        </Link>
+                      </td>
+                    </tr>
+                  ))
+                  :
+                  <tr className='text-center'><p>This Project has no amenities</p></tr>
+              }
+            </Suspense>
           </tbody>
         </table>
       </div>

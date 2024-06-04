@@ -9,6 +9,7 @@ import type { Amenity } from '@/utils/db/types'
 import { getAmenities } from '@/utils/db/dbFunctions'
 import Spinner from '@/components/spinner/Spinner'
 import { useProfileContext } from "@/context/ProfileContext"
+import { Suspense } from 'react'
 
 export default function Amenity() {
   const searchParams = useSearchParams()
@@ -47,7 +48,9 @@ export default function Amenity() {
   return (
     <div className='align-center'>
 
-      <h2 className="overline text-2xl mt-4">YOUR AMENITIES - {id}</h2>
+      <Suspense fallback={<Spinner />}>
+        <h2 className="overline text-2xl mt-4">YOUR AMENITIES - {id}</h2>
+      </Suspense>
 
       <div>
         <table className="w-full table-auto border-separate border border-blue-600">
@@ -59,21 +62,23 @@ export default function Amenity() {
             </tr>
           </thead>
           <tbody>
-            {amenities.map(amenity => (
-              <tr key={`${amenity.amenity_id}`}>
-                <td className="border border-green-600 px-5">{amenity.amenity_name}</td>
-                <td className="border border-green-600 px-5">{formatCurrency(amenity.default_amount)}</td>
-                <td className="border border-green-600 px-5">
-                  <Link href={`/amenities/${amenity.amenity_id}`} className='flex flex-auto float-start mx-auto'>
-                    <EyeIcon />
-                  </Link>
-                  <Link href={`/amenities/${amenity.amenity_id}/update`} className='flex flex-auto float-end mx-auto'>
-                    <PencilSquareIcon />
-                  </Link>
-                </td>
-              </tr>
-            ))}
-            {amenities.length < 1 && <tr><td className='text-center'><p>This Project has no amenities</p></td></tr>}
+            <Suspense fallback={<Spinner />}>
+              {amenities.map(amenity => (
+                <tr key={`${amenity.amenity_id}`}>
+                  <td className="border border-green-600 px-5">{amenity.amenity_name}</td>
+                  <td className="border border-green-600 px-5">{formatCurrency(amenity.default_amount)}</td>
+                  <td className="border border-green-600 px-5">
+                    <Link href={`/amenities/${amenity.amenity_id}`} className='flex flex-auto float-start mx-auto'>
+                      <EyeIcon />
+                    </Link>
+                    <Link href={`/amenities/${amenity.amenity_id}/update`} className='flex flex-auto float-end mx-auto'>
+                      <PencilSquareIcon />
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+              {amenities.length < 1 && <tr><td className='text-center'><p>This Project has no amenities</p></td></tr>}
+            </Suspense>
           </tbody>
         </table>
 
