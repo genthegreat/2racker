@@ -5,7 +5,9 @@ import { del } from "./actions"
 export default function DeleteButton({ amenity }: { amenity: number }) {
     async function handleClick() {
         try {
-            await del(amenity)
+            if (confirm(`Are you sure you want to delete this amenity: ${amenity}`)) {
+                await del(amenity)
+            }
         } catch (error) {
             console.error('Failed to delete amenity:', error)
         }

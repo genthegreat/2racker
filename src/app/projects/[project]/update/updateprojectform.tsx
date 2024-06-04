@@ -1,7 +1,7 @@
 import { getAllAccounts, getProjectData } from "@/utils/db/dbFunctions";
 import { Account } from "@/utils/db/types";
 import { useCallback, useEffect, useState } from "react";
-import { update } from "../../actions";
+import { del, update } from "../../actions";
 import { useRouter } from "next/navigation";
 
 export default function UpdateProjectForm({ project }: { project: number }) {
@@ -58,6 +58,21 @@ export default function UpdateProjectForm({ project }: { project: number }) {
         setLoading(false)
     }
 
+    async function handleDeleteClick() {
+        try {
+            setLoading(true)
+            if(confirm(`Are you sure you want to delete this transaction: ${project}`)) {
+                await del(project)
+            } else {
+                router.refresh()
+            }
+        } catch (error) {
+            console.error('Failed to delete project:', error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
     return (
         <>
             <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -92,6 +107,7 @@ export default function UpdateProjectForm({ project }: { project: number }) {
                                     <input type="hidden" name="id" id="id" value={project} />
                                     <div className="mt-5 text-right md:space-x-3 md:block flex flex-col-reverse">
                                         <button onClick={() => router.back()} className="mb-2 md:mb-0 bg-white px-5 py-2 text-sm shadow-sm font-medium tracking-wider border text-gray-600 rounded-full hover:shadow-lg hover:bg-gray-100">Cancel</button>
+                                        <button onClick={handleDeleteClick} className="mb-2 md:mb-0 bg-red-400 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-red-500" >Delete</button>
                                         <button formAction={handleSubmit} className="mb-2 md:mb-0 bg-green-400 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-green-500 disabled:bg-gray-600" disabled={loading}>{loading ? 'Updating' : 'Update'}</button>
                                     </div>
                                 </form>

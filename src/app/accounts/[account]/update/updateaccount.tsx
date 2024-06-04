@@ -1,7 +1,8 @@
 import { fetchAccountDataById } from "@/utils/db/dbFunctions";
 import { useRouter } from "next/navigation";
 import { useState, useCallback, useEffect } from "react";
-import { update } from "../../actions";
+import { del, update } from "../../actions";
+import Spinner from '@/components/spinner/Spinner';
 
 export default function UpdateAccountForm({ account }: { account: number }) {
     const router = useRouter()
@@ -54,6 +55,23 @@ export default function UpdateAccountForm({ account }: { account: number }) {
         setLoading(false)
     }
 
+    async function handleDelete() {
+        try {
+            setLoading(true)
+            if(confirm(`Are you sure you want to delete this account: ${account}`)) {
+                await del(account)
+            } else {
+                router.refresh()
+            }
+        } catch (error) {
+            console.error('Failed to delete account:', error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    if(loading) return <Spinner />
+
     return (
         <div>
             <div>
@@ -79,6 +97,7 @@ export default function UpdateAccountForm({ account }: { account: number }) {
                             <input name="id" id="id" type="hidden" value={account} />
                             <div className="mt-5 text-right md:space-x-3 md:block flex flex-col-reverse">
                                 <button onClick={() => router.back()} className="w-auto my-2 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Cancel</button>
+                                <button onClick={handleDelete} className="w-auto my-2 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-500 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" >Delete</button>
                                 <button formAction={handleSubmit} type="submit" className="w-auto my-2 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-500 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" disabled={loading}>{loading ? 'Updating' : 'Update'}</button>
                             </div>
                         </form>

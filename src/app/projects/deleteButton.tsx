@@ -5,7 +5,9 @@ import { del } from "./actions"
 export default function DeleteButton({ project }: { project: number }) {
     async function handleClick() {
         try {
-            await del(project)
+            if (confirm(`Are you sure you want to delete this project: ${project}`)) {
+                await del(project)
+            }
         } catch (error) {
             console.error('Failed to delete project:', error)
         }

@@ -3,9 +3,9 @@ import { useCallback, useEffect, useState } from 'react'
 import { useFormStatus } from 'react-dom';
 import { fetchAmenityDataById, getProjects } from '@/utils/db/dbFunctions';
 import { Project } from '@/utils/db/types';
-import { update } from '../../actions';
+import { del, update } from '../../actions';
 import Spinner from '@/components/spinner/Spinner';
-import { useRouter  } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 export default function AddAmenityForm({ params }: { params: { amenity_id: number } }) {
     const { amenity_id } = params
@@ -64,6 +64,21 @@ export default function AddAmenityForm({ params }: { params: { amenity_id: numbe
         }
     }
 
+    async function handleDelete() {
+        try {
+            setLoading(true)
+            if(confirm(`Are you sure you want to delete this amenity: ${amenity_id}`)) {
+                await del(amenity_id)
+            } else {
+                router.refresh()
+            }
+        } catch (error) {
+            console.error('Failed to delete amenity:', error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
     if(loading) return <Spinner />
 
     return (
@@ -108,7 +123,8 @@ export default function AddAmenityForm({ params }: { params: { amenity_id: numbe
                                         <p className="text-xs text-red-500 text-right my-3">Required fields are marked with an asterisk*</p>
                                         {error && <p className="text-base text-red-500 text-right my-3">An error occured { error }</p>}
                                         <div className="mt-5 text-right md:space-x-3 md:block flex flex-col-reverse">
-                                            <button className="mb-2 md:mb-0 bg-white px-5 py-2 text-sm shadow-sm font-medium tracking-wider border text-gray-600 rounded-full hover:shadow-lg hover:bg-gray-100">Cancel</button>
+                                            <button onClick={() => router.back()} className="mb-2 md:mb-0 bg-white px-5 py-2 text-sm shadow-sm font-medium tracking-wider border text-gray-600 rounded-full hover:shadow-lg hover:bg-gray-100">Cancel</button>
+                                            <button onClick={handleDelete} className="mb-2 md:mb-0 bg-red-400 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-red-500" >Delete</button>
                                             <button formAction={handleSubmit} className="mb-2 md:mb-0 bg-green-400 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-green-500" disabled={pending}>{pending ? "Updating..." : "Update"}</button>
                                         </div>
                                     </form>

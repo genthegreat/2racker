@@ -73,6 +73,7 @@ export async function del(id: number) {
       .delete()
       .eq("transaction_id", id);
 
+    console.log("Status from delete:", status)
     if (error) redirect('/error?error=' + encodeURIComponent(serializeError(error)))
 
     revalidatePath("/", "layout");

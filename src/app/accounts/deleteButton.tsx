@@ -5,7 +5,9 @@ import { del } from "./actions"
 export default function DeleteButton({ account }: { account: number }) {
     async function handleClick() {
         try {
-            await del(account)
+            if (confirm(`Are you sure you want to delete this account: ${account}`)) {
+                await del(account)                
+            }
         } catch (error) {
             console.error('Failed to delete account:', error)
         }
