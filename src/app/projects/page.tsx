@@ -61,23 +61,21 @@ export default function Project() {
 
       <Suspense fallback={<Spinner />}>
         <h2 className="overline text-2xl mt-4">{profile.full_name?.concat("'s") || 'YOUR'} PROJECTS - {id}</h2>
-      </Suspense>
 
-      {accounts && <PaidTotal {...accounts} />}
+        {accounts && <PaidTotal {...accounts} />}
 
-      <div>
-        <table className="w-full table-auto border-separate border border-blue-600">
-          <thead>
-            <tr>
-              <th className="border border-green-600 px-5">Project</th>
-              <th className="border border-green-600 px-5">Amount Due</th>
-              <th className="border border-green-600 px-5">Amount Paid</th>
-              <th className="border border-green-600 px-5">Balance</th>
-              <th className="border border-green-600 px-5">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <Suspense fallback={<Spinner />}>
+        <div>
+          <table className="w-full table-auto border-separate border border-blue-600">
+            <thead>
+              <tr>
+                <th className="border border-green-600 px-5">Project</th>
+                <th className="border border-green-600 px-5">Amount Due</th>
+                <th className="border border-green-600 px-5">Amount Paid</th>
+                <th className="border border-green-600 px-5">Balance</th>
+                <th className="border border-green-600 px-5">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
               {error
                 ?
                 <tr className='text-center'><p>Error fetching data: {error}</p></tr>
@@ -103,16 +101,16 @@ export default function Project() {
                   :
                   <tr className='text-center'><p>This Project has no amenities</p></tr>
               }
-            </Suspense>
-          </tbody>
-        </table>
-      </div>
+            </tbody>
+          </table>
+        </div>
 
-      <div className='flex justify-end pt-10'>
-        <Link href="/projects/add">
-          <button className="w-52 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Add New</button>
-        </Link>
-      </div>
+        <div className='flex justify-end pt-10'>
+          <Link href="/projects/add">
+            <button className="w-52 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Add New</button>
+          </Link>
+        </div>
+      </Suspense>
     </div>
   )
 }

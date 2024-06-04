@@ -50,19 +50,17 @@ export default function Amenity() {
 
       <Suspense fallback={<Spinner />}>
         <h2 className="overline text-2xl mt-4">YOUR AMENITIES - {id}</h2>
-      </Suspense>
 
-      <div>
-        <table className="w-full table-auto border-separate border border-blue-600">
-          <thead>
-            <tr>
-              <th className="border border-green-600 px-5">Amenity</th>
-              <th className="border border-green-600 px-5">Amount Due</th>
-              <th className="border border-green-600 px-5">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <Suspense fallback={<Spinner />}>
+        <div>
+          <table className="w-full table-auto border-separate border border-blue-600">
+            <thead>
+              <tr>
+                <th className="border border-green-600 px-5">Amenity</th>
+                <th className="border border-green-600 px-5">Amount Due</th>
+                <th className="border border-green-600 px-5">Action</th>
+              </tr>
+            </thead>
+            <tbody>
               {amenities.map(amenity => (
                 <tr key={`${amenity.amenity_id}`}>
                   <td className="border border-green-600 px-5">{amenity.amenity_name}</td>
@@ -78,17 +76,17 @@ export default function Amenity() {
                 </tr>
               ))}
               {amenities.length < 1 && <tr><td className='text-center'><p>This Project has no amenities</p></td></tr>}
-            </Suspense>
-          </tbody>
-        </table>
+            </tbody>
+          </table>
 
-      </div>
+        </div>
 
-      <div className='flex justify-end pt-10'>
-        <Link href="/amenities/add">
-          <button className="w-52 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Add New</button>
-        </Link>
-      </div>
+        <div className='flex justify-end pt-10'>
+          <Link href="/amenities/add">
+            <button className="w-52 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Add New</button>
+          </Link>
+        </div>
+      </Suspense>
     </div>
   )
 }
