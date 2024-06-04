@@ -1,7 +1,8 @@
 "use client"
 
+import Spinner from '@/components/spinner/Spinner';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 
 interface ErrorObject {
   message: string;
@@ -34,11 +35,13 @@ export default function ErrorPage() {
 
   return (
     <div>
-      <h1>Error: {error.name}</h1>
-      <p>Message: {error.message}</p>
-      {error.code && <p>Code: {error.code}</p>}
-      {error.cause && <p>Cause: {error.cause}</p>}
-      {error.status && <p>Status: {error.status}</p>}
+      <Suspense fallback={<Spinner />}>
+        <h1>Error: {error.name}</h1>
+        <p>Message: {error.message}</p>
+        {error.code && <p>Code: {error.code}</p>}
+        {error.cause && <p>Cause: {error.cause}</p>}
+        {error.status && <p>Status: {error.status}</p>}
+      </Suspense>
     </div>
   );
 }
