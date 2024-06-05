@@ -15,8 +15,8 @@ export default function Account() {
   const [total, setTotal] = useState<PaidTotalProps | null>(null)
   const { profile, error, authState } = useProfileContext();
 
-  if (authState.status === 'SIGNED_OUT' || authState.status === null || error) {
-    console.log('An error occured', error)
+  if (!profile.id?.length) {
+    console.log('An error occured. You are not signed in.', error, authState)
     redirect('/login')
   }
 
