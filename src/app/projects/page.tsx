@@ -51,9 +51,9 @@ function Project() {
 
   if (loading) return <Spinner />
 
-  if (authState.status === 'SIGNED_OUT' || authState.status === null) {
-    console.log('An error occured', error)
-    redirect('/')
+  if (!profile.id?.length) {
+    console.log('An error occured. You are not signed in.', error, authState)
+    redirect('/login')
   }
 
   return (
