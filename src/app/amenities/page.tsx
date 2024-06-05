@@ -23,7 +23,7 @@ function Amenity() {
 
   if (!profile.id?.length) {
     console.log('An error occured. You are not signed in.', error, authState)
-    redirect('/login')
+    // redirect('/login')
   }
 
   useEffect(() => {
