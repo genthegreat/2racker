@@ -15,10 +15,14 @@ export default function Account() {
   const [total, setTotal] = useState<PaidTotalProps | null>(null)
   const { profile, error, authState } = useProfileContext();
 
-  if (!profile.id?.length) {
-    console.log('An error occured. You are not signed in.', error, authState)
-    // redirect('/login')
-  }
+  useEffect(() => {
+    if (authState.status === 'SIGNED_OUT' || !profile.id) {
+      console.log('An error occured. You are not signed in.', authState)
+      // redirect('/login')
+    } else {
+      console.log('You are signed in.', authState, profile.id)
+    }
+  }, [authState, profile.id])
 
   const fetchData = async () => {
     try {
