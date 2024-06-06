@@ -51,7 +51,7 @@ function Amenity() {
       <h2 className="overline text-2xl mt-4">YOUR AMENITIES - {id}</h2>
 
       <div className="relative overflow-x-auto shadow-md shadow-blue-900 sm:rounded-lg pt-4">
-        <table className="w-full text-m text-left rtl:text-right text-gray-500 dark:text-gray-400 border-separate border border-blue-600">
+        <table className="w-full text-m text-left rtl:text-right text-nowrap text-gray-500 dark:text-gray-400 border-separate border border-blue-600">
           <thead className="text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="border py-3 border-green-600 px-5">Amenity</th>
@@ -64,11 +64,11 @@ function Amenity() {
               <tr key={`${amenity.amenity_id}`}>
                 <td className="border border-green-600 px-5 py-2 font-medium">{amenity.amenity_name}</td>
                 <td className="border border-green-600 px-5 py-2">{formatCurrency(amenity.default_amount)}</td>
-                <td className="border border-green-600 px-5 py-2">
-                  <Link href={`/amenities/${amenity.amenity_id}`} className='flex flex-auto float-start mx-auto'>
+                <td className="border border-green-600 px-5 py-2 flex justify-center">
+                  <Link href={`/amenities/${amenity.amenity_id}`} className='flex flex-auto float-start px-5'>
                     <EyeIcon />
                   </Link>
-                  <Link href={`/amenities/${amenity.amenity_id}/update`} className='flex flex-auto float-end mx-auto'>
+                  <Link href={`/amenities/${amenity.amenity_id}/update`} className='flex flex-auto float-end px-5'>
                     <PencilSquareIcon />
                   </Link>
                 </td>

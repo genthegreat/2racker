@@ -64,7 +64,7 @@ function Project() {
         {accounts && <PaidTotal {...accounts} />}
 
         <div className="relative overflow-x-auto shadow-md shadow-blue-900 sm:rounded-lg pt-4">
-        <table className="w-full text-s text-left rtl:text-right text-gray-500 dark:text-gray-400 border-separate border border-blue-600">
+        <table className="w-full text-s text-left rtl:text-right text-nowrap text-gray-500 dark:text-gray-400 border-separate border border-blue-600">
           <thead className="text-s text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
               <tr>
                 <th className="border border-green-600 px-5 py-3">Project</th>
@@ -87,11 +87,11 @@ function Project() {
                       <td className="border border-green-600 px-5 py-2">{formatCurrency(project.amount_due)}</td>
                       <td className="border border-green-600 px-5 py-2">{formatCurrency(project.amount_paid)}</td>
                       <td className="border border-green-600 px-5 py-2">{formatCurrency(project.amount_due - project.amount_paid)}</td>
-                      <td className="border border-green-600 px-5 py-2">
-                        <Link href={`/projects/${project.project_id}`} className='flex flex-auto float-start'>
+                      <td className="border border-green-600 px-5 py-2 flex justify-center">
+                        <Link href={`/projects/${project.project_id}`} className='flex flex-auto float-start px-5'>
                           <EyeIcon />
                         </Link>
-                        <Link href={`/projects/${project.project_id}/update`} className='flex flex-auto float-end'>
+                        <Link href={`/projects/${project.project_id}/update`} className='flex flex-auto float-end px-5'>
                           <PencilSquareIcon />
                         </Link>
                       </td>
