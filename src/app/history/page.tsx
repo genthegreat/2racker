@@ -54,47 +54,49 @@ export default function History() {
       <h1>Transaction History</h1>
 
       {transactions && (
-        <table className="w-full table-auto border-separate border border-blue-600">
-          <thead>
-            <tr>
-              <th className="border border-green-600 px-5">Date</th>
-              <th className="border border-green-600 px-5">Account</th>
-              <th className="border border-green-600 px-5">Amenity</th>
-              <th className="border border-green-600 px-5">Amount Due</th>
-              <th className="border border-green-600 px-5">Amount Paid</th>
-              <th className="border border-green-600 px-5">Start Date</th>
-              <th className="border border-green-600 px-5">Status</th>
-              <th className="border border-green-600 px-5">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {transactions.map(account => (
-              account?.projects?.map(project => (
-                project?.amenities?.map(amenity => (
-                  amenity?.transactions?.map(transaction => (
-                    <tr key={`${account.account_id}-${project.project_name}-${amenity.amenity_name}-${transaction.transaction_id}`}>
-                      <td className="border border-green-600 px-5">{transaction.transaction_date}</td>
-                      <td className="border border-green-600 px-5">{account.account_name}</td>
-                      <td className="border border-green-600 px-5">{amenity.amenity_name}</td>
-                      <td className="border border-green-600 px-5">{formatCurrency(amenity.default_amount)}</td>
-                      <td className="border border-green-600 px-5">{formatCurrency(transaction.amount_paid)}</td>
-                      <td className="border border-green-600 px-5">{account.start_date}</td>
-                      <td className="border border-green-600 px-5">{transaction.status}</td>
-                      <td className="border border-green-600 px-5 flex">
-                        <Link href={`/history/${transaction.transaction_id}`} className='flex flex-auto float-start'>
-                          <EyeIcon />
-                        </Link>
-                        <Link href={`/history/${transaction.transaction_id}/update`} className='flex flex-auto float-end'>
-                          <PencilSquareIcon />
-                        </Link>
-                      </td>
-                    </tr>
+        <div className="relative overflow-x-auto shadow-md shadow-blue-900 sm:rounded-lg pt-4">
+          <table className="w-full text-m text-left rtl:text-right text-gray-500 dark:text-gray-400 border-separate border border-blue-600">
+            <thead className="text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
+              <tr>
+                <th scope="col" className="border py-3 border-green-600 px-5">Date</th>
+                <th scope="col" className="border py-3 border-green-600 px-5">Account</th>
+                <th scope="col" className="border py-3 border-green-600 px-5">Amenity</th>
+                <th scope="col" className="border py-3 border-green-600 px-5">Amount Due</th>
+                <th scope="col" className="border py-3 border-green-600 px-5">Amount Paid</th>
+                <th scope="col" className="border py-3 border-green-600 px-5">Start Date</th>
+                <th scope="col" className="border py-3 border-green-600 px-5">Status</th>
+                <th scope="col" className="border py-3 border-green-600 px-5 text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {transactions.map(account => (
+                account?.projects?.map(project => (
+                  project?.amenities?.map(amenity => (
+                    amenity?.transactions?.map(transaction => (
+                      <tr key={`${account.account_id}-${project.project_name}-${amenity.amenity_name}-${transaction.transaction_id}`}>
+                        <td className="border border-green-600 px-5 py-2">{transaction.transaction_date}</td>
+                        <td className="border border-green-600 px-5 py-2">{account.account_name}</td>
+                        <td className="border border-green-600 px-5 py-2">{amenity.amenity_name}</td>
+                        <td className="border border-green-600 px-5 py-2">{formatCurrency(amenity.default_amount)}</td>
+                        <td className="border border-green-600 px-5 py-2">{formatCurrency(transaction.amount_paid)}</td>
+                        <td className="border border-green-600 px-5 py-2">{account.start_date}</td>
+                        <td className="border border-green-600 px-5 py-2">{transaction.status}</td>
+                        <td className="border border-green-600 px-5 py-2">
+                          <Link href={`/history/${transaction.transaction_id}`} className='flex flex-auto float-start'>
+                            <EyeIcon />
+                          </Link>
+                          <Link href={`/history/${transaction.transaction_id}/update`} className='flex flex-auto float-end'>
+                            <PencilSquareIcon />
+                          </Link>
+                        </td>
+                      </tr>
+                    ))
                   ))
                 ))
-              ))
-            ))}
-          </tbody>
-        </table>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
 

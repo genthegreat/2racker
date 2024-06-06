@@ -49,27 +49,27 @@ export default function Account() {
 
       {total && <PaidTotal {...total} />}
 
-      <div>
-        <table className="w-full table-auto border-separate border border-blue-600">
-          <thead>
+      <div className="relative overflow-x-auto shadow-md shadow-blue-900 sm:rounded-lg pt-4">
+        <table className="w-full text-s text-left rtl:text-right text-gray-500 dark:text-gray-400 border-separate border border-blue-600">
+          <thead className="text-s text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
             <tr>
-              <th className="border border-green-600 px-5">Account</th>
-              <th className="border border-green-600 px-5">Amount Due</th>
-              <th className="border border-green-600 px-5">Amount Paid</th>
-              <th className="border border-green-600 px-5">Balance</th>
-              <th className="border border-green-600 px-5">Status</th>
-              <th className="border border-green-600 px-5">Action</th>
+              <th scope="col" className="border py-3 border-green-600 px-5">Account</th>
+              <th scope="col" className="border py-3 border-green-600 px-5">Amount Due</th>
+              <th scope="col" className="border py-3 border-green-600 px-5">Amount Paid</th>
+              <th scope="col" className="border py-3 border-green-600 px-5">Balance</th>
+              <th scope="col" className="border py-3 border-green-600 px-5">Status</th>
+              <th scope="col" className="border py-3 border-green-600 px-5 text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
             {accounts.map(account => (
               <tr key={`${account.account_id}`}>
-                <td className="border border-green-600 px-5"><Link href={`/projects?id=${account.account_id}`}>{account.account_name}</Link></td>
-                <td className="border border-green-600 px-5">{formatCurrency(account.amount_due)}</td>
-                <td className="border border-green-600 px-5">{formatCurrency(account.amount_paid)}</td>
-                <td className="border border-green-600 px-5">{formatCurrency(account.balance)}</td>
-                <td className="border border-green-600 px-5">{account.status}</td>
-                <td className="border border-green-600 px-5 flex">
+                <td className="border border-green-600 px-5 py-2 font-semibold text-m"><Link href={`/projects?id=${account.account_id}`}>{account.account_name}</Link></td>
+                <td className="border border-green-600 px-5 py-2">{formatCurrency(account.amount_due)}</td>
+                <td className="border border-green-600 px-5 py-2">{formatCurrency(account.amount_paid)}</td>
+                <td className="border border-green-600 px-5 py-2">{formatCurrency(account.balance)}</td>
+                <td className="border border-green-600 px-5 py-2">{account.status}</td>
+                <td className="border border-green-600 px-5 py-2">
                   <Link href={`/accounts/${account.account_id}`} className='flex flex-auto float-start'>
                     <EyeIcon />
                   </Link>

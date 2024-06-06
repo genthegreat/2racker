@@ -63,15 +63,15 @@ function Project() {
 
         {accounts && <PaidTotal {...accounts} />}
 
-        <div>
-          <table className="w-full table-auto border-separate border border-blue-600">
-            <thead>
+        <div className="relative overflow-x-auto shadow-md shadow-blue-900 sm:rounded-lg pt-4">
+        <table className="w-full text-s text-left rtl:text-right text-gray-500 dark:text-gray-400 border-separate border border-blue-600">
+          <thead className="text-s text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
               <tr>
-                <th className="border border-green-600 px-5">Project</th>
-                <th className="border border-green-600 px-5">Amount Due</th>
-                <th className="border border-green-600 px-5">Amount Paid</th>
-                <th className="border border-green-600 px-5">Balance</th>
-                <th className="border border-green-600 px-5">Actions</th>
+                <th className="border border-green-600 px-5 py-3">Project</th>
+                <th className="border border-green-600 px-5 py-3">Amount Due</th>
+                <th className="border border-green-600 px-5 py-3">Amount Paid</th>
+                <th className="border border-green-600 px-5 py-3">Balance</th>
+                <th className="border border-green-600 px-5 py-3 text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -83,11 +83,11 @@ function Project() {
                   ?
                   projects.map(project => (
                     <tr key={`${project.project_id}`}>
-                      <td className="border border-green-600 px-5"><Link href={`/amenities?id=${project.project_id}`}>{project.project_name}</Link></td>
-                      <td className="border border-green-600 px-5">{formatCurrency(project.amount_due)}</td>
-                      <td className="border border-green-600 px-5">{formatCurrency(project.amount_paid)}</td>
-                      <td className="border border-green-600 px-5">{formatCurrency(project.amount_due - project.amount_paid)}</td>
-                      <td className="border border-green-600 px-5 flex">
+                      <td className="border border-green-600 px-5 py-2 font-semibold text-m"><Link href={`/amenities?id=${project.project_id}`}>{project.project_name}</Link></td>
+                      <td className="border border-green-600 px-5 py-2">{formatCurrency(project.amount_due)}</td>
+                      <td className="border border-green-600 px-5 py-2">{formatCurrency(project.amount_paid)}</td>
+                      <td className="border border-green-600 px-5 py-2">{formatCurrency(project.amount_due - project.amount_paid)}</td>
+                      <td className="border border-green-600 px-5 py-2">
                         <Link href={`/projects/${project.project_id}`} className='flex flex-auto float-start'>
                           <EyeIcon />
                         </Link>
