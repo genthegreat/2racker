@@ -55,7 +55,7 @@ export default function History() {
 
       {transactions && (
         <div className="relative overflow-x-auto shadow-md shadow-blue-900 sm:rounded-lg pt-4">
-          <table className="w-full text-xs md:text-s text-left rtl:text-right text-gray-500 dark:text-gray-400 border-separate border border-blue-600">
+          <table className="w-full text-xs md:text-s text-left rtl:text-right text-nowrap text-gray-500 dark:text-gray-400 border-separate border border-blue-600">
             <thead className="text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
               <tr>
                 <th scope="col" className="border py-3 border-green-600 px-2 md:px-5">Date</th>
