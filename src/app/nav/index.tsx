@@ -38,13 +38,13 @@ export default function Navigation() {
         <div className={`w-full text-center md:flex md:items-center md:w-auto ${isMenuOpen ? 'block' : 'hidden'}`} id="navbar-default">
           <ul className="flex flex-col p-4 whitespace-nowrap md:p-0 mt-4 border border-gray-100 rounded-lg md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0">
             <li className="block py-2 px-3">
-              <Link href="/accounts">Accounts</Link>
+              {user && <Link href="/accounts">Accounts</Link>}
             </li>
             <li className="block py-2 px-3">
-              <Link href="/history">Transaction History</Link>
+              {user && <Link href="/history">Transaction History</Link>}
             </li>
             <li className="block py-2 px-3">
-              <Link href="/profile">Profile</Link>
+              {user && <Link href="/profile">Profile</Link>}
             </li>
             <li className="block py-2 px-3">
               {
