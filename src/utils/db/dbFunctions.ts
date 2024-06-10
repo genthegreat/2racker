@@ -1,7 +1,7 @@
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Account, Amenity, Project, Transaction } from "./types";
 
-const supabase = createClientComponentClient();
+export const supabase = createClientComponentClient();
 
 /* 
 Note to self: 
@@ -155,15 +155,17 @@ export async function getProfileData() {
     data: { user },
   } = await supabase.auth.getUser();
 
+  if (!user) return null;
+
   const { data, error } = await supabase
     .from("profiles")
-    .select("full_name, username, avatar_url")
-    .eq("id", user?.id)
+    .select("*")
+    .eq("id", user.id)
     .single();
 
   if (error) {
-    console.log(error);
     console.error(error);
+    return null;
   }
 
   console.log(data);
