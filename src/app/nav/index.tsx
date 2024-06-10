@@ -56,7 +56,7 @@ export default function Navigation() {
                     </button>
                   </form>
                   :
-                  <Link href="/login" className='text-lime-300 bg-lime-950 p-3 border border-lime-50 rounded-xl uppercase'>Login</Link>
+                  <Link href="/login" className='text-lime-300 bg-lime-950 p-2 border border-lime-50 rounded-xl uppercase'>Login</Link>
               }
             </li>
           </ul>
