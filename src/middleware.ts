@@ -14,9 +14,9 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const isPublicPath = publicPaths.some(path => request.nextUrl.pathname === path);
-  console.log("where:", request.nextUrl.pathname)
-  console.log("user:", user)
-  console.log("isPublicPath:", isPublicPath)
+  // console.log("where:", request.nextUrl.pathname)
+  // console.log("user:", user)
+  // console.log("isPublicPath:", isPublicPath)
 
   if (!user  && !isPublicPath) {
     console.log('You are not logged in')

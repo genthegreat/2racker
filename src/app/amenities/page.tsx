@@ -8,7 +8,6 @@ import { EyeIcon, PencilSquareIcon } from '@/components/icons'
 import type { Amenity } from '@/utils/db/types'
 import { getAmenities } from '@/utils/db/dbFunctions'
 import Spinner from '@/components/spinner/Spinner'
-import { useProfileContext } from "@/context/ProfileContext"
 import { Suspense } from 'react'
 
 function Amenity() {
@@ -19,12 +18,6 @@ function Amenity() {
   // State
   const [amenities, setAmenities] = useState<Amenity[]>([])
   const [loading, setLoading] = useState(true)
-  const { profile, error, authState } = useProfileContext();
-
-  if (!profile.id?.length) {
-    console.log('An error occured. You are not signed in.', error, authState)
-    // redirect('/login')
-  }
 
   useEffect(() => {
     const fetchData = async () => {

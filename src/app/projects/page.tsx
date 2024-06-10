@@ -51,11 +51,6 @@ function Project() {
 
   if (loading) return <Spinner />
 
-  if (!profile.id?.length) {
-    console.log('An error occured. You are not signed in.', error, authState)
-    // redirect('/login')
-  }
-
   return (
     <div className='align-center'>
 

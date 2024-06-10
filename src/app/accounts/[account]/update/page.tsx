@@ -10,11 +10,6 @@ export default function UpdateAccount({ params }: { params: { account: number } 
 
   if (loading) return <Spinner />;
 
-  if (authState.status === 'SIGNED_OUT' || authState.status === null || error) {
-    console.log('An error occured', error)
-    redirect('/')
-  }
-
   return (
     <div>
       <h1 className="overline text-2xl mt-4">{profile.full_name || 'Guest'}&#39;s Portfolio</h1>

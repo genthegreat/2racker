@@ -2,17 +2,11 @@
 import AddAmenityForm from './addamenityform'
 import { useProfileContext } from '@/context/ProfileContext';
 import Spinner from '@/components/spinner/Spinner';
-import { redirect } from 'next/navigation';
 
 export default function AddAmenity() {
-  const { profile, loading, error, authState } = useProfileContext();
+  const { profile, loading } = useProfileContext();
 
   if (loading) return <Spinner />;
-
-  if (authState.status === 'SIGNED_OUT' || null || error) {
-    console.log('An error occured', error)
-    redirect('/')
-  }
 
   return (
     <div>

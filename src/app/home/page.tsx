@@ -37,7 +37,7 @@ export default function Home() {
   return (
     <>
       {accounts
-        ?
+        &&
         ( // Check if accounts is not null or undefined
         <div className="flex flex-col text-center justify-center mx-auto">
             <h1 className="overline text-2xl mt-4">{profile?.full_name || 'Guest'}&#39;s Portfolio</h1>
@@ -50,8 +50,6 @@ export default function Home() {
             </div>
           </div>
         )
-        :
-        redirect('/login')
       }
     </>
   )
