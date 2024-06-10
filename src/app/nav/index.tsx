@@ -2,19 +2,25 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import './styles.css'
-import { useEffect, useState } from 'react';
-import { supabase, getProfileData } from '@/utils/db/dbFunctions';
-import { Profile } from '@/utils/db/types';
+import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 
 export const dynamic = 'force-dynamic';
+
+const NavItem = ({ href, children }: {href: any, children: any}) => (
+  <li className="block py-2 px-3">
+    <Link href={href}>
+      {children}
+    </Link>
+  </li>
+);
 
 export default function Navigation() {
   const { user } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   if (user) {
-    console.log('Profile', user)
+    console.log('Session', user)
   }
 
   const handleToggle = () => {
@@ -36,27 +42,21 @@ export default function Navigation() {
           </svg>
         </button>
         <div className={`w-full text-center md:flex md:items-center md:w-auto ${isMenuOpen ? 'block' : 'hidden'}`} id="navbar-default">
-          <ul className="flex flex-col p-4 whitespace-nowrap md:p-0 mt-4 border border-gray-100 rounded-lg md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0">
-            <li className="block py-2 px-3">
-              {user && <Link href="/accounts">Accounts</Link>}
-            </li>
-            <li className="block py-2 px-3">
-              {user && <Link href="/history">Transaction History</Link>}
-            </li>
-            <li className="block py-2 px-3">
-              {user && <Link href="/profile">Profile</Link>}
-            </li>
-            <li className="block py-2 px-3">
+          <ul className="flex flex-col p-4 whitespace-nowrap md:p-0 mt-4 border border-gray-100 rounded-lg md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 justify-center">
+            {user && <NavItem href="/accounts">Accounts</NavItem>}
+            {user && <NavItem href="/history">Transaction History</NavItem>}
+            {user && <NavItem href="/profile">Profile</NavItem>}
+            <li className="block px-3">
               {
                 user
                   ?
                   <form action="/auth/signout" method="post">
-                    <button className="p-0 border-none text-transform-capitalize" type="submit">
+                    <button className="p-2 border bg-slate-950 text-red-800 rounded-xl" type="submit">
                       Sign out
                     </button>
                   </form>
                   :
-                  <Link href="/login">Login</Link>
+                  <Link href="/login" className='text-lime-300 bg-lime-950 p-3 border border-lime-50 rounded-xl uppercase'>Login</Link>
               }
             </li>
           </ul>
