@@ -4,8 +4,7 @@ import { login, loginAnonymously, signup } from './actions'
 import { redirect } from 'next/navigation'
 import { useProfileContext } from '@/context/ProfileContext'
 import TurnstileInput from 'turnstile-next'
-import { useEffect, useRef, useState } from 'react'
-import { checkWidgetRender } from 'turnstile-next/utils'
+import { useRef, useState } from 'react'
 import { refreshTurnstile } from 'turnstile-next/utils'
 
 const SITE_KEY = process.env.NEXT_PUBLIC_CLOUDFLARE_SITE_KEY as string;
@@ -24,9 +23,6 @@ export default function Login() {
         redirect('/')
     }
 
-    useEffect(() => {
-        checkWidgetRender();
-    }, []);
 
     const onVerify = (token: string) => {
         // console.log('Verification token:', token);
