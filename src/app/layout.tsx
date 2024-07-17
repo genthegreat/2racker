@@ -6,6 +6,7 @@ import Footer from "./footer";
 import { Providers } from "@/components/provider/ProfileProvider";
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from '@vercel/analytics/react';
+import Script from 'next/script'
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,6 +33,7 @@ export default function RootLayout({
           </header>
           <main>
             {children}
+            <Script src='https://challenges.cloudflare.com/turnstile/v0/api.js' async defer></Script>
           </main>
           <footer>
             <Footer />
