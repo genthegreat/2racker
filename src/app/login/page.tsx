@@ -101,7 +101,7 @@ export default function Login() {
 
 
                         <div className='w-full flex justify-between'>
-                            <div className='w-70 flex'>
+                            <div className='w-full flex'>
                                 <TurnstileInput
                                     onVerify={onVerify}
                                     onError={onError}
@@ -110,10 +110,9 @@ export default function Login() {
                                     size='normal'
                                 />
                             </div>
-
-                            <div className='w-30 flex mx-2 px-2'>
-                                <button className='text-xs my-2 ml-auto' onClick={refresh}>Refresh Captcha</button>
-                            </div>
+                        </div>
+                        <div className='w-30 flex mx-2 px-2'>
+                            <button className='text-xs my-2 ml-auto' onClick={refresh}>Refresh Captcha</button>
                         </div>
 
                         <button type="submit" name='login' className="w-full flex justify-center my-2 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Log in</button>
