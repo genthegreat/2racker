@@ -6,6 +6,7 @@ import { useProfileContext } from '@/context/ProfileContext'
 import TurnstileInput from 'turnstile-next'
 import { useRef, useState } from 'react'
 import { refreshTurnstile } from 'turnstile-next/utils'
+import Link from 'next/link'
 
 const SITE_KEY = process.env.NEXT_PUBLIC_CLOUDFLARE_SITE_KEY as string;
 
@@ -73,7 +74,7 @@ export default function Login() {
 
     return (
         <div>
-            <div className="min-h-screen flex items-center justify-center w-full">
+            <div className="min-h-full my-5 flex items-center justify-center w-full">
                 <div className="border-solid border-2 border-lime-900 rounded-lg px-8 py-6 max-w-md">
                     <h1 className="text-2xl font-bold text-center mb-4 dark:text-gray-200">Welcome</h1>
                     <form ref={formRef} onSubmit={handleSubmit}>
@@ -84,9 +85,9 @@ export default function Login() {
                         <div className="mb-4">
                             <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password</label>
                             <input type="password" id="password" name="password" className="shadow-sm rounded-md w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter your password" />
-                            <a href="#"
-                                className="text-xs text-gray-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Forgot
-                                Password?</a>
+                            <Link href="forgot-password" className="text-xs text-gray-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Forgot Password?
+                            </Link>
                         </div>
 
                         {/* <div className="flex items-center justify-between mb-4">
