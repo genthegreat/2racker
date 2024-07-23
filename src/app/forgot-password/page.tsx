@@ -20,7 +20,6 @@ export default function ForgotPassword() {
 
     const formRef = useRef<HTMLFormElement>(null);
 
-    const [currentUrl, setCurrentUrl] = useState('');
     const [captchaToken, setCaptchaToken] = useState<string | null>(null);
     const [message, setMessage] = useState<string | null | undefined>(null);
     const [color, setColor] = useState<string>('green')
@@ -29,12 +28,6 @@ export default function ForgotPassword() {
         console.log('Profile', profile.id)
         redirect('/')
     }
-
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            setCurrentUrl(`${window.location.origin}`);
-        }
-    }, []);
 
     const onVerify = (token: string) => {
         // console.log('Verification token:', token);
@@ -57,6 +50,9 @@ export default function ForgotPassword() {
 
         if (formRef.current) {
             const formData = new FormData(formRef.current);
+
+            // Determine the base URL on the client-side
+            formData.set("redirectLink", window.location.origin);
 
             if (captchaToken) {
                 formData.set("captchaToken", captchaToken);
@@ -99,7 +95,6 @@ export default function ForgotPassword() {
                                         <label htmlFor="email" className="block text-sm font-bold ml-1 mb-2 dark:text-white">Email address</label>
                                         <div className="relative">
                                             <input type="email" id="email" name="email" className="shadow-sm rounded-md w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required aria-describedby="email-error" />
-                                            <input type='hidden' id='redirectLink' name='redirectLink' value={currentUrl} />
                                         </div>
                                         <p className="hidden text-xs text-red-600 mt-2" id="email-error">Please include a valid email address so we can get back to you</p>
                                     </div>
