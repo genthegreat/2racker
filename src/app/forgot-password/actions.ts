@@ -8,8 +8,10 @@ export async function forgotPassword(formData: FormData) {
   const supabase = createClient();
 
   const email = formData.get("email") as string;
+  const redirectLink = formData.get("redirectLink") as string;
+
   const options = {
-    redirectTo: "/reset-password",
+    redirectTo: `${redirectLink}/reset-password`,
     captchaToken: formData.get("captchaToken") as string,
   };
 

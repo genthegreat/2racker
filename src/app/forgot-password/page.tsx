@@ -6,7 +6,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useEffect, useRef, useState } from 'react';
 import { forgotPassword } from './actions';
 import { useProfileContext } from '@/context/ProfileContext';
-import { redirect } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { refreshTurnstile } from 'turnstile-next/utils';
 import TurnstileInput from 'turnstile-next'
 
@@ -16,16 +16,24 @@ export default function ForgotPassword() {
 
     const supabase = createClientComponentClient();
     const { profile } = useProfileContext();
+    const router = useRouter();
+
     const formRef = useRef<HTMLFormElement>(null);
-
+    
+    const [currentUrl, setCurrentUrl] = useState('');
     const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-
+    
     if (profile.id) {
         console.log('Profile', profile.id)
         redirect('/')
     }
-
-
+    
+    useEffect(() => {
+      if (typeof window !== 'undefined') {
+        setCurrentUrl(`${window.location.origin}`);
+      }
+    }, []);
+    
     const onVerify = (token: string) => {
         // console.log('Verification token:', token);
         setCaptchaToken(token);
@@ -80,6 +88,7 @@ export default function ForgotPassword() {
                                     <label htmlFor="email" className="block text-sm font-bold ml-1 mb-2 dark:text-white">Email address</label>
                                     <div className="relative">
                                         <input type="email" id="email" name="email" className="shadow-sm rounded-md w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required aria-describedby="email-error" />
+                                        <input type='hidden' id='redirectLink' name='redirectLink' value={currentUrl} />
                                     </div>
                                     <p className="hidden text-xs text-red-600 mt-2" id="email-error">Please include a valid email address so we can get back to you</p>
                                 </div>
