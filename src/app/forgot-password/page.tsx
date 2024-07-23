@@ -92,7 +92,7 @@ export default function ForgotPassword() {
                     <div className="mt-5">
                         <form ref={formRef} onSubmit={handleSubmit}>
                             {
-                                !message || color === 'red'
+                                !message
                                 &&
                                 <div className="grid gap-y-4">
                                     <div>
