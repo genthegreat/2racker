@@ -66,7 +66,7 @@ export default function ForgotPassword() {
                     setMessage('An email has been sent to you to reset your password');
                     setColor('green')
                 } else {
-                    setMessage(result);
+                    setMessage(`${result}. Try again later.`);
                     setColor('red')
                 }
             }
@@ -92,7 +92,7 @@ export default function ForgotPassword() {
                     <div className="mt-5">
                         <form ref={formRef} onSubmit={handleSubmit}>
                             {
-                                !message
+                                !message || color === 'red'
                                 &&
                                 <div className="grid gap-y-4">
                                     <div>
@@ -122,7 +122,11 @@ export default function ForgotPassword() {
                                     <button type="submit" className="py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">Reset password</button>
                                 </div>
                             }
-                            {message && <div className={`text-lg text-${color}-700 text-center font-bold`}>{message}</div>}
+                            {message && (
+                                <div className={`text-lg ${color === 'green' ? 'text-green-700' : 'text-red-700'} text-center font-bold`}>
+                                    {message}
+                                </div>
+                            )}
                         </form>
                     </div>
                 </div>

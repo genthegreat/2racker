@@ -1,14 +1,14 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
-import { serializeError } from "@/utils/utils";
-import { redirect } from "next/navigation";
 
 export async function forgotPassword(formData: FormData) {
   const supabase = createClient();
 
   const email = formData.get("email") as string;
   const redirectLink = formData.get("redirectLink") as string;
+
+  // console.log(email, redirectLink)
 
   const options = {
     redirectTo: `${redirectLink}/reset-password`,
