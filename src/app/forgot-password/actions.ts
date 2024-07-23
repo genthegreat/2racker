@@ -21,10 +21,10 @@ export async function forgotPassword(formData: FormData) {
   );
 
   if (error) {
-    redirect("/error?error=" + encodeURIComponent(serializeError(error)));
+    return error.message;
   }
 
-  if (!error) {
+  if (data) {
     return 'success';
   }
 }

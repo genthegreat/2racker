@@ -19,21 +19,23 @@ export default function ForgotPassword() {
     const router = useRouter();
 
     const formRef = useRef<HTMLFormElement>(null);
-    
+
     const [currentUrl, setCurrentUrl] = useState('');
     const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-    
+    const [message, setMessage] = useState<string | null | undefined>(null);
+    const [color, setColor] = useState<string>('green')
+
     if (profile.id) {
         console.log('Profile', profile.id)
         redirect('/')
     }
-    
+
     useEffect(() => {
-      if (typeof window !== 'undefined') {
-        setCurrentUrl(`${window.location.origin}`);
-      }
+        if (typeof window !== 'undefined') {
+            setCurrentUrl(`${window.location.origin}`);
+        }
     }, []);
-    
+
     const onVerify = (token: string) => {
         // console.log('Verification token:', token);
         setCaptchaToken(token);
@@ -48,7 +50,7 @@ export default function ForgotPassword() {
         console.log('Turnstile error:', error);
     }
 
-    
+
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -60,7 +62,13 @@ export default function ForgotPassword() {
                 formData.set("captchaToken", captchaToken);
                 const result = await forgotPassword(formData);
 
-                result && <>An email has been sent to you to reset your password</>
+                if (result === 'success') {
+                    setMessage('An email has been sent to you to reset your password');
+                    setColor('green')
+                } else {
+                    setMessage(result);
+                    setColor('red')
+                }
             }
         } else {
             console.log('Captcha verification is required.');
@@ -83,33 +91,38 @@ export default function ForgotPassword() {
 
                     <div className="mt-5">
                         <form ref={formRef} onSubmit={handleSubmit}>
-                            <div className="grid gap-y-4">
-                                <div>
-                                    <label htmlFor="email" className="block text-sm font-bold ml-1 mb-2 dark:text-white">Email address</label>
-                                    <div className="relative">
-                                        <input type="email" id="email" name="email" className="shadow-sm rounded-md w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required aria-describedby="email-error" />
-                                        <input type='hidden' id='redirectLink' name='redirectLink' value={currentUrl} />
+                            {
+                                !message
+                                &&
+                                <div className="grid gap-y-4">
+                                    <div>
+                                        <label htmlFor="email" className="block text-sm font-bold ml-1 mb-2 dark:text-white">Email address</label>
+                                        <div className="relative">
+                                            <input type="email" id="email" name="email" className="shadow-sm rounded-md w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required aria-describedby="email-error" />
+                                            <input type='hidden' id='redirectLink' name='redirectLink' value={currentUrl} />
+                                        </div>
+                                        <p className="hidden text-xs text-red-600 mt-2" id="email-error">Please include a valid email address so we can get back to you</p>
                                     </div>
-                                    <p className="hidden text-xs text-red-600 mt-2" id="email-error">Please include a valid email address so we can get back to you</p>
-                                </div>
 
-                                <div className='w-full flex justify-between'>
-                                    <div className='w-full flex'>
-                                        <TurnstileInput
-                                            onVerify={onVerify}
-                                            onError={onError}
-                                            siteKey={SITE_KEY}
-                                            theme='light'
-                                            size='normal'
-                                        />
+                                    <div className='w-full flex justify-between'>
+                                        <div className='w-full flex'>
+                                            <TurnstileInput
+                                                onVerify={onVerify}
+                                                onError={onError}
+                                                siteKey={SITE_KEY}
+                                                theme='light'
+                                                size='normal'
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                                <div className='w-30 flex mx-2 px-2'>
-                                    <button className='text-xs my-2 ml-auto' onClick={refresh}>Refresh Captcha</button>
-                                </div>
+                                    <div className='w-30 flex mx-2 px-2'>
+                                        <button className='text-xs my-2 ml-auto' onClick={refresh}>Refresh Captcha</button>
+                                    </div>
 
-                                <button type="submit" className="py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">Reset password</button>
-                            </div>
+                                    <button type="submit" className="py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">Reset password</button>
+                                </div>
+                            }
+                            {message && <div className={`text-lg text-${color}-700 text-center font-bold`}>{message}</div>}
                         </form>
                     </div>
                 </div>
