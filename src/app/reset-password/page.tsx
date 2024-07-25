@@ -8,6 +8,7 @@ export default function ResetPassword() {
 
     const { event, session } = useAuth();
 
+    const [color, setColor] = useState<string>('green')
     const [message, setMessage] = useState<String>("")
     const [isPasswordRecovery, setIsPasswordRecovery] = useState(false);
     const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -15,7 +16,7 @@ export default function ResetPassword() {
 
     useEffect(() => {
         if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") {
-            setIsPasswordRecovery(true);
+            setIsPasswordRecovery(true)
         }
         console.log('event in useEffect', event, 'session in useEffect:', session)
     }, [event, session]);
@@ -38,9 +39,14 @@ export default function ResetPassword() {
             const result = await response.json();
             console.log(result)
             setMessage(result.message);
-        } catch (error) {
+            setIsPasswordRecovery(false)
+            result.message === 'Invalid event type or missing password.'
+                ? setColor('red')
+                : setColor('green')
+        } catch (error: any) {
             console.log(error)
-            // setMessage(error);
+            setColor('red')
+            setMessage(error.message || 'An unexpected error occurred.');
         } finally {
             setIsLoading(false)
         }
@@ -65,13 +71,21 @@ export default function ResetPassword() {
                         :
                         <>
                             Not Allowed. &nbsp;
-                            <Link href="forgot-password" className="text-amber-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                Request Forgot Password
-                            </Link>
+                            {
+                                !message
+                                &&
+                                <Link href="forgot-password" className="text-amber-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    Request Forgot Password
+                                </Link>
+                            }
                         </>
                 }
 
-                {message && <p>message</p>}
+                {message && (
+                    <div className={`text-lg ${color === 'green' ? 'text-green-700' : 'text-red-700'} text-center font-bold`}>
+                        {message}
+                    </div>
+                )}
             </div>
         </main>
     )
