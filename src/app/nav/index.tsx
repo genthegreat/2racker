@@ -16,11 +16,11 @@ const NavItem = ({ href, children }: {href: any, children: any}) => (
 );
 
 export default function Navigation() {
-  const { user } = useAuth();
+  const { user, event, session } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   if (user) {
-    console.log('Session', user)
+    console.log('User', user, 'event', event, 'session', session )
   }
 
   const handleToggle = () => {
