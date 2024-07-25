@@ -16,7 +16,7 @@ export async function middleware(request: NextRequest) {
   // Log the request URL and user information for debugging
   // console.log("Request URL:", request.nextUrl.pathname);
   // console.log("User:", user);
-  console.log("Middleware Error on get User:", error?.name);
+  // console.log("Middleware Error on get User:", error?.name);
 
   const isPublicPath = publicPaths.some(path => request.nextUrl.pathname === path);
   // console.log("isPublicPath:", isPublicPath)

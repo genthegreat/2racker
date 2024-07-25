@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from "@/utils/supabase/server";
-import { AuthError } from "@supabase/supabase-js";
 
 // Handle POST requests
 export async function POST(request: NextRequest) {
@@ -9,9 +8,7 @@ export async function POST(request: NextRequest) {
   try {
     const { newPassword, event } = await request.json();
 
-    console.log("event:", event);
-
-    if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") {
+    if ((event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") && newPassword) {
       const { data, error } = await supabase.auth.updateUser({
         password: newPassword,
       });
@@ -24,7 +21,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ message: "There was an error updating your password.", error }, { status: 400 });
       }
     } else {
-      return NextResponse.json({ message: "Invalid event type." }, { status: 400 });
+      return NextResponse.json({ message: "Invalid event type or missing password." }, { status: 400 });
     }
   } catch (error) {
     console.error('Error in POST handler:', error);
