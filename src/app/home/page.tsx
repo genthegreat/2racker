@@ -39,7 +39,7 @@ export default function Home() {
       {accounts
         &&
         ( // Check if accounts is not null or undefined
-        <div className="flex flex-col text-center justify-center mx-auto">
+        <div className="flex flex-col text-center justify-center mx-auto max-w-screen-lg">
             <h1 className="overline text-2xl mt-4">{profile?.full_name || 'Guest'}&#39;s Portfolio</h1>
 
             <PaidTotal {...accounts} />
