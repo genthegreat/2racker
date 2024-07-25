@@ -1,20 +1,24 @@
 import { createClient } from "@/utils/supabase/server";
 import { AuthError } from "@supabase/supabase-js";
 
-export default async function handler(req: { method: string; body: { newPassword: any; event: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { message: string; error?: AuthError | null; }): void; new(): any; }; }; }) {
+export default async function handler(req: any, res: any) {
   const supabase = createClient();
 
-  if (req.method === "POST") {
-    const { newPassword, event } = req.body;
+  const { newPassword, event } = req.body;
 
-    if (event === "PASSWORD_RECOVERY") {
+  console.log("event:", event);
+
+  if (req.method === "POST") {
+    if (newPassword) {
       const { data, error } = await supabase.auth.updateUser({
         password: newPassword,
       });
 
       if (data) {
+        console.log(data);
         res.status(200).json({ message: "Password updated successfully!" });
       } else {
+        console.log(error);
         res.status(400).json({
           message: "There was an error updating your password.",
           error,

@@ -1,40 +1,49 @@
 "use client"
 
-import { supabase } from "@/utils/db/dbFunctions";
+import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function ResetPassword() {
 
+    const { event, session } = useAuth();
+
     const [message, setMessage] = useState<String>("")
     const [isPasswordRecovery, setIsPasswordRecovery] = useState(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+
 
     useEffect(() => {
-        const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-            if (event === "PASSWORD_RECOVERY") {
-                setIsPasswordRecovery(true);
-            }
-        });
-
-        return () => {
-            authListener.subscription.unsubscribe();
-        };
-    }, []);
+        if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") {
+            setIsPasswordRecovery(true);
+        }
+        console.log('event in useEffect', event, 'session in useEffect:', session)
+    }, [event, session]);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setIsLoading(true)
 
-        const newPassword = e.currentTarget.password.value;
+        try {
+            const newPassword = e.currentTarget.password.value;
 
-        const response = await fetch('/api/routes', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ newPassword }),
-        });
+            const response = await fetch('/api/reset-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ newPassword, event }),
+            });
 
-        const result = await response.json();
-        setMessage(result.message);
+            const result = await response.json();
+            console.log(result)
+            setMessage(result.message);
+        } catch (error) {
+            console.log(error)
+            // setMessage(error);
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     return (
@@ -49,10 +58,17 @@ export default function ResetPassword() {
                                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">New Password</label>
                                 <input type="password" id="password" name="password" className="shadow-sm rounded-md w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter your new password" />
                             </div>
-                            <button type="submit" name='update' className="w-full flex justify-center my-2 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Update Password</button>
+                            <button type="submit" name='update' disabled={isLoading} className="w-full flex justify-center my-2 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                {isLoading ? 'Loading...' : 'Update Password'}
+                            </button>
                         </form>
                         :
-                        <>Not password recovery</>
+                        <>
+                            Not Allowed. &nbsp;
+                            <Link href="forgot-password" className="text-amber-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Request Forgot Password
+                            </Link>
+                        </>
                 }
 
                 {message && <p>message</p>}

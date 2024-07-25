@@ -7,12 +7,11 @@ export async function forgotPassword(formData: FormData) {
 
   const email = formData.get("email") as string;
   const redirectLink = formData.get("redirectLink") as string;
-  const url = `${redirectLink}/reset-password`
     
-  console.log(email, redirectLink, url)
+  console.log(email, redirectLink)
 
   const options = {
-    redirectTo: url,
+    redirectTo: `${redirectLink}/reset-password`,
     captchaToken: formData.get("captchaToken") as string,
   };
 
