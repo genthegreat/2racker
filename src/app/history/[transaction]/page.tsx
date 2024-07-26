@@ -1,50 +1,51 @@
 'use client'
-import { useCallback, useEffect, useState } from 'react';
-import { fetchTransactionDataById, getTransactions } from "@/utils/db/dbFunctions";
-import { formatCurrency } from "@/utils/utils";
-import DeleteButton from "../deleteButton";
+import { useCallback, useEffect, useState } from 'react'
+import { fetchTransactionDataById, getTransactions } from "@/utils/db/dbFunctions"
+import { formatCurrency } from "@/utils/utils"
+import DeleteButton from "../deleteButton"
+import Spinner from '@/components/spinner/Spinner'
 
 // Return a list of `params` to populate the [id] dynamic segment
 // export async function generateStaticParams() {
-//     const transactions = await getTransactions(null);
+//     const transactions = await getTransactions(null)
 
-//     console.log('transactions loaded', transactions);
+//     console.log('transactions loaded', transactions)
 
 //     return transactions.map((transaction) => ({
 //         transaction: transaction.transaction_id.toString()
-//     }));
+//     }))
 // }
 
 export default function TransactionDetail({ params }: { params: { transaction: number } }) {
-    const { transaction } = params;
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [transactionData, setTransactionData] = useState<any | null>(null);
+    const { transaction } = params
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+    const [transactionData, setTransactionData] = useState<any | null>(null)
 
     const fetchData = useCallback(async () => {
         try {
-            setLoading(true);
-            const res = await fetchTransactionDataById(transaction);
+            setLoading(true)
+            const res = await fetchTransactionDataById(transaction)
 
             if (res) {
-                setTransactionData(res);
+                setTransactionData(res)
             } else {
-                setError('Transaction not found');
+                setError('Transaction not found')
             }
         } catch (error: any) {
-            console.log("An error occurred:", error);
-            setError('Failed to fetch transaction data');
+            console.log("An error occurred:", error)
+            setError('Failed to fetch transaction data')
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
-    }, [transaction]);
+    }, [transaction])
 
     useEffect(() => {
-        fetchData();
-    }, [transaction, fetchData]);
+        fetchData()
+    }, [transaction, fetchData])
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <h1>{error}</h1>;
+    if (loading) return  <Spinner />
+    if (error) return <h1>{error}</h1>
 
     return (
         <>
@@ -60,5 +61,5 @@ export default function TransactionDetail({ params }: { params: { transaction: n
                 <DeleteButton transaction={transaction} />
             </div>
         </>
-    );
+    )
 }
