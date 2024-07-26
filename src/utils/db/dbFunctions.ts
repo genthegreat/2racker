@@ -62,7 +62,6 @@ export async function fetchAmenityDataById(id: number): Promise<Amenity> {
 
   if (error) {
     console.log(error);
-    console.error(error);
   }
 
   console.log(amenity);

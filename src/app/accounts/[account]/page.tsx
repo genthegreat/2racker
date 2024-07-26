@@ -1,38 +1,60 @@
-import { fetchAccountDataById, getAllAccounts } from "@/utils/db/dbFunctions";
-import { formatCurrency } from "@/utils/utils";
-import DeleteButton from "../deleteButton";
+'use client'
+import { useCallback, useEffect, useState } from 'react'
+import { fetchAccountDataById, getAllAccounts } from "@/utils/db/dbFunctions"
+import { formatCurrency } from "@/utils/utils"
+import Spinner from '@/components/spinner/Spinner'
+import DeleteButton from "../deleteButton"
 
-// Return a list of `params` to populate the [id] dynamic segment
-export async function generateStaticParams() {
-    const accounts = await getAllAccounts();
+// // Return a list of `params` to populate the [id] dynamic segment
+// export async function generateStaticParams() {
+//     const accounts = await getAllAccounts()
 
-    console.log('accounts loaded', accounts)
+//     console.log('accounts loaded', accounts)
 
-    return accounts.map((account) => ({
-        account: account.account_id.toString()
-    }))
-}
+//     return accounts.map((account) => ({
+//         account: account.account_id.toString()
+//     }))
+// }
 
-export default async function Page({ params }: { params: { account: number } }) {
+export default function AccountDetail({ params }: { params: { account: number } }) {
     const { account } = params
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+    const [accountData, setAccountData] = useState<any | null>(null)
 
-    const res = await fetchAccountDataById(account)
+    const fetchData = useCallback(async () => {
+        try {
+            setLoading(true)
+            const res = await fetchAccountDataById(account)
 
-    if (!res.account_id) {
-        console.error("Error fetching account data!");
-        return <h1>Account not found!</h1>
-    }
+            if (res) {
+                setAccountData(res)
+            } else {
+                setError('Account not found')
+            }
+        } catch (error: any) {
+            console.log("An error occurred:", error)
+            setError('Failed to fetch account data')
+        } finally {
+            setLoading(false)
+        }
+    }, [account])
 
-    console.log("account data", res)
+    useEffect(() => {
+        fetchData()
+    }, [account, fetchData])
+
+    if (loading) return <Spinner />
+    if (error) return <h1>{error}</h1>
 
     return (
         <>
             <h1>Account: {account}</h1>
-            <h6>Account Name: {res.account_name}</h6>
-            <h6>Account Status: {res.status}</h6>
-            <h6>Amount due: {formatCurrency(res.amount_due)}</h6>
-            <h6>Amount Paid: {formatCurrency(res.amount_paid)}</h6>
-            <h6>Balance: {formatCurrency(res.balance)}</h6>
+            <h6>Account Name: {accountData.account_name}</h6>
+            <h6>Account Status: {accountData.status}</h6>
+            <h6>Amount due: {formatCurrency(accountData.amount_due)}</h6>
+            <h6>Amount Paid: {formatCurrency(accountData.amount_paid)}</h6>
+            <h6>Balance: {formatCurrency(accountData.balance)}</h6>
 
             <div className='pt-10'>
                 <DeleteButton account={account} />
