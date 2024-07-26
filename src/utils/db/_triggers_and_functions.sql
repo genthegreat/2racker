@@ -1,4 +1,4 @@
--- 'update_accounts' function
+                    -- 'update_accounts' function
 CREATE OR REPLACE FUNCTION update_accounts()
 RETURNS TRIGGER AS $$
 BEGIN
