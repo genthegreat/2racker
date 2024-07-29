@@ -34,3 +34,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+#db
+/src/utils/db/_triggers_and_functions.sql
+
+#backup repo
+backup-repo.*
