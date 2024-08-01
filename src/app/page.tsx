@@ -54,13 +54,13 @@ export default function Home() {
   if (loading) return <Spinner />;
 
   return (
-    <main className="flex min-h-screen w-screen flex-col items-center justify-center p-2 overflow-hidden">
+    <main className="flex min-h-96 w-screen flex-col items-center justify-center p-2 overflow-hidden whitespace-normal">
       <div className="max-w-full text-center">
         <h1 className="text-4xl md:text-6xl lg:text-9xl text-lime-600 break-words">Welcome {username ? username : ""}</h1>
         {!username && (
           <>
-            <h2 className="text-xl md:text-3xl text-blue-600 mt-4">Please Login to proceed</h2>
-            <Link href="/login" className="mt-4 p-3 border-solid border-2 rounded-2xl text-lg bg-cyan-500 border-amber-100">
+            <h2 className="text-xl md:text-3xl text-blue-600 my-10">Please Login to proceed</h2>
+            <Link href="/login" className="h-auto flex justify-center my-2 py-2 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
               Login
             </Link>
           </>
