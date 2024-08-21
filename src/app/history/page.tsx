@@ -4,16 +4,16 @@ import PaidTotal, { PaidTotalProps } from '@/components/paidTotal/paidTotal'
 import React from 'react'
 import { useState, useEffect } from "react"
 import { formatCurrency } from '../../utils/utils'
-import { getAccountData, getTransactionHistory } from '@/utils/db/dbFunctions'
+import { getAccountData, getTransactionHistory, getAccountDetails } from '@/utils/db/dbFunctions'
 import Spinner from '@/components/spinner/Spinner'
 import Link from 'next/link'
-import { Account } from '@/utils/db/types'
+import { Account, AccountDetails } from '@/utils/db/types'
 import { EyeIcon, PencilSquareIcon } from '@/components/icons'
 import { useProfileContext } from '@/context/ProfileContext'
 import { redirect } from 'next/navigation'
 
 export default function History() {
-  const [transactions, setTransactions] = useState<Account[] | null>([])
+  const [transactions, setTransactions] = useState<AccountDetails[] | null>([])
   const [accountData, setAccountData] = useState<PaidTotalProps | null>(null);
   const [loading, setLoading] = useState(true)
   const { profile, error, authState } = useProfileContext();
@@ -28,7 +28,7 @@ export default function History() {
       try {
         setLoading(true);
 
-        const getTransactions = await getTransactionHistory()
+        const getTransactions = await getAccountDetails()
         setTransactions(getTransactions)
 
         const accountResult = await getAccountData();
@@ -69,27 +69,27 @@ export default function History() {
             </thead>
             <tbody>
               {transactions.map(account => (
-                account?.projects?.map(project => (
-                  project?.amenities?.map(amenity => (
-                    amenity?.transactions?.map(transaction => (
-                      <tr key={`${account.account_id}-${project.project_name}-${amenity.amenity_name}-${transaction.transaction_id}`}>
-                        <td className="border border-green-600 px-2 md:px-5 py-4">{transaction.transaction_date}</td>
-                        <td className="border border-green-600 px-2 md:px-5 py-4">{account.account_name}</td>
-                        <td className="border border-green-600 px-2 md:px-5 py-4">{amenity.amenity_name}</td>
-                        <td className="border border-green-600 px-2 md:px-5 py-4">{formatCurrency(amenity.default_amount)}</td>
-                        <td className="border border-green-600 px-2 md:px-5 py-4">{formatCurrency(transaction.amount_paid)}</td>
-                        <td className="border border-green-600 px-2 md:px-5 py-4">{transaction.status}</td>
-                        <td className="border border-green-600 px-2 md:px-5 py-4 flex justify-center">
-                          <Link href={`/history/${transaction.transaction_id}`} className='flex flex-auto float-start px-5'>
-                            <EyeIcon />
-                          </Link>
-                          <Link href={`/history/${transaction.transaction_id}/update`} className='flex flex-auto float-end px-5'>
-                            <PencilSquareIcon />
-                          </Link>
-                        </td>
-                      </tr>
-                    ))
-                  ))
+                account?.transactions.map(transaction => (
+                  <tr key={`${account.account_id}-${transaction.transaction_id}`}>
+                    <td className="border border-green-600 px-2 md:px-5 py-4">{transaction.transaction_date}</td>
+                    <td className="border border-green-600 px-2 md:px-5 py-4">{account.account_name}</td>
+                    <td className="border border-green-600 px-2 md:px-5 py-4">
+                      {account?.amenities.length > 0 && account.amenities[0].amenity_name}
+                    </td>
+                    <td className="border border-green-600 px-2 md:px-5 py-4">
+                      {account.amenities.length > 0 && formatCurrency(account.amenities[0].default_amount)}
+                    </td>
+                    <td className="border border-green-600 px-2 md:px-5 py-4">{formatCurrency(transaction.amount_paid)}</td>
+                    <td className="border border-green-600 px-2 md:px-5 py-4">{transaction.status}</td>
+                    <td className="border border-green-600 px-2 md:px-5 py-4 flex justify-center">
+                      <Link href={`/history/${transaction.transaction_id}`} className='flex flex-auto float-start px-5'>
+                        <EyeIcon />
+                      </Link>
+                      <Link href={`/history/${transaction.transaction_id}/update`} className='flex flex-auto float-end px-5'>
+                        <PencilSquareIcon />
+                      </Link>
+                    </td>
+                  </tr>
                 ))
               ))}
             </tbody>

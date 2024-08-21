@@ -1,5 +1,5 @@
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { Account, Amenity, Project, Transaction } from "./types";
+import { Account, AccountDetails, Amenity, Project, Transaction } from "./types";
 
 export const supabase = createClientComponentClient();
 
@@ -147,6 +147,22 @@ export async function getTransactionHistory(): Promise<Account[]> {
 
   console.log("Transaction History", accounts);
   return accounts as Account[];
+}
+
+export async function getAccountDetails(): Promise<AccountDetails[]> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data: accountDetails, error } = await supabase
+    .rpc('get_account_details', { p_user_id: user?.id });
+
+  if (error) {
+    console.error(error);
+  }
+
+  console.log("Transaction History", accountDetails);
+  return accountDetails as AccountDetails[];
 }
 
 export async function getProfileData() {

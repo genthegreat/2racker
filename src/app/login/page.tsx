@@ -18,6 +18,7 @@ export default function Login() {
     const { profile } = useProfileContext();
     const formRef = useRef<HTMLFormElement>(null);
     const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     if (profile.id) {
         console.log('Profile', profile.id)
@@ -28,6 +29,7 @@ export default function Login() {
     const onVerify = (token: string) => {
         // console.log('Verification token:', token);
         setCaptchaToken(token);
+        setError(null)
     }
 
     const refresh = () => {
@@ -50,6 +52,7 @@ export default function Login() {
 
             if (captchaToken) {
                 formData.set("captchaToken", captchaToken);
+                setError(null)
 
                 switch (submitAction) {
                     case 'login':
@@ -66,6 +69,7 @@ export default function Login() {
                 }
             } else {
                 console.log('Captcha verification is required.');
+                setError('Captcha verification is required.')
             }
         } else {
             console.log('Form reference is null.');
@@ -116,6 +120,7 @@ export default function Login() {
                             <button className='text-xs my-2 ml-auto' onClick={refresh}>Refresh Captcha</button>
                         </div>
 
+                        {error && <p>{error}</p>}
                         <button type="submit" name='login' className="w-full flex justify-center my-2 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Log in</button>
                         <button type="submit" name='signup' className="w-full flex justify-center my-2 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Sign up</button>
 
