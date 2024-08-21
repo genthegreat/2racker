@@ -104,7 +104,7 @@ export default function Home() {
           </div>
           <div className="w-full px-1 lg:w-4/12">
             <SingleCard
-              CardTitle="Project and Amenity Management "
+              CardTitle="Project and Amenity Management"
               titleHref="/#"
               btnHref="/#"
               CardDescription="Easily manage and track the expenses associated with your various projects and amenities. Whether you're dealing with large-scale projects or everyday expenses, 2racker simplifies the process by offering tools to manage budgets, track due dates, and monitor payments. This ensures that you stay organized and in control of your financial commitments."
@@ -112,10 +112,10 @@ export default function Home() {
           </div>
           <div className="w-full px-1 lg:w-4/12">
             <SingleCard
-              CardTitle="Project and Amenity Management "
+              CardTitle="Real-Time Data Access"
               titleHref="/#"
               btnHref="/#"
-              CardDescription="Easily manage and track the expenses associated with your various projects and amenities. Whether you're dealing with large-scale projects or everyday expenses, 2racker simplifies the process by offering tools to manage budgets, track due dates, and monitor payments. This ensures that you stay organized and in control of your financial commitments."
+              CardDescription="In the fast-paced world of finance, having access to real-time data is crucial. 2racker's powerful backend ensures that all your account summaries, detailed reports, and transaction histories are available whenever you need them. This real-time access allows you to make quick, informed decisions that can help manage your debt more efficiently."
             />
           </div>
         </div>
