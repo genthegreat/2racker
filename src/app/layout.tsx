@@ -7,6 +7,7 @@ import { Providers } from "@/components/provider/ProfileProvider";
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from '@vercel/analytics/react';
 import Script from 'next/script'
+import ScrollToTop from "@/components/ScrollToTop";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,6 +36,7 @@ export default function RootLayout({
             {children}
             <Script src='https://challenges.cloudflare.com/turnstile/v0/api.js' async defer></Script>
           </main>
+          <ScrollToTop />
           <footer>
             <Footer />
           </footer>

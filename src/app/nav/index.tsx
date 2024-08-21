@@ -2,12 +2,13 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import './styles.css'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { usePathname } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
-const NavItem = ({ href, children }: {href: any, children: any}) => (
+const NavItem = ({ href, children }: { href: any, children: any }) => (
   <li className="block py-2 px-3 font-medium">
     <Link href={href}>
       {children}
@@ -18,15 +19,19 @@ const NavItem = ({ href, children }: {href: any, children: any}) => (
 export default function Navigation() {
   const { user, event, session } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   if (user) {
-    console.log('User', user, 'event', event, 'session', session )
+    console.log('User', user, 'event', event, 'session', session)
   }
 
   const handleToggle = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [pathname]);
 
   return (
     <nav className="bg-gray-900">
