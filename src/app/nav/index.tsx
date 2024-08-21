@@ -8,7 +8,7 @@ import { useAuth } from '@/context/AuthContext';
 export const dynamic = 'force-dynamic';
 
 const NavItem = ({ href, children }: {href: any, children: any}) => (
-  <li className="block py-2 px-3">
+  <li className="block py-2 px-3 font-medium">
     <Link href={href}>
       {children}
     </Link>
@@ -51,12 +51,12 @@ export default function Navigation() {
                 user
                   ?
                   <form action="/auth/signout" method="post">
-                    <button className="p-2 border bg-slate-950 text-red-800 rounded-xl" type="submit">
+                    <button className="inline-flex items-center justify-center rounded-xl bg-red-700 px-6 py-2 text-center font-medium text-white hover:bg-blue-dark lg:px-6" type="submit">
                       Sign out
                     </button>
                   </form>
                   :
-                  <Link href="/login" className='text-lime-300 bg-lime-950 p-2 border border-lime-50 rounded-xl uppercase'>Login</Link>
+                  <Link href="/login" className='inline-flex items-center justify-center rounded-xl bg-green-700 px-6 py-2 text-center font-medium text-white hover:bg-blue-dark lg:px-6'>Sign In</Link>
               }
             </li>
           </ul>
