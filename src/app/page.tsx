@@ -1,7 +1,7 @@
 'use client'
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Spinner from "@/components/spinner/Spinner";
 
 export default function Home() {
@@ -54,19 +54,45 @@ export default function Home() {
   if (loading) return <Spinner />;
 
   return (
-    <main className="flex min-h-96 w-screen flex-col items-center justify-center p-2 overflow-hidden whitespace-normal">
-      <div className="max-w-full text-center">
-        <h1 className="text-4xl md:text-6xl lg:text-9xl text-lime-600 break-words">Welcome {username ? username : ""}</h1>
-        {!username && (
-          <>
-            <h2 className="text-xl md:text-3xl text-blue-600 my-10">Please Login to proceed</h2>
-            <Link href="/login" className="h-auto flex justify-center my-2 py-2 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-              Login
-            </Link>
-          </>
-        )}
+    <main className="relative">
+      <div className="relative pb-[50px] pt-[50px] lg:pt-[50px]">
+        <div className="container">
+          <div className="-mx-4 flex flex-wrap">
+            <div className="w-full px-4 lg:w-5/12">
+              <div className="hero-content">
+                <h1 className="mb-5 text-4xl font-bold !leading-[1.208] text-gray-200 sm:text-[42px] lg:text-[40px] xl:text-5xl">
+                  Welcome <span className="capitalize">{username ? username : ""}</span> to 2racker
+                </h1>
+                <p className="mb-8 max-w-[480px] text-gray-600">
+                  Take control of your financial future with 2racker, the ultimate debt payment planner. Designed to streamline the management of multiple accounts, 2racker allows you to track payments, monitor balances, and oversee project finances all in one place. With real-time data synchronization, you can stay on top of your finances effortlessly, ensuring you never miss a payment.
+                </p>
+                <ul className="flex flex-wrap items-center">
+                  <li>
+                    <Link
+                      href={username ? "/home" : "/login"}
+                      className="inline-flex items-center justify-center rounded-md bg-blue-700 px-6 py-3 text-center font-medium text-white hover:bg-blue-dark lg:px-7"
+                    >
+                      {username ? "Get Started" : "Login"}
+                    </Link>
+                  </li>                  
+                </ul>
+              </div>
+            </div>
+            <div className="hidden px-4 lg:block lg:w-1/12"></div>
+            <div className="w-full px-4 lg:w-6/12">
+              <div className="lg:ml-auto lg:text-right">
+                <div className="relative inline-block pt-11 lg:pt-0">
+                  <img
+                    src="https://cdn.tailgrids.com/1.0/assets/images/hero/hero-image-01.png"
+                    alt="hero"
+                    className="max-w-full lg:ml-auto"
+                  />                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
-
   );
 }

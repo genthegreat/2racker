@@ -11,8 +11,8 @@ import Script from 'next/script'
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "2racker App",
-  description: "Payment Plan Tracker by Prince Kwesi",
+  title: "2racker | Debt Payment Planner by Prince Kwesi",
+  description: "Stay Organized, Pay On Time, and Reduce Your Debt",
   icons: {
     icon: "./favicon.ico",
     apple: "../public/favicon/apple-touch-icon.png"
