@@ -63,7 +63,7 @@ export default function Home() {
               <h1 className="mb-5 text-4xl font-bold !leading-[1.208] text-gray-200 sm:text-[42px] lg:text-[40px] xl:text-5xl">
                 Welcome <span className="capitalize">{username ? username : ""}</span> to 2racker
               </h1>
-              <p className="mb-8 max-w-[480px] text-gray-600">
+              <p className="mb-8 max-w-[480px] text-gray-600 text-justify">
                 Take control of your financial future with 2racker, the ultimate debt payment planner. Designed to streamline the management of multiple accounts, 2racker allows you to track payments, monitor balances, and oversee project finances all in one place. With real-time data synchronization, you can stay on top of your finances effortlessly, ensuring you never miss a payment.
               </p>
               <ul className="flex flex-wrap items-center">
