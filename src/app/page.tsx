@@ -66,11 +66,11 @@ export default function Home() {
               <p className="mb-8 max-w-[480px] text-gray-600 text-justify">
                 Take control of your financial future with 2racker, the ultimate debt payment planner. Designed to streamline the management of multiple accounts, 2racker allows you to track payments, monitor balances, and oversee project finances all in one place. With real-time data synchronization, you can stay on top of your finances effortlessly, ensuring you never miss a payment.
               </p>
-              <ul className="flex flex-wrap items-center">
+              <ul className="flex flex-wrap justify-center md:justify-start items-center">
                 <li>
                   <Link
                     href={username ? "/home" : "/login"}
-                    className="inline-flex items-center justify-center rounded-md bg-blue-700 px-6 py-3 text-center font-medium text-white hover:bg-blue-dark lg:px-7"
+                    className="inline-flex rounded-md bg-blue-700 px-6 py-3 text-center font-medium text-white hover:bg-blue-dark lg:px-7"
                   >
                     {username ? "Get Started" : "Login"}
                   </Link>
