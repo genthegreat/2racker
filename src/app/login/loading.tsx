@@ -3,7 +3,7 @@ import React from 'react'
 
 export default function loading() {
   return (
-      <div>
+      <div className='flex flex-col justify-center items-center'>
           <Spinner />
           <span>loading...</span>
       </div>
