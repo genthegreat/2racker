@@ -19,7 +19,7 @@ export const SingleCard = ({
                             {CardTitle}
                         </a>
                     </h3>
-                    <p className="mb-7 text-justify lg:text-center text-base leading-relaxed text-body-color">
+                    <p className="mb-7 text-justify text-sm text-gray-600">
                         {CardDescription}
                     </p>
 
