@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+
 import { useProfileContext } from '@/context/ProfileContext';
 import Spinner from '@/components/spinner/Spinner';
 import { redirect } from 'next/navigation';

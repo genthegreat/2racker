@@ -1,7 +1,7 @@
 "use client"
 
 import PaidTotal, { PaidTotalProps } from '@/components/paidTotal/paidTotal'
-import React from 'react'
+
 import { useState, useEffect } from "react"
 import { formatCurrency } from '@/utils/utils'
 import Link from 'next/link'
