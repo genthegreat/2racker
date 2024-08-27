@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react'
+
 import ProgressLine from '../ProgressLine/ProgressLine';
 import { formatCurrency } from '@/utils/utils';
 

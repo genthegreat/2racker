@@ -5,25 +5,44 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/utils/supabase/server";
 import { serializeError } from "@/utils/utils";
+import { FormState } from "@/utils/db/types";
+import { projectSchema } from "@/utils/db/schema";
 
 const supabase = createClient();
 
-export async function submit(formData: FormData) {
-  const data = {
-    project_name: formData.get("name") as string,
-    description: formData.get("description") as string,
-    account_id: formData.get("accountId"),
+export async function onSubmitAction(data: FormData): Promise<FormState> {
+  console.log("Raw formData:", data);
+  const formData = Object.fromEntries(data.entries());
+
+  const processedData = {
+    ...formData,
+    account_id: formData.account_id ? Number(formData.account_id) : null, // Convert to number
   };
 
-  console.log(data);
+  console.log("Processed formData:", processedData);
 
-  const { error } = await supabase.from("projects").insert([data]).select();
+  const parsed = projectSchema.safeParse(processedData);
+  console.log("Parsed result:", parsed);
 
-  if (error)
-    redirect("/error?error=" + encodeURIComponent(serializeError(error)));
+  if (!parsed.success) {
+    return {
+      status: 400,
+      message: `Invalid data. Error: ${parsed.error.message}`,
+    };
+  }
 
-  revalidatePath("/", "layout");
-  redirect("/accounts");
+  if (parsed.data.project_name.includes("test")) {
+    return { status: 401, message: "Invalid Input. Name uses keyword." };
+  }
+
+  const { error } = await supabase
+    .from("projects")
+    .insert([parsed.data])
+    .select();
+
+  if (error) return { status: 406, message: `Database error: ${error}` };
+
+  return { status: 201, message: "Project Added Successfully!" };
 }
 
 export async function update(formData: FormData) {
@@ -56,27 +75,31 @@ export async function update(formData: FormData) {
   }
 }
 
-export async function del(project_id: number) {
-  const { data: { user }, error } = await supabase.auth.getUser();
+export async function onDeleteAction(project_id: number) {
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
 
   if (error || !user) {
     console.error("User not logged in or unexpected error:", error);
-    redirect("/login");
+    return { success: false, error: "User not logged in" };
   }
 
   try {
-    const { data, error } = await supabase.rpc("delete_project", { project_id });
+    const { data, error } = await supabase.rpc("delete_project", {
+      project_id,
+    });
 
     if (error) {
       console.error("Error deleting project:", error.message);
-      redirect("/error?error=" + encodeURIComponent(serializeError(error)));
+      return { success: false, error: error.message };
     } else {
       console.log("Project deleted successfully:", data);
-      revalidatePath("/", "layout");
-      redirect("/projects");
+      return { success: true };
     }
   } catch (error) {
     console.error("Unexpected error:", error);
-    redirect("/error?error=" + encodeURIComponent(serializeError(error)));
+    return { success: false, error: "Unexpected error occurred" };
   }
 }

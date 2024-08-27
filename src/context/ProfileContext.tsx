@@ -40,7 +40,7 @@ export const ProfileContextProvider = ({ children }: { children: React.ReactNode
     const fetchProfile = async (userId: string) => {
       setLoading(true);
       try {
-        console.log('Fetching profile at:', new Date().toLocaleTimeString());
+        // console.log('Fetching profile at:', new Date().toLocaleTimeString());
         const { data, error, status } = await supabase
           .from('profiles')
           .select('*')
@@ -48,17 +48,17 @@ export const ProfileContextProvider = ({ children }: { children: React.ReactNode
           .single();
 
         if (error && status !== 406) {
-          console.log('fetchProfile inner error:', error);
+          // console.log('fetchProfile inner error:', error);
           setError(error);
           throw error;
         }
 
         if (data) {
-          console.log('Profile data:', data);
+          // console.log('Profile data:', data);
           setProfile(data);
         }
       } catch (error) {
-        console.log('fetchProfile outer error:', error);
+        // console.log('fetchProfile outer error:', error);
         setError(error);
       } finally {
         setLoading(false);
@@ -67,7 +67,7 @@ export const ProfileContextProvider = ({ children }: { children: React.ReactNode
 
     // Function to handle authentication state changes
     const handleAuthChange = (event: string, session: any) => {
-      console.log('onAuthStateChange event at:', new Date().toLocaleTimeString(), 'event:', event);
+      // console.log('onAuthStateChange event at:', new Date().toLocaleTimeString(), 'event:', event);
       // Update the authentication state based on whether a session exists
       setAuthState({ status: session ? 'SIGNED_IN' : 'SIGNED_OUT' });
     };
@@ -77,7 +77,7 @@ export const ProfileContextProvider = ({ children }: { children: React.ReactNode
 
     // Check the current authentication session when the component mounts
     supabase.auth.getSession().then(({ data }) => {
-      console.log('Get session response at:', new Date().toLocaleTimeString(), 'data:', data);
+      // console.log('Get session response at:', new Date().toLocaleTimeString(), 'data:', data);
       // Update the authentication state based on whether a session exists
       setAuthState({ status: data.session ? 'SIGNED_IN' : 'SIGNED_OUT' });
       // If there is a session, fetch the user profile

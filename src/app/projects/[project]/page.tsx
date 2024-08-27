@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { getProjectData, getProjects } from "@/utils/db/dbFunctions"
 import { formatCurrency } from "@/utils/utils"
 import DeleteButton from "../deleteButton"
-import Spinner from '@/components/spinner/Spinner'
+import Loading from './loading'
 
 // Return a list of `params` to populate the [id] dynamic segment
 // export async function generateStaticParams() {
@@ -44,7 +44,7 @@ export default function ProjectDetail({ params }: { params: { project: number } 
         fetchData()
     }, [project, fetchData])
 
-    if (loading) return  <Spinner />
+    if (loading) return <Loading />
     if (error) return <h1>{error}</h1>
 
     return (

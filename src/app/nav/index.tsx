@@ -21,9 +21,9 @@ export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
 
-  if (user) {
-    console.log('User', user, 'event', event, 'session', session)
-  }
+  // if (user) {
+  //   console.log('User', user, 'event', event, 'session', session)
+  // }
 
   const handleToggle = () => {
     setIsMenuOpen(!isMenuOpen);
