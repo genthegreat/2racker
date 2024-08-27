@@ -26,9 +26,13 @@ export async function onSubmitAction(data: FormData): Promise<FormState> {
 
   if (!parsed.success) {
     return {
-      status: 404,
+      status: 400,
       message: `Invalid data. Error: ${parsed.error.message}`,
     };
+  }
+
+  if (parsed.data.project_name.includes("test")) {
+    return { status: 401, message: "Invalid Input. Name uses keyword." };
   }
 
   const { error } = await supabase
@@ -36,12 +40,9 @@ export async function onSubmitAction(data: FormData): Promise<FormState> {
     .insert([parsed.data])
     .select();
 
-  if (error) return { status: 200, message: `Database error: ${error}` };
-  //   redirect("/error?error=" + encodeURIComponent(serializeError(error)));
+  if (error) return { status: 406, message: `Database error: ${error}` };
 
-  // revalidatePath("/", "layout");
-  // redirect("/accounts");
-  return { status: 200, message: "Project Added!" };
+  return { status: 201, message: "Project Added Successfully!" };
 }
 
 export async function update(formData: FormData) {
@@ -74,7 +75,7 @@ export async function update(formData: FormData) {
   }
 }
 
-export async function del(project_id: number) {
+export async function onDeleteAction(project_id: number) {
   const {
     data: { user },
     error,
@@ -82,7 +83,7 @@ export async function del(project_id: number) {
 
   if (error || !user) {
     console.error("User not logged in or unexpected error:", error);
-    redirect("/login");
+    return { success: false, error: "User not logged in" };
   }
 
   try {
@@ -92,14 +93,13 @@ export async function del(project_id: number) {
 
     if (error) {
       console.error("Error deleting project:", error.message);
-      redirect("/error?error=" + encodeURIComponent(serializeError(error)));
+      return { success: false, error: error.message };
     } else {
       console.log("Project deleted successfully:", data);
-      revalidatePath("/", "layout");
-      redirect("/projects");
+      return { success: true };
     }
   } catch (error) {
     console.error("Unexpected error:", error);
-    redirect("/error?error=" + encodeURIComponent(serializeError(error)));
+    return { success: false, error: "Unexpected error occurred" };
   }
 }
