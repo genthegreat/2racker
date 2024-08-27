@@ -51,28 +51,33 @@ export interface Profile {
 }
 
 export interface AccountDetails {
-  account_id: number;
-  account_name: string;
-  status: string;
-  amount_due: number;
-  amount_paid: number;
-  balance: number;
-  start_date?: string;
-  amenities: AmenityDetails[];
-  transactions: TransactionDetails[];
+  account_id: number,
+  account_name: string,
+  status: string,
+  amount_due: number,
+  amount_paid: number,
+  balance: number,
+  start_date?: string,
+  amenities: AmenityDetails[],
+  transactions: TransactionDetails[],
 }
 
 export interface AmenityDetails {
-  amenity_id: number;
-  amenity_name: string;
-  default_amount: number;
+  amenity_id: number,
+  amenity_name: string,
+  default_amount: number,
 }
 
 export interface TransactionDetails {
-  transaction_id: number;
-  amount_paid: number;
-  transaction_date: string;
-  platform: string;
-  receipt_info: string;
-  status: string;
+  transaction_id: number,
+  amount_paid: number,
+  transaction_date: string,
+  platform: string,
+  receipt_info: string,
+  status: string,
+}
+
+export type FormState = {
+  status: number,
+  message: string
 }

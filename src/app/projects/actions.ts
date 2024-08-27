@@ -5,25 +5,43 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/utils/supabase/server";
 import { serializeError } from "@/utils/utils";
+import { FormState } from "@/utils/db/types";
+import { projectSchema } from "@/utils/db/schema";
 
 const supabase = createClient();
 
-export async function submit(formData: FormData) {
-  const data = {
-    project_name: formData.get("name") as string,
-    description: formData.get("description") as string,
-    account_id: formData.get("accountId"),
+export async function onSubmitAction(data: FormData): Promise<FormState> {
+  console.log("Raw formData:", data);
+  const formData = Object.fromEntries(data.entries());
+
+  const processedData = {
+    ...formData,
+    account_id: formData.account_id ? Number(formData.account_id) : null, // Convert to number
   };
 
-  console.log(data);
+  console.log("Processed formData:", processedData);
 
-  const { error } = await supabase.from("projects").insert([data]).select();
+  const parsed = projectSchema.safeParse(processedData);
+  console.log("Parsed result:", parsed);
 
-  if (error)
-    redirect("/error?error=" + encodeURIComponent(serializeError(error)));
+  if (!parsed.success) {
+    return {
+      status: 404,
+      message: `Invalid data. Error: ${parsed.error.message}`,
+    };
+  }
 
-  revalidatePath("/", "layout");
-  redirect("/accounts");
+  const { error } = await supabase
+    .from("projects")
+    .insert([parsed.data])
+    .select();
+
+  if (error) return { status: 200, message: `Database error: ${error}` };
+  //   redirect("/error?error=" + encodeURIComponent(serializeError(error)));
+
+  // revalidatePath("/", "layout");
+  // redirect("/accounts");
+  return { status: 200, message: "Project Added!" };
 }
 
 export async function update(formData: FormData) {
@@ -57,7 +75,10 @@ export async function update(formData: FormData) {
 }
 
 export async function del(project_id: number) {
-  const { data: { user }, error } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
 
   if (error || !user) {
     console.error("User not logged in or unexpected error:", error);
@@ -65,7 +86,9 @@ export async function del(project_id: number) {
   }
 
   try {
-    const { data, error } = await supabase.rpc("delete_project", { project_id });
+    const { data, error } = await supabase.rpc("delete_project", {
+      project_id,
+    });
 
     if (error) {
       console.error("Error deleting project:", error.message);

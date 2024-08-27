@@ -81,7 +81,7 @@ export async function getAllAccounts(): Promise<Account[]> {
     console.error(error);
   }
 
-  console.log(accounts);
+  // console.log(accounts);
   return accounts as Account[];
 }
 
