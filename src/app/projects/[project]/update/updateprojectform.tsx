@@ -1,7 +1,7 @@
 import { getAllAccounts, getProjectData } from "@/utils/db/dbFunctions";
 import { Account } from "@/utils/db/types";
 import { useCallback, useEffect, useState } from "react";
-import { del, update } from "../../actions";
+import { onDeleteAction, update } from "../../actions";
 import { useRouter } from "next/navigation";
 
 export default function UpdateProjectForm({ project }: { project: number }) {
@@ -62,7 +62,7 @@ export default function UpdateProjectForm({ project }: { project: number }) {
         try {
             setLoading(true)
             if(confirm(`Are you sure you want to delete this transaction: ${project}`)) {
-                await del(project)
+                await onDeleteAction(project)
             } else {
                 router.refresh()
             }
