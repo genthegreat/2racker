@@ -4,7 +4,7 @@ import { getAllAccounts } from "@/utils/db/dbFunctions";
 import { Account } from "@/utils/db/types";
 import { useEffect, useState } from "react";
 import { onSubmitAction } from "../actions";
-import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { DevTool } from "@hookform/devtools"
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -14,7 +14,9 @@ import Modal from "@/components/Modal";
 export default function AddProjectForm() {
     const [accountData, setAccountData] = useState<Account[] | null>(null)
     const [modalOpen, setModalOpen] = useState(false);
+    const [modalStatus, setModalStatus] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
+    const [modalRedirect, setModalRedirect] = useState<string | undefined>();
 
     const {
         register,
@@ -45,12 +47,16 @@ export default function AddProjectForm() {
 
         const response = await onSubmitAction(formData);
 
-        if (response.status === 200) {
-            setModalMessage("Project Added Successfully!");
+        if (response.status === 201) {
+            setModalMessage(response.message);
             setModalOpen(true);
+            setModalStatus(true);
+            setModalRedirect("/projects")
         } else {
             setModalMessage(`Failed to add project: ${response.message}`);
             setModalOpen(true);
+            setModalStatus(false);
+            setModalRedirect(undefined)
         }
     }
 
@@ -110,7 +116,7 @@ export default function AddProjectForm() {
                                     </div>
                                 </form>
                                 <DevTool control={control} />
-                                <Modal open={modalOpen} onClose={() => setModalOpen(false)} message={modalMessage} />
+                                <Modal open={modalOpen} onClose={() => setModalOpen(false)} success={modalStatus} message={modalMessage} redirectUrl={modalRedirect} />
                             </div>
                         </div>
                     </div>
