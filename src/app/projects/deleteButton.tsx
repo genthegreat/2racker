@@ -12,7 +12,7 @@ export default function DeleteButton({ project }: { project: number }) {
     const [modalSuccess, setModalSuccess] = useState(false);
 
     async function handleDelete() {
-        if (confirm(`Are you sure you want to delete this project: ${ project }`)) {
+        if (confirm(`Are you sure you want to delete this project: ${project}`)) {
             try {
                 setLoading(true);
                 const result = await onDeleteAction(project);
@@ -28,7 +28,6 @@ export default function DeleteButton({ project }: { project: number }) {
                 // Show modal and set redirect URL after a short delay
                 setModalOpen(true);
             } catch (error) {
-                console.error('Failed to delete project:', error);
                 setModalMessage('Failed to delete project.');
                 setModalSuccess(false);
                 setModalOpen(true);
