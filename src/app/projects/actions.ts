@@ -1,16 +1,12 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-
 import { createClient } from "@/utils/supabase/server";
-import { serializeError } from "@/utils/utils";
 import { FormState } from "@/utils/db/types";
-import { projectSchema } from "@/utils/db/schema";
+import { deleteProjectArgsSchema, projectSchema } from "@/utils/db/schema";
 
 const supabase = createClient();
 
-export async function onSubmitAction(data: FormData): Promise<FormState> {
+export async function onCreateAction(data: FormData): Promise<FormState> {
   console.log("Raw formData:", data);
   const formData = Object.fromEntries(data.entries());
 
@@ -45,37 +41,68 @@ export async function onSubmitAction(data: FormData): Promise<FormState> {
   return { status: 201, message: "Project Added Successfully!" };
 }
 
-export async function update(formData: FormData) {
+export async function onUpdateAction(formData: FormData): Promise<FormState> {
   try {
-    const project_id = formData.get("id");
+    const project_id = formData.get("project_id");
 
     const form = {
-      project_name: formData.get("name") as string,
+      project_name: formData.get("project_name") as string,
       description: formData.get("description") as string,
-      account_id: formData.get("accountId"),
+      account_id: formData.get("accountId")
+        ? Number(formData.get("accountId"))
+        : null,
     };
 
-    console.log(form);
+    // Parse the form data using Zod schema
+    const parsed = projectSchema.safeParse(form);
+    if (!parsed.success) {
+      return {
+        status: 400,
+        message: `Invalid data. Error: ${parsed.error.message}`,
+        success: false,
+      };
+    }
 
-    const { data, error, status } = await supabase
+    // Perform additional custom validation if needed
+    if (parsed.data.project_name.includes("test")) {
+      return {
+        status: 401,
+        message: "Invalid Input. Name uses keyword.",
+        success: false,
+      };
+    }
+
+    // Proceed with updating the project in the database
+    const { error, status } = await supabase
       .from("projects")
-      .update(form)
+      .update(parsed.data)
       .eq("project_id", project_id)
       .select();
 
-    console.log("status code", status);
+    if (error) {
+      return {
+        status: status,
+        message: `Database error: ${error.message}`,
+        success: false,
+      };
+    }
 
-    if (error) throw error;
-
-    if (data) console.log("Project Updated!", data);
-    return { success: true, data, status };
+    return {
+      status: status,
+      message: "Project Updated Successfully!",
+      success: true,
+    };
   } catch (error: any) {
-    console.log("An error occured!", error);
-    return { success: false, error: error.message };
+    console.log("An error occurred!", error);
+    return {
+      status: 500,
+      message: `Unexpected error: ${error.message}`,
+      success: false,
+    };
   }
 }
 
-export async function onDeleteAction(project_id: number) {
+export async function onDeleteAction(project_id: number): Promise<FormState> {
   const {
     data: { user },
     error,
@@ -83,23 +110,48 @@ export async function onDeleteAction(project_id: number) {
 
   if (error || !user) {
     console.error("User not logged in or unexpected error:", error);
-    return { success: false, error: "User not logged in" };
+    return {
+      status: 401,
+      message: "User not logged in",
+      success: false,
+    };
   }
-
+  
   try {
-    const { data, error } = await supabase.rpc("delete_project", {
-      project_id,
-    });
+    // Validate the project_id using Zod schema
+    const projectIdNumber = Number(project_id);
+    const parsed = deleteProjectArgsSchema.safeParse({ project_id: projectIdNumber });
+    if (!parsed.success) {
+      console.error("Parsing error:", parsed.error.message);
+      return {
+        status: 400,
+        message: `Invalid data. Error: ${parsed.error.message}`,
+        success: false,
+      };
+    }
+
+    const { data, error } = await supabase.rpc("delete_project", parsed.data);
 
     if (error) {
       console.error("Error deleting project:", error.message);
-      return { success: false, error: error.message };
-    } else {
-      console.log("Project deleted successfully:", data);
-      return { success: true };
+      return {
+        status: 406,
+        message: `Error deleting project: ${error.message}`,
+        success: false,
+      };
     }
-  } catch (error) {
+
+    return {
+      status: 200,
+      message: "Project deleted successfully!",
+      success: true,
+    };
+  } catch (error: any) {
     console.error("Unexpected error:", error);
-    return { success: false, error: "Unexpected error occurred" };
+    return {
+      status: 500,
+      message: "Unexpected error occurred",
+      success: false,
+    };
   }
 }
