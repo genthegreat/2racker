@@ -1,16 +1,12 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-
 import { createClient } from "@/utils/supabase/server";
-import { serializeError } from "@/utils/utils";
 import { FormState } from "@/utils/db/types";
 import { projectSchema } from "@/utils/db/schema";
 
 const supabase = createClient();
 
-export async function onSubmitAction(data: FormData): Promise<FormState> {
+export async function onCreateAction(data: FormData): Promise<FormState> {
   console.log("Raw formData:", data);
   const formData = Object.fromEntries(data.entries());
 
