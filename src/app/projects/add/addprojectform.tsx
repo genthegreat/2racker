@@ -51,12 +51,10 @@ export default function AddProjectForm() {
             setModalMessage(response.message);
             setModalOpen(true);
             setModalStatus(true);
-            setModalRedirect("/projects")
         } else {
             setModalMessage(`Failed to add project: ${response.message}`);
             setModalOpen(true);
             setModalStatus(false);
-            setModalRedirect(undefined)
         }
     }
 
@@ -108,7 +106,7 @@ export default function AddProjectForm() {
                 </div>
             </form>
             <DevTool control={control} />
-            <Modal open={modalOpen} onClose={() => setModalOpen(false)} success={modalStatus} message={modalMessage} redirectUrl={modalRedirect} />
+            <Modal open={modalOpen} onClose={() => setModalOpen(false)} success={modalStatus} message={modalMessage} redirectUrl={modalStatus ? "/projects" : undefined} />
         </>
     );
 }

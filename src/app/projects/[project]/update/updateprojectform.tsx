@@ -66,11 +66,9 @@ export default function UpdateProjectForm({ project }: { project: number }) {
     if (response.success) {
       setModalMessage("Project updated successfully!");
       setModalStatus(true);
-      setModalRedirect("/projects");
     } else {
       setModalMessage(`Failed to update project: ${response.message}`);
       setModalStatus(false);
-      setModalRedirect(undefined);
     }
 
     setModalOpen(true);
@@ -174,7 +172,7 @@ export default function UpdateProjectForm({ project }: { project: number }) {
         </div>
       </form>
       <DevTool control={control} />
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} success={modalStatus} message={modalMessage} redirectUrl={modalRedirect} />
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} success={modalStatus} message={modalMessage} redirectUrl={modalStatus ? "/projects" : undefined} />
     </>
   );
 }
