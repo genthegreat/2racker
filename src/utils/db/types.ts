@@ -79,5 +79,6 @@ export interface TransactionDetails {
 
 export type FormState = {
   status: number,
-  message: string
+  message: string,
+  success?: boolean
 }

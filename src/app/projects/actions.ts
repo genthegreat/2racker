@@ -41,33 +41,46 @@ export async function onCreateAction(data: FormData): Promise<FormState> {
   return { status: 201, message: "Project Added Successfully!" };
 }
 
-export async function update(formData: FormData) {
+export async function onUpdateAction(formData: FormData): Promise<FormState> {
   try {
-    const project_id = formData.get("id");
+    const project_id = formData.get("project_id");
 
     const form = {
-      project_name: formData.get("name") as string,
+      project_name: formData.get("project_name") as string,
       description: formData.get("description") as string,
-      account_id: formData.get("accountId"),
+      account_id: formData.get("accountId") ? Number(formData.get("accountId")) : null,
     };
 
-    console.log(form);
+    // Parse the form data using Zod schema
+    const parsed = projectSchema.safeParse(form);
+    if (!parsed.success) {
+      return {
+        status: 400,
+        message: `Invalid data. Error: ${parsed.error.message}`,
+        success: false,
+      };
+    }
 
-    const { data, error, status } = await supabase
+    // Perform additional custom validation if needed
+    if (parsed.data.project_name.includes("test")) {
+      return { status: 401, message: "Invalid Input. Name uses keyword.", success: false };
+    }
+
+    // Proceed with updating the project in the database
+    const { error, status } = await supabase
       .from("projects")
-      .update(form)
+      .update(parsed.data)
       .eq("project_id", project_id)
       .select();
 
-    console.log("status code", status);
+    if (error) {
+      return { status: status, message: `Database error: ${error.message}`, success: false };
+    }
 
-    if (error) throw error;
-
-    if (data) console.log("Project Updated!", data);
-    return { success: true, data, status };
+    return { status: status, message: "Project Updated Successfully!", success: true };
   } catch (error: any) {
-    console.log("An error occured!", error);
-    return { success: false, error: error.message };
+    console.log("An error occurred!", error);
+    return { status: 500, message: `Unexpected error: ${error.message}`, success: false };
   }
 }
 
