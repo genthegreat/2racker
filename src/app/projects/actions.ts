@@ -7,7 +7,6 @@ import { deleteProjectArgsSchema, projectSchema } from "@/utils/db/schema";
 const supabase = createClient();
 
 export async function onCreateAction(data: FormData): Promise<FormState> {
-  console.log("Raw formData:", data);
   const formData = Object.fromEntries(data.entries());
 
   const processedData = {

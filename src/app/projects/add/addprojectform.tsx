@@ -16,7 +16,6 @@ export default function AddProjectForm() {
     const [modalOpen, setModalOpen] = useState(false);
     const [modalStatus, setModalStatus] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
-    const [modalRedirect, setModalRedirect] = useState<string | undefined>();
 
     const {
         register,

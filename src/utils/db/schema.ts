@@ -1,14 +1,16 @@
 import { z } from "zod";
 
 export const accountSchema = z.object({
-  account_id: z.never(),
-  account_name: z.string().nullable().optional(),
+  account_id: z.number().optional(),
+  account_name: z.string().min(1, {
+    message: "Account name is required",
+  }),
   amount_due: z.number().optional(),
   amount_paid: z.number().optional(),
   balance: z.number().optional(),
-  start_date: z.string(),
-  status: z.string().nullable().optional(),
-  user_id: z.string(),
+  start_date: z.string().date("Date of format YYYY-MM-DD is required"),
+  status: z.string(),
+  user_id: z.string().optional(),
 });
 
 export const amenitySchema = z.object({
@@ -28,15 +30,15 @@ export const profileSchema = z.object({
 });
 
 export const projectSchema = z.object({
-    account_id: z.number({
-        message: "Account is Required"
-    }),
-    amount_due: z.number().nullable().optional(),
-    amount_paid: z.number().nullable().optional(),
-    description: z.string().nullable().optional(),
-    project_name: z.string().min(1, {
-        message: "Project name is required"
-    }),
+  account_id: z.number({
+    message: "Account is Required",
+  }),
+  amount_due: z.number().nullable().optional(),
+  amount_paid: z.number().nullable().optional(),
+  description: z.string().nullable().optional(),
+  project_name: z.string().min(1, {
+    message: "Project name is required",
+  }),
   project_id: z.number().optional(),
 });
 
