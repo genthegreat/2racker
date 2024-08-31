@@ -1,4 +1,4 @@
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClientComponentClient, User } from "@supabase/auth-helpers-nextjs";
 import { Account, AccountDetails, Amenity, Project, Transaction } from "./types";
 
 export const supabase = createClientComponentClient();
@@ -7,6 +7,15 @@ export const supabase = createClientComponentClient();
 Note to self: 
 - Standardize function names. use 'get' for mulitple and 'fetch' for singular returns
 */
+
+export async function getCurrentUser(): Promise<User> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  console.log(user);
+  return user as User;
+}
 
 export async function getAccountData() {
   const {

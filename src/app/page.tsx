@@ -97,28 +97,28 @@ export default function Home() {
           <div className="w-full pb-[50px]">
             <h1 className="uppercase text-3xl font-bold">What about 2racker</h1>
           </div>
-          <div className="w-full lg:w-1/2 px-2">
+          <div className="w-full lg:w-1/2 px-2 mb-5">
             <SingleCard
               CardTitle="Detailed Transaction Histories"
               btnHref="/#"
               CardDescription="Transparency is key to effective financial management. 2racker provides detailed transaction histories for every account, allowing you to review essential details such as payment amounts, dates, platforms, and receipt information. This feature ensures that you have all the information you need to make informed financial decisions, at your fingertips."
             />
           </div>
-          <div className="w-full lg:w-1/2 px-2">
+          <div className="w-full lg:w-1/2 px-2 mb-5">
             <SingleCard
               CardTitle="Project and Amenity Management"
               btnHref="/#"
               CardDescription="Easily manage and track the expenses associated with your various projects and amenities. Whether you're dealing with large-scale projects or everyday expenses, 2racker simplifies the process by offering tools to manage budgets, track due dates, and monitor payments. This ensures that you stay organized and in control of your financial commitments."
             />
           </div>
-          <div className="w-full lg:w-1/2 px-2">
+          <div className="w-full lg:w-1/2 px-2 mb-5">
             <SingleCard
               CardTitle="Real-Time Data Access"
               btnHref="/#"
               CardDescription="In today's world, having access to real-time data is crucial. 2racker's powerful backend ensures that all your account summaries, detailed reports, and transaction histories are available whenever you need them. This real-time access allows you to make quick, informed decisions that can help manage your debt more efficiently."
             />
           </div>
-          <div className="w-full lg:w-1/2 px-2">
+          <div className="w-full lg:w-1/2 px-2 mb-5">
             <SingleCard
               CardTitle="Tailored for Every User"
               btnHref="/#"

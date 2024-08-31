@@ -4,27 +4,55 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { serializeError } from "@/utils/utils";
+import { FormState } from "@/utils/db/types";
+import { accountSchema } from "@/utils/db/schema";
 
 const supabase = createClient();
 
-export async function submit(id: string, formData: FormData) {
-  const data = {
-    account_name: formData.get("name") as string,
-    start_date: formData.get("startDate") as string,
-    status: (formData.get("status") as string).toLowerCase(),
+export async function onCreateAction(data: FormData): Promise<FormState> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data: { session } } = await supabase.auth.getSession()
+
+  if (!user) {
+    return {
+      status: 401,
+      message: "User not authenticated.",
+    };
+  }
+
+  const { id } = user;
+
+  console.log("Raw formData:", data);
+  const formData = Object.fromEntries(data.entries());
+
+  const processedData = {
+    ...formData,
     user_id: id,
   };
 
-  console.log(data);
+  console.log("Processed formData:", processedData);
 
-  const { error } = await supabase.from("accounts").insert([data]);
+  const parsed = accountSchema.safeParse(processedData);
+  console.log("Parsed result:", parsed);
 
-  if (error) {
-    redirect('/error?error=' + encodeURIComponent(serializeError(error)))
+  if (!parsed.success) {
+    return {
+      status: 400,
+      message: `Invalid data. Error: ${parsed.error.message}`,
+    };
   }
 
-  revalidatePath("/", "layout");
-  redirect("/accounts");
+  const { error } = await supabase.from("accounts").insert([parsed.data]);
+
+  console.log(error);
+
+  if (error)
+    return { status: 406, message: `Database error: ${error.message}` };
+
+  return { status: 201, message: "Account Added Successfully!" };
 }
 
 export async function update(formData: FormData) {
@@ -58,26 +86,34 @@ export async function update(formData: FormData) {
 }
 
 export async function del(accountId: number) {
-  const { data: { user }, error } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
 
   if (error || !user) {
-    console.error('User not logged in or unexpected error:', error);
-    redirect('/login');
+    console.error("User not logged in or unexpected error:", error);
+    redirect("/login");
   }
 
   try {
-    const { data, error: deleteAccountError } = await supabase.rpc('delete_account', { account_id: accountId });
+    const { data, error: deleteAccountError } = await supabase.rpc(
+      "delete_account",
+      { account_id: accountId }
+    );
 
     if (deleteAccountError) {
-      console.error('Error deleting account:', deleteAccountError.message);
-      redirect('/error?error=' + encodeURIComponent(serializeError(deleteAccountError)));
+      console.error("Error deleting account:", deleteAccountError.message);
+      redirect(
+        "/error?error=" + encodeURIComponent(serializeError(deleteAccountError))
+      );
     } else {
-      console.log('Account deleted successfully:', data);
-      revalidatePath('/', 'layout');
-      redirect('/accounts');
+      console.log("Account deleted successfully:", data);
+      revalidatePath("/", "layout");
+      redirect("/accounts");
     }
   } catch (error) {
-    console.error('Unexpected error:', error);
-    redirect('/error?error=' + encodeURIComponent(serializeError(error)));
+    console.error("Unexpected error:", error);
+    redirect("/error?error=" + encodeURIComponent(serializeError(error)));
   }
 }
