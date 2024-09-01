@@ -5,17 +5,6 @@ import { formatCurrency } from "@/utils/utils"
 import DeleteButton from "../deleteButton"
 import Loading from './loading'
 
-// // Return a list of `params` to populate the [id] dynamic segment
-// export async function generateStaticParams() {
-//     const accounts = await getAllAccounts()
-
-//     console.log('accounts loaded', accounts)
-
-//     return accounts.map((account) => ({
-//         account: account.account_id.toString()
-//     }))
-// }
-
 export default function AccountDetail({ params }: { params: { account: number } }) {
     const { account } = params
     const [loading, setLoading] = useState(true)

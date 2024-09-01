@@ -14,8 +14,6 @@ export async function onCreateAction(data: FormData): Promise<FormState> {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: { session } } = await supabase.auth.getSession()
-
   if (!user) {
     return {
       status: 401,
@@ -55,7 +53,7 @@ export async function onCreateAction(data: FormData): Promise<FormState> {
   return { status: 201, message: "Account Added Successfully!" };
 }
 
-export async function update(formData: FormData) {
+export async function onUpdateAction(formData: FormData): Promise<FormState> {
   try {
     const account_id = formData.get("id");
 
@@ -66,22 +64,42 @@ export async function update(formData: FormData) {
     };
 
     console.log(form);
+    // Parse the form data using Zod schema
+    const parsed = accountSchema.safeParse(form);
+    if (!parsed.success) {
+      return {
+        status: 400,
+        message: `Invalid data. Error: ${parsed.error.message}`,
+        success: false,
+      };
+    }
 
     const { data, error, status } = await supabase
       .from("accounts")
-      .update(form)
+      .update(parsed.data)
       .eq("account_id", account_id)
       .select();
 
-    console.log("status code", status);
+    if (error) {
+      return {
+        status: status,
+        message: `Database error: ${error.message}`,
+        success: false,
+      };
+    }
 
-    if (error) throw error;
-
-    if (data) console.log("Account Updated!", data);
-    return { success: true, data, status };
+    return {
+      status: status,
+      message: "Project Updated Successfully!",
+      success: true,
+    };
   } catch (error: any) {
     console.log("An error occured!", error);
-    return { success: false, error: error.message };
+    return {
+      status: 500,
+      message: `Unexpected error: ${error.message}`,
+      success: false,
+    };
   }
 }
 
