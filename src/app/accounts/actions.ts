@@ -1,11 +1,8 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
-import { serializeError } from "@/utils/utils";
 import { FormState } from "@/utils/db/types";
-import { accountSchema } from "@/utils/db/schema";
+import { accountSchema, deleteAccountArgsSchema } from "@/utils/db/schema";
 
 const supabase = createClient();
 
@@ -55,15 +52,19 @@ export async function onCreateAction(data: FormData): Promise<FormState> {
 
 export async function onUpdateAction(formData: FormData): Promise<FormState> {
   try {
-    const account_id = formData.get("id");
+    const account_id = Number(formData.get("account_id"));
+
+    // Ensure that account_id is a valid number before proceeding
+    if (isNaN(account_id)) {
+      throw new Error("Invalid account_id");
+    }
 
     const form = {
-      account_name: formData.get("name") as string,
-      start_date: formData.get("date") as string,
-      status: (formData.get("status") as string).toLowerCase(),
+      account_name: formData.get("account_name") as string,
+      start_date: formData.get("start_date") as string,
+      status: formData.get("status") as string,
     };
 
-    console.log(form);
     // Parse the form data using Zod schema
     const parsed = accountSchema.safeParse(form);
     if (!parsed.success) {
@@ -74,11 +75,15 @@ export async function onUpdateAction(formData: FormData): Promise<FormState> {
       };
     }
 
+    console.log("Parsed result:", parsed);
+    
     const { data, error, status } = await supabase
       .from("accounts")
       .update(parsed.data)
       .eq("account_id", account_id)
       .select();
+
+    console.log('supabase result', data, error, status)
 
     if (error) {
       return {
@@ -103,7 +108,7 @@ export async function onUpdateAction(formData: FormData): Promise<FormState> {
   }
 }
 
-export async function del(accountId: number) {
+export async function onDeleteAction(account_id: number): Promise<FormState> {
   const {
     data: { user },
     error,
@@ -111,27 +116,53 @@ export async function del(accountId: number) {
 
   if (error || !user) {
     console.error("User not logged in or unexpected error:", error);
-    redirect("/login");
+    return {
+      status: 401,
+      message: "User not logged in",
+      success: false,
+    };
   }
 
   try {
+    // Validate the project_id using Zod schema
+    const accountIdNumber = Number(account_id);
+    const parsed = deleteAccountArgsSchema.safeParse({
+      account_id: accountIdNumber,
+    });
+    if (!parsed.success) {
+      console.error("Parsing error:", parsed.error.message);
+      return {
+        status: 400,
+        message: `Invalid data. Error: ${parsed.error.message}`,
+        success: false,
+      };
+    }
+
     const { data, error: deleteAccountError } = await supabase.rpc(
       "delete_account",
-      { account_id: accountId }
+      parsed.data
     );
 
     if (deleteAccountError) {
       console.error("Error deleting account:", deleteAccountError.message);
-      redirect(
-        "/error?error=" + encodeURIComponent(serializeError(deleteAccountError))
-      );
-    } else {
-      console.log("Account deleted successfully:", data);
-      revalidatePath("/", "layout");
-      redirect("/accounts");
+      return {
+        status: 406,
+        message: `Error deleting project: ${deleteAccountError.message}`,
+        success: false,
+      };
     }
-  } catch (error) {
+
+    return {
+      status: 200,
+      message: "Account deleted successfully!",
+      success: true,
+    };
+  } catch (error: any) {
     console.error("Unexpected error:", error);
-    redirect("/error?error=" + encodeURIComponent(serializeError(error)));
+    return {
+      status: 500,
+      message: "Unexpected error occurred",
+      success: false,
+    };
   }
 }

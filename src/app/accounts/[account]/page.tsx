@@ -44,6 +44,7 @@ export default function AccountDetail({ params }: { params: { account: number } 
             <h6>Amount due: {formatCurrency(accountData.amount_due)}</h6>
             <h6>Amount Paid: {formatCurrency(accountData.amount_paid)}</h6>
             <h6>Balance: {formatCurrency(accountData.balance)}</h6>
+            <h6>Start Date: {accountData.start_date}</h6>
 
             <div className='pt-10'>
                 <DeleteButton account={account} />
