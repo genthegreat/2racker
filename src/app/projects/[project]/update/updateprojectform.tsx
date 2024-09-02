@@ -17,7 +17,6 @@ export default function UpdateProjectForm({ project }: { project: number }) {
     const [modalOpen, setModalOpen] = useState(false);
     const [modalStatus, setModalStatus] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
-    const [modalRedirect, setModalRedirect] = useState<string | undefined>();
 
     const {
         register,
@@ -184,7 +183,13 @@ export default function UpdateProjectForm({ project }: { project: number }) {
                 </div>
             </form>
             <DevTool control={control} />
-            <Modal open={modalOpen} onClose={() => setModalOpen(false)} success={modalStatus} message={modalMessage} redirectUrl={modalStatus ? "/projects" : undefined} />
+            <Modal
+                open={modalOpen}
+                onClose={() => setModalOpen(false)}
+                success={modalStatus}
+                message={modalMessage}
+                redirectUrl={modalStatus ? `/projects/${project}` : undefined}
+            />
         </>
     );
 }

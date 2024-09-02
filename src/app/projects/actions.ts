@@ -42,7 +42,12 @@ export async function onCreateAction(data: FormData): Promise<FormState> {
 
 export async function onUpdateAction(formData: FormData): Promise<FormState> {
   try {
-    const project_id = formData.get("project_id");
+    const project_id = Number(formData.get("project_id"));
+
+    // Ensure that project_id is a valid number before proceeding
+    if (isNaN(project_id)) {
+      throw new Error("Invalid account_id");
+    }
 
     const form = {
       project_name: formData.get("project_name") as string,
@@ -115,11 +120,13 @@ export async function onDeleteAction(project_id: number): Promise<FormState> {
       success: false,
     };
   }
-  
+
   try {
     // Validate the project_id using Zod schema
     const projectIdNumber = Number(project_id);
-    const parsed = deleteProjectArgsSchema.safeParse({ project_id: projectIdNumber });
+    const parsed = deleteProjectArgsSchema.safeParse({
+      project_id: projectIdNumber,
+    });
     if (!parsed.success) {
       console.error("Parsing error:", parsed.error.message);
       return {
