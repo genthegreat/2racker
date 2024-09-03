@@ -76,14 +76,14 @@ export async function onUpdateAction(formData: FormData): Promise<FormState> {
     }
 
     console.log("Parsed result:", parsed);
-    
+
     const { data, error, status } = await supabase
       .from("accounts")
       .update(parsed.data)
       .eq("account_id", account_id)
       .select();
 
-    console.log('supabase result', data, error, status)
+    console.log("supabase result", data, error, status);
 
     if (error) {
       return {
@@ -124,30 +124,25 @@ export async function onDeleteAction(account_id: number): Promise<FormState> {
   }
 
   try {
-    // Validate the project_id using Zod schema
-    const accountIdNumber = Number(account_id);
-    const parsed = deleteAccountArgsSchema.safeParse({
-      account_id: accountIdNumber,
-    });
-    if (!parsed.success) {
-      console.error("Parsing error:", parsed.error.message);
+    // Ensure that account_id is a valid number before proceeding
+    if (isNaN(account_id)) {
       return {
         status: 400,
-        message: `Invalid data. Error: ${parsed.error.message}`,
+        message: `Invalid account_id`,
         success: false,
       };
     }
 
-    const { data, error: deleteAccountError } = await supabase.rpc(
-      "delete_account",
-      parsed.data
-    );
+    const { error } = await supabase
+      .from("accounts")
+      .delete()
+      .eq("account_id", account_id);
 
-    if (deleteAccountError) {
-      console.error("Error deleting account:", deleteAccountError.message);
+    if (error) {
+      console.error("Error deleting account:", error.message);
       return {
         status: 406,
-        message: `Error deleting project: ${deleteAccountError.message}`,
+        message: `Error deleting project: ${error.message}`,
         success: false,
       };
     }
