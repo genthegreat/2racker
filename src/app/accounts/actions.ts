@@ -124,15 +124,6 @@ export async function onDeleteAction(account_id: number): Promise<FormState> {
   }
 
   try {
-    // Ensure that account_id is a valid number before proceeding
-    if (isNaN(account_id)) {
-      return {
-        status: 400,
-        message: `Invalid account_id`,
-        success: false,
-      };
-    }
-
     const { error } = await supabase
       .from("accounts")
       .delete()
