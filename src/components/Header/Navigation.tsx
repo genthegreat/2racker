@@ -31,7 +31,7 @@ export default function Navigation() {
 
   useEffect(() => {
     setIsMenuOpen(false);
-  }, [pathname]);
+  }, [pathname, user, session, event]);
 
   return (
     <nav className="bg-gray-900">

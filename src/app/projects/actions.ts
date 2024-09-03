@@ -122,21 +122,10 @@ export async function onDeleteAction(project_id: number): Promise<FormState> {
   }
 
   try {
-    // Validate the project_id using Zod schema
-    const projectIdNumber = Number(project_id);
-    const parsed = deleteProjectArgsSchema.safeParse({
-      project_id: projectIdNumber,
-    });
-    if (!parsed.success) {
-      console.error("Parsing error:", parsed.error.message);
-      return {
-        status: 400,
-        message: `Invalid data. Error: ${parsed.error.message}`,
-        success: false,
-      };
-    }
-
-    const { data, error } = await supabase.rpc("delete_project", parsed.data);
+    const { error } = await supabase
+      .from("projects")
+      .delete()
+      .eq("project_id", project_id);
 
     if (error) {
       console.error("Error deleting project:", error.message);
