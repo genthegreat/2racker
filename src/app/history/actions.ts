@@ -18,12 +18,8 @@ export async function onCreateAction(formData: FormData): Promise<FormState> {
     status: formData.get("status"),
   };
 
-  console.log("Submitted formData:", data);
-
   // Parse the form data using Zod schema
   const parsed = transactionSchema.safeParse(data);
-
-  console.log("Parsed data:", parsed);
 
   if (!parsed.success) {
     return {
@@ -71,15 +67,11 @@ export async function onUpdateAction(formData: FormData): Promise<FormState> {
       };
     }
 
-    console.log("Parsed result:", parsed);
-
     const { data, error, status } = await supabase
       .from("transactions")
       .update(form)
       .eq("transaction_id", transaction_id)
       .select();
-
-    console.log("supabase result", data, error, status);
 
     if (error) {
       return {
