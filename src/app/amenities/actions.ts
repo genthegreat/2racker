@@ -14,8 +14,6 @@ export async function onCreateAction(formData: FormData): Promise<FormState> {
     project_id: Number(formData.get("project_id")),
   };
 
-  console.log("Submitted formData:", data);
-
   // Parse the form data using Zod schema
   const parsed = amenitySchema.safeParse(data);
   if (!parsed.success) {
@@ -41,7 +39,7 @@ export async function onUpdateAction(formData: FormData): Promise<FormState> {
 
     // Ensure that amenity_id is a valid number before proceeding
     if (isNaN(amenity_id)) {
-      throw new Error("Invalid account_id");
+      throw new Error("Invalid amenity_id");
     }
 
     const form = {
@@ -60,15 +58,11 @@ export async function onUpdateAction(formData: FormData): Promise<FormState> {
       };
     }
 
-    console.log("Parsed result:", parsed);
-
     const { data, error, status } = await supabase
       .from("amenities")
       .update(parsed.data)
       .eq("amenity_id", amenity_id)
       .select();
-
-    console.log("supabase result", data, error, status);
 
     if (error) {
       return {

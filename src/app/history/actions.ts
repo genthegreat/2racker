@@ -1,38 +1,55 @@
-"use server";
+"use server"
 
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { serializeError } from "../../utils/utils";
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/utils/supabase/server"
+import { FormState } from "@/utils/db/types"
+import { transactionSchema } from "@/utils/db/schema"
 
-const supabase = createClient();
+const supabase = createClient()
 
-export async function submit(formData: FormData) {
+export async function onCreateAction(formData: FormData): Promise<FormState> {
   const data = {
-    notes: formData.get("notes") as string,
-    amount_paid: formData.get("amount"),
-    transaction_date: formData.get("date") as string,
+    account_id: Number(formData.get("account_id")),
+    amenity_id: Number(formData.get("amenity_id")),
+    amount_paid: Number(formData.get("amount_paid")),
     platform: formData.get("platform"),
-    receipt_info: formData.get("receipt"),
+    transaction_date: formData.get("transaction_date"),
+    notes: formData.get("notes"),
+    receipt_info: formData.get("receipt_info"),
     status: formData.get("status"),
-    amenity_id: formData.get("amenity"),
-  };
-
-  console.log(data);
-
-  const { error } = await supabase.from("transactions").insert([data]).select();
-
-  if (error) {
-    redirect("/error?error=" + encodeURIComponent(serializeError(error)));
   }
 
-  revalidatePath("/", "layout");
-  redirect("/history");
+  console.log("Submitted formData:", data)
+  
+  // Parse the form data using Zod schema
+  const parsed = transactionSchema.safeParse(data)
+  
+  console.log("Parsed data:", parsed)
+
+  if (!parsed.success) {
+    return {
+      status: 400,
+      message: `Invalid data. Error: ${parsed.error.message}`,
+    }
+  }
+
+  const { error, status } = await supabase
+    .from("transactions")
+    .insert([parsed.data])
+    .select()
+
+  if (error) return { status: status, message: `Database error: ${error}` }
+
+  return { status: 201, message: "Transaction Added Successfully!" }
 }
 
-export async function update(formData: FormData) {
+export async function onUpdateAction(formData: FormData): Promise<FormState> {
   try {
-    const id = formData.get("id");
+    const transaction_id = Number(formData.get("transaction_id"))
+
+    // Ensure that transaction_id is a valid number before proceeding
+    if (isNaN(transaction_id)) {
+      throw new Error("Invalid transaction_id")
+    }
 
     const form = {
       notes: formData.get("notes") as string,
@@ -42,41 +59,90 @@ export async function update(formData: FormData) {
       receipt_info: formData.get("receipt"),
       status: formData.get("status"),
       amenity_id: formData.get("amenity"),
-    };
+    }
+
+    // Parse the form data using Zod schema
+    const parsed = transactionSchema.safeParse(form)
+    if (!parsed.success) {
+      return {
+        status: 400,
+        message: `Invalid data. Error: ${parsed.error.message}`,
+      }
+    }
+
+    console.log("Parsed result:", parsed)
 
     const { data, error, status } = await supabase
       .from("transactions")
       .update(form)
-      .eq("transaction_id", id)
-      .select();
+      .eq("transaction_id", transaction_id)
+      .select()
 
-    console.log("status code", status);
+      console.log("supabase result", data, error, status)
 
-    if (error) throw error;
+      if (error) {
+        return {
+          status: status,
+          message: `Database error: ${error.message}`,
+          success: false,
+        }
+      }
 
-    if (data) console.log("Transaction Updated!", data);
-    return { success: true, data, status };
+      return {
+        status: status,
+        message: "Amenity Updated Successfully!",
+        success: true,
+      }
   } catch (error: any) {
-    console.log("An error occured!", error);
-    return { success: false, error: error.message };
+    console.log("An error occured!", error)
+    return {
+      status: 500,
+      message: `Unexpected error: ${error.message}`,
+      success: false,
+    }
   }
 }
 
-export async function del(id: number) {
+export async function onDeleteAction(id: number): Promise<FormState> {
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+    error,
+  } = await supabase.auth.getUser()
 
-  if (user) {
+  if (error || !user) {
+    return {
+      status: 401,
+      message: "User not logged in",
+      success: false,
+    }
+  }
+
+  try {
     const { error, status } = await supabase
       .from("transactions")
       .delete()
-      .eq("transaction_id", id);
+      .eq("transaction_id", id)
 
-    console.log("Status from delete:", status)
-    if (error) redirect('/error?error=' + encodeURIComponent(serializeError(error)))
+    if (error) {
+      console.error("Error deleting transaction:", error.message)
+      return {
+        status: status,
+        message: `Error deleting transaction: ${error.message}`,
+        success: false,
+      }
+    }
 
-    revalidatePath("/", "layout");
-    redirect("/history");
+    return {
+      status: 200,
+      message: "Transaction deleted successfully!",
+      success: true,
+    }
+  } catch (error) {
+    console.error("Unexpected error:", error)
+    return {
+      status: 500,
+      message: "Unexpected error occurred",
+      success: false,
+    }
   }
 }
