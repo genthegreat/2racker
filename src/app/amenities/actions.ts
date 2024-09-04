@@ -1,82 +1,138 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-
 import { createClient } from "@/utils/supabase/server";
-import { serializeError } from "@/utils/utils";
+import { FormState } from "@/utils/db/types";
+import { amenitySchema } from "@/utils/db/schema";
 
 const supabase = createClient();
-export async function submit(formData: FormData) {
-  const id = formData.get("projectId");
 
+export async function onCreateAction(formData: FormData): Promise<FormState> {
   const data = {
-    amenity_name: formData.get("amenityName") as string,
-    default_amount: formData.get("defaultAmount"),
+    amenity_name: formData.get("amenity_name") as string,
+    default_amount: Number(formData.get("default_amount")),
     category: formData.get("category") as string,
-    project_id: id,
+    project_id: Number(formData.get("project_id")),
   };
 
-  console.log(data);
+  console.log("Submitted formData:", data);
 
-  const { error } = await supabase.from("amenities").insert([data]).select();
+  // Parse the form data using Zod schema
+  const parsed = amenitySchema.safeParse(data);
+  if (!parsed.success) {
+    return {
+      status: 400,
+      message: `Invalid data. Error: ${parsed.error.message}`,
+    };
+  }
 
-  if (error) redirect('/error?error=' + encodeURIComponent(serializeError(error)))
+  const { error } = await supabase
+    .from("amenities")
+    .insert([parsed.data])
+    .select();
 
-  //   revalidatePath("/", "layout");
-  redirect(`/amenities?id=${id}`);
+  if (error) return { status: 406, message: `Database error: ${error}` };
+
+  return { status: 201, message: "Project Added Successfully!" };
 }
 
-export async function update(formData: FormData) {
+export async function onUpdateAction(formData: FormData): Promise<FormState> {
   try {
-    const id = formData.get("id")
+    const amenity_id = Number(formData.get("amenity_id"));
+
+    // Ensure that amenity_id is a valid number before proceeding
+    if (isNaN(amenity_id)) {
+      throw new Error("Invalid account_id");
+    }
 
     const form = {
-      amenity_name: formData.get("amenityName") as string,
-      default_amount: formData.get("defaultAmount"),
+      amenity_name: formData.get("amenity_name") as string,
+      default_amount: Number(formData.get("default_amount")),
       category: formData.get("category") as string,
-      project_id: formData.get("projectId"),
+      project_id: Number(formData.get("project_id")),
     };
+
+    // Parse the form data using Zod schema
+    const parsed = amenitySchema.safeParse(form);
+    if (!parsed.success) {
+      return {
+        status: 400,
+        message: `Invalid data. Error: ${parsed.error.message}`,
+      };
+    }
+
+    console.log("Parsed result:", parsed);
 
     const { data, error, status } = await supabase
       .from("amenities")
-      .update(form)
-      .eq("amenity_id", id)
+      .update(parsed.data)
+      .eq("amenity_id", amenity_id)
       .select();
-    
-    console.log("status code", status)
 
-    if (error) throw error;
+    console.log("supabase result", data, error, status);
 
-    if (data) console.log("Amenity Updated!", data);
-    return { success: true, data, status };
+    if (error) {
+      return {
+        status: status,
+        message: `Database error: ${error.message}`,
+        success: false,
+      };
+    }
+
+    return {
+      status: status,
+      message: "Amenity Updated Successfully!",
+      success: true,
+    };
   } catch (error: any) {
     console.log("An error occured!", error);
-    return { success: false, error: error.message, status};
+    return {
+      status: 500,
+      message: `Unexpected error: ${error.message}`,
+      success: false,
+    };
   }
 }
 
-export async function del(amenity_id: number) {
-  const { data: { user }, error } = await supabase.auth.getUser();
+export async function onDeleteAction(amenity_id: number): Promise<FormState> {
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
 
   if (error || !user) {
-    console.error("User not logged in or unexpected error:", error);
-    redirect("/login");
+    return {
+      status: 401,
+      message: "User not logged in",
+      success: false,
+    };
   }
 
   try {
-    const { data, error } = await supabase.rpc("delete_amenity", { amenity_id });
+    const { error } = await supabase
+      .from("amenities")
+      .delete()
+      .eq("amenity_id", amenity_id);
 
     if (error) {
       console.error("Error deleting amenity:", error.message);
-      redirect("/error?error=" + encodeURIComponent(serializeError(error)));
-    } else {
-      console.log("Amenity deleted successfully:", data);
-      revalidatePath("/", "layout");
-      redirect("/amenities");
+      return {
+        status: 406,
+        message: `Error deleting amenity: ${error.message}`,
+        success: false,
+      };
     }
+
+    return {
+      status: 200,
+      message: "Amenity deleted successfully!",
+      success: true,
+    };
   } catch (error) {
     console.error("Unexpected error:", error);
-    redirect("/error?error=" + encodeURIComponent(serializeError(error)));
+    return {
+      status: 500,
+      message: "Unexpected error occurred",
+      success: false,
+    };
   }
 }

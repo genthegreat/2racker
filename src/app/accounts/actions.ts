@@ -1,9 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
-import { serializeError } from "@/utils/utils";
 import { FormState } from "@/utils/db/types";
 import { accountSchema } from "@/utils/db/schema";
 
@@ -13,8 +10,6 @@ export async function onCreateAction(data: FormData): Promise<FormState> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  const { data: { session } } = await supabase.auth.getSession()
 
   if (!user) {
     return {
@@ -55,65 +50,100 @@ export async function onCreateAction(data: FormData): Promise<FormState> {
   return { status: 201, message: "Account Added Successfully!" };
 }
 
-export async function update(formData: FormData) {
+export async function onUpdateAction(formData: FormData): Promise<FormState> {
   try {
-    const account_id = formData.get("id");
+    const account_id = Number(formData.get("account_id"));
+
+    // Ensure that account_id is a valid number before proceeding
+    if (isNaN(account_id)) {
+      throw new Error("Invalid account_id");
+    }
 
     const form = {
-      account_name: formData.get("name") as string,
-      start_date: formData.get("date") as string,
-      status: (formData.get("status") as string).toLowerCase(),
+      account_name: formData.get("account_name") as string,
+      start_date: formData.get("start_date") as string,
+      status: formData.get("status") as string,
     };
 
-    console.log(form);
+    // Parse the form data using Zod schema
+    const parsed = accountSchema.safeParse(form);
+    if (!parsed.success) {
+      return {
+        status: 400,
+        message: `Invalid data. Error: ${parsed.error.message}`,
+        success: false,
+      };
+    }
 
     const { data, error, status } = await supabase
       .from("accounts")
-      .update(form)
+      .update(parsed.data)
       .eq("account_id", account_id)
       .select();
 
-    console.log("status code", status);
+    if (error) {
+      return {
+        status: status,
+        message: `Database error: ${error.message}`,
+        success: false,
+      };
+    }
 
-    if (error) throw error;
-
-    if (data) console.log("Account Updated!", data);
-    return { success: true, data, status };
+    return {
+      status: status,
+      message: "Project Updated Successfully!",
+      success: true,
+    };
   } catch (error: any) {
     console.log("An error occured!", error);
-    return { success: false, error: error.message };
+    return {
+      status: 500,
+      message: `Unexpected error: ${error.message}`,
+      success: false,
+    };
   }
 }
 
-export async function del(accountId: number) {
+export async function onDeleteAction(account_id: number): Promise<FormState> {
   const {
     data: { user },
     error,
   } = await supabase.auth.getUser();
 
   if (error || !user) {
-    console.error("User not logged in or unexpected error:", error);
-    redirect("/login");
+    return {
+      status: 401,
+      message: "User not logged in",
+      success: false,
+    };
   }
 
   try {
-    const { data, error: deleteAccountError } = await supabase.rpc(
-      "delete_account",
-      { account_id: accountId }
-    );
+    const { error } = await supabase
+      .from("accounts")
+      .delete()
+      .eq("account_id", account_id);
 
-    if (deleteAccountError) {
-      console.error("Error deleting account:", deleteAccountError.message);
-      redirect(
-        "/error?error=" + encodeURIComponent(serializeError(deleteAccountError))
-      );
-    } else {
-      console.log("Account deleted successfully:", data);
-      revalidatePath("/", "layout");
-      redirect("/accounts");
+    if (error) {
+      console.error("Error deleting account:", error.message);
+      return {
+        status: 406,
+        message: `Error deleting account: ${error.message}`,
+        success: false,
+      };
     }
-  } catch (error) {
+
+    return {
+      status: 200,
+      message: "Account deleted successfully!",
+      success: true,
+    };
+  } catch (error: any) {
     console.error("Unexpected error:", error);
-    redirect("/error?error=" + encodeURIComponent(serializeError(error)));
+    return {
+      status: 500,
+      message: "Unexpected error occurred",
+      success: false,
+    };
   }
 }

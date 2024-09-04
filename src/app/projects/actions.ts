@@ -2,7 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { FormState } from "@/utils/db/types";
-import { deleteProjectArgsSchema, projectSchema } from "@/utils/db/schema";
+import { projectSchema } from "@/utils/db/schema";
 
 const supabase = createClient();
 
@@ -14,10 +14,8 @@ export async function onCreateAction(data: FormData): Promise<FormState> {
     account_id: formData.account_id ? Number(formData.account_id) : null, // Convert to number
   };
 
-  console.log("Processed formData:", processedData);
-
+  // parse to ensure data is valid
   const parsed = projectSchema.safeParse(processedData);
-  console.log("Parsed result:", parsed);
 
   if (!parsed.success) {
     return {
@@ -26,6 +24,7 @@ export async function onCreateAction(data: FormData): Promise<FormState> {
     };
   }
 
+  // Example server side rule
   if (parsed.data.project_name.includes("test")) {
     return { status: 401, message: "Invalid Input. Name uses keyword." };
   }
@@ -42,7 +41,12 @@ export async function onCreateAction(data: FormData): Promise<FormState> {
 
 export async function onUpdateAction(formData: FormData): Promise<FormState> {
   try {
-    const project_id = formData.get("project_id");
+    const project_id = Number(formData.get("project_id"));
+
+    // Ensure that project_id is a valid number before proceeding
+    if (isNaN(project_id)) {
+      throw new Error("Invalid account_id");
+    }
 
     const form = {
       project_name: formData.get("project_name") as string,
@@ -115,21 +119,12 @@ export async function onDeleteAction(project_id: number): Promise<FormState> {
       success: false,
     };
   }
-  
-  try {
-    // Validate the project_id using Zod schema
-    const projectIdNumber = Number(project_id);
-    const parsed = deleteProjectArgsSchema.safeParse({ project_id: projectIdNumber });
-    if (!parsed.success) {
-      console.error("Parsing error:", parsed.error.message);
-      return {
-        status: 400,
-        message: `Invalid data. Error: ${parsed.error.message}`,
-        success: false,
-      };
-    }
 
-    const { data, error } = await supabase.rpc("delete_project", parsed.data);
+  try {
+    const { error } = await supabase
+      .from("projects")
+      .delete()
+      .eq("project_id", project_id);
 
     if (error) {
       console.error("Error deleting project:", error.message);

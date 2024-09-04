@@ -14,11 +14,13 @@ export const accountSchema = z.object({
 });
 
 export const amenitySchema = z.object({
-  amenity_id: z.never(),
+  amenity_id: z.number().optional(),
   amenity_name: z.string(),
   category: z.string().nullable().optional(),
   default_amount: z.number().nullable().optional(),
-  project_id: z.number().nullable().optional(),
+  project_id: z.number({
+    message: "Project is Required"
+  }),
 });
 
 export const profileSchema = z.object({
