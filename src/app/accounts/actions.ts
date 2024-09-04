@@ -2,7 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { FormState } from "@/utils/db/types";
-import { accountSchema, deleteAccountArgsSchema } from "@/utils/db/schema";
+import { accountSchema } from "@/utils/db/schema";
 
 const supabase = createClient();
 
@@ -75,15 +75,11 @@ export async function onUpdateAction(formData: FormData): Promise<FormState> {
       };
     }
 
-    console.log("Parsed result:", parsed);
-
     const { data, error, status } = await supabase
       .from("accounts")
       .update(parsed.data)
       .eq("account_id", account_id)
       .select();
-
-    console.log("supabase result", data, error, status);
 
     if (error) {
       return {
@@ -115,7 +111,6 @@ export async function onDeleteAction(account_id: number): Promise<FormState> {
   } = await supabase.auth.getUser();
 
   if (error || !user) {
-    console.error("User not logged in or unexpected error:", error);
     return {
       status: 401,
       message: "User not logged in",
@@ -133,7 +128,7 @@ export async function onDeleteAction(account_id: number): Promise<FormState> {
       console.error("Error deleting account:", error.message);
       return {
         status: 406,
-        message: `Error deleting project: ${error.message}`,
+        message: `Error deleting account: ${error.message}`,
         success: false,
       };
     }

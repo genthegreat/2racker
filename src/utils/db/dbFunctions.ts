@@ -13,7 +13,7 @@ export async function getCurrentUser(): Promise<User> {
     data: { user },
   } = await supabase.auth.getUser();
 
-  console.log(user);
+  // console.log(user);
   return user as User;
 }
 
@@ -38,11 +38,11 @@ export async function getAccountData() {
       // Add the value of the current key to the accumulator
       acc[key] = (acc[key] || 0) + obj[key];
     });
-    console.log(acc);
+    // console.log(acc);
     return acc;
   }, {});
 
-  console.log(summedValues);
+  // console.log(summedValues);
   return summedValues;
 }
 
@@ -58,7 +58,7 @@ export async function fetchAccountDataById(id: number) {
     return error;
   }
 
-  console.log(account);
+  // console.log(account);
   return account;
 }
 
@@ -73,7 +73,7 @@ export async function fetchAmenityDataById(id: number): Promise<Amenity> {
     console.log(error);
   }
 
-  console.log(amenity);
+  // console.log("fetchAmenityDataById", amenity);
   return amenity as Amenity;
 }
 
@@ -110,7 +110,7 @@ export async function getProjectData(id: number) {
     console.error(error);
   }
 
-  console.log("Project", data);
+  // console.log("Project", data);
   return data;
 }
 
@@ -154,7 +154,7 @@ export async function getTransactionHistory(): Promise<Account[]> {
     console.error(error);
   }
 
-  console.log("Transaction History", accounts);
+  // console.log("Transaction History", accounts);
   return accounts as Account[];
 }
 
@@ -170,7 +170,7 @@ export async function getAccountDetails(): Promise<AccountDetails[]> {
     console.error(error);
   }
 
-  console.log("Transaction History", accountDetails);
+  // console.log("Transaction History", accountDetails);
   return accountDetails as AccountDetails[];
 }
 
@@ -192,7 +192,7 @@ export async function getProfileData() {
     return null;
   }
 
-  console.log(data);
+  // console.log(data);
   return data;
 }
 
@@ -209,7 +209,7 @@ export async function getAmenities(id: string | null): Promise<Amenity[]> {
     console.error(error);
   }
 
-  console.log(amenities);
+  // console.log(amenities);
   return amenities as Amenity[];
 }
 
@@ -221,10 +221,10 @@ export async function getProjects(
     : await supabase.from("projects").select("*");
 
   if (error) {
-    console.error(error);
+    console.error("Error in getProjects", error);
   }
 
-  console.log("projects", projects);
+  // console.log("projects", projects);
   return projects as Project[];
 }
 
@@ -243,7 +243,7 @@ export async function getTransactions(
     console.error(error);
   }
 
-  console.log("Transaction", transaction);
+  // console.log("Transaction", transaction);
   return transaction;
 }
 
@@ -259,6 +259,6 @@ export async function fetchTransactionDataById(id: number) {
     return error;
   }
 
-  console.log(transaction);
+  // console.log(transaction);
   return transaction;
 }

@@ -105,7 +105,13 @@ export default function AddProjectForm() {
                 </div>
             </form>
             <DevTool control={control} />
-            <Modal open={modalOpen} onClose={() => setModalOpen(false)} success={modalStatus} message={modalMessage} redirectUrl={modalStatus ? "/projects" : undefined} />
+            <Modal
+                open={modalOpen}
+                onClose={() => setModalOpen(false)}
+                success={modalStatus}
+                message={modalMessage}
+                redirectUrl={modalStatus ? "/projects" : undefined}
+            />
         </>
     );
 }

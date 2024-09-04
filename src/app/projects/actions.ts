@@ -2,7 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { FormState } from "@/utils/db/types";
-import { deleteProjectArgsSchema, projectSchema } from "@/utils/db/schema";
+import { projectSchema } from "@/utils/db/schema";
 
 const supabase = createClient();
 
@@ -14,10 +14,8 @@ export async function onCreateAction(data: FormData): Promise<FormState> {
     account_id: formData.account_id ? Number(formData.account_id) : null, // Convert to number
   };
 
-  console.log("Processed formData:", processedData);
-
+  // parse to ensure data is valid
   const parsed = projectSchema.safeParse(processedData);
-  console.log("Parsed result:", parsed);
 
   if (!parsed.success) {
     return {
@@ -26,6 +24,7 @@ export async function onCreateAction(data: FormData): Promise<FormState> {
     };
   }
 
+  // Example server side rule
   if (parsed.data.project_name.includes("test")) {
     return { status: 401, message: "Invalid Input. Name uses keyword." };
   }
