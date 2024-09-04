@@ -1,5 +1,14 @@
-import { createClientComponentClient, User } from "@supabase/auth-helpers-nextjs";
-import { Account, AccountDetails, Amenity, Project, Transaction } from "./types";
+import {
+  createClientComponentClient,
+  User,
+} from "@supabase/auth-helpers-nextjs";
+import {
+  Account,
+  AccountDetails,
+  Amenity,
+  Project,
+  Transaction,
+} from "./types";
 
 export const supabase = createClientComponentClient();
 
@@ -163,8 +172,10 @@ export async function getAccountDetails(): Promise<AccountDetails[]> {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: accountDetails, error } = await supabase
-    .rpc('get_account_details', { p_user_id: user?.id });
+  const { data: accountDetails, error } = await supabase.rpc(
+    "get_account_details",
+    { p_user_id: user?.id }
+  );
 
   if (error) {
     console.error(error);
@@ -261,4 +272,35 @@ export async function fetchTransactionDataById(id: number) {
 
   // console.log(transaction);
   return transaction;
+}
+
+export async function getAmenityAccountId(
+  amenityId: number
+): Promise<number | null> {
+  const { data, error } = await supabase
+    .from("amenities")
+    .select(
+      `
+      project_id,
+      projects (
+        account_id
+      )
+    `
+    )
+    .eq("amenity_id", amenityId)
+    .single();
+
+  console.log("getAmenityAccountId:", data);
+
+  if (error) {
+    console.error("Error fetching account ID:", error);
+    return null;
+  }
+
+  // Handle projects being an array
+  const accountId = (data?.projects as unknown as { account_id: number })?.account_id || null;
+
+  console.log("accountId:", accountId);
+
+  return accountId;
 }

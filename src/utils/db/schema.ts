@@ -49,11 +49,13 @@ export const transactionSchema = z.object({
   amenity_id: z.number(),
   amount_paid: z.number(),
   notes: z.string().nullable().optional(),
-  platform: z.string(),
+  platform: z.string().min(1, {
+    message: "Payment Platform is required",
+  }),
   receipt_info: z.string().nullable().optional(),
   status: z.string().nullable().optional(),
-  transaction_date: z.string(),
-  transaction_id: z.never(),
+  transaction_date: z.string().date("Date of format YYYY-MM-DD is required"),
+  transaction_id: z.number().optional(),
 });
 
 export const deleteAccountArgsSchema = z.object({
