@@ -71,6 +71,7 @@ export default function UpdateTransactionForm({ transaction }: { transaction: nu
 
     async function onSubmit(data: z.output<typeof transactionSchema>) {
         const formData = new FormData()
+        formData.append('transaction_id', String(transaction));
         formData.append('account_id', String(data.account_id));  //  Account ID is already set
         formData.append("amenity_id", String(data.amenity_id))
         formData.append("amount_paid", String(data.amount_paid))
