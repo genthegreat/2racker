@@ -2,13 +2,7 @@ import {
   createClientComponentClient,
   User,
 } from "@supabase/auth-helpers-nextjs";
-import {
-  Account,
-  AccountDetails,
-  Amenity,
-  Project,
-  Transaction,
-} from "./types";
+import { AccountDetails } from "./types";
 
 export const supabase = createClientComponentClient();
 
@@ -71,7 +65,7 @@ export async function fetchAccountDataById(id: number) {
   return account;
 }
 
-export async function fetchAmenityDataById(id: number): Promise<Amenity> {
+export async function fetchAmenityDataById(id: number): Promise<Amenities> {
   const { data: amenity, error } = await supabase
     .from("amenities")
     .select("*")
@@ -83,10 +77,10 @@ export async function fetchAmenityDataById(id: number): Promise<Amenity> {
   }
 
   // console.log("fetchAmenityDataById", amenity);
-  return amenity as Amenity;
+  return amenity as Amenities;
 }
 
-export async function getAllAccounts(): Promise<Account[]> {
+export async function getAllAccounts(): Promise<Accounts[]> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -100,7 +94,7 @@ export async function getAllAccounts(): Promise<Account[]> {
   }
 
   // console.log(accounts);
-  return accounts as Account[];
+  return accounts as Accounts[];
 }
 
 export async function getProjectData(id: number) {
@@ -123,48 +117,44 @@ export async function getProjectData(id: number) {
   return data;
 }
 
-export async function getTransactionHistory(): Promise<Account[]> {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const { data: accounts, error } = await supabase
-    .from("accounts")
+export async function getTransactionHistory(): Promise<Transaction[]> {
+  const { data: transaction, error } = await supabase
+    .from("transactions")
     .select(
       `
+      transaction_id,
+      transaction_date,
+      amount_paid,
+      notes,
+      platform,
+      status,
+      amenity_id,
+      receipt_info,
+      amenities (
+        amenity_id,
+        amenity_name,
+        category,
+        default_amount
+      ),
+      account_id,
+      accounts (
         account_id,
         account_name,
-        status,
-        start_date,
         amount_due,
         amount_paid,
         balance,
-        projects (
-          project_name,
-          amenities(
-            amenity_id,
-            amenity_name,
-            default_amount,
-            transactions(
-              transaction_id,
-              amount_paid,
-              transaction_date,
-              platform,
-              receipt_info,
-              status
-            )
-          )
-        )
-      `
+        start_date,
+        status
+      )
+    `
     )
-    .eq("user_id", `${user?.id}`);
 
   if (error) {
     console.error(error);
   }
 
-  // console.log("Transaction History", accounts);
-  return accounts as Account[];
+  console.log("Transaction History on getTransactionHistory", transaction);
+  return transaction as Transaction[];
 }
 
 export async function getAccountDetails(): Promise<AccountDetails[]> {
@@ -181,7 +171,7 @@ export async function getAccountDetails(): Promise<AccountDetails[]> {
     console.error(error);
   }
 
-  // console.log("Transaction History", accountDetails);
+  console.log("Transaction History on accountDetails", accountDetails);
   return accountDetails as AccountDetails[];
 }
 
@@ -207,7 +197,7 @@ export async function getProfileData() {
   return data;
 }
 
-export async function getAmenities(id: string | null): Promise<Amenity[]> {
+export async function getAmenities(id: string | null): Promise<Amenities[]> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -221,12 +211,12 @@ export async function getAmenities(id: string | null): Promise<Amenity[]> {
   }
 
   // console.log(amenities);
-  return amenities as Amenity[];
+  return amenities as Amenities[];
 }
 
 export async function getProjects(
   id: number | string | null
-): Promise<Project[]> {
+): Promise<Projects[]> {
   const { data: projects, error } = id
     ? await supabase.from("projects").select("*").eq("account_id", `${id}`)
     : await supabase.from("projects").select("*");
@@ -236,7 +226,7 @@ export async function getProjects(
   }
 
   // console.log("projects", projects);
-  return projects as Project[];
+  return projects as Projects[];
 }
 
 export async function getTransactions(
