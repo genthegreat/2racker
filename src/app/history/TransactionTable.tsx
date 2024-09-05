@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react"
 import { formatCurrency } from '../../utils/utils'
-import { getTransactionHistory } from '@/utils/db/dbFunctions'
+import { getAccountData, getTransactionHistory } from '@/utils/db/dbFunctions'
 import Link from 'next/link'
 import { EyeIcon, PencilSquareIcon } from '@/components/icons'
+import PaidTotal, { PaidTotalProps } from "@/components/paidTotal/paidTotal"
 
 export default function TransactionTable() {
     const [transactions, setTransactions] = useState<Transaction[]>([])
@@ -64,6 +65,29 @@ export default function TransactionTable() {
                     </tbody>
                 </table>
             )}
+        </div>
+    )
+}
+
+export function DataBoard() {
+    const [accounts, setAccounts] = useState<PaidTotalProps | null>(null)
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const accountResult = await getAccountData();
+                setAccounts(accountResult);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, [])
+
+    return (
+        <div>
+            {accounts && <PaidTotal {...accounts} />}
         </div>
     )
 }

@@ -1,43 +1,19 @@
-import PaidTotal, { PaidTotalProps } from '@/components/paidTotal/paidTotal'
-
 import Link from 'next/link'
 import { Metadata } from 'next'
-import TransactionTable from './TransactionTable'
+import TransactionTable, { DataBoard } from './TransactionTable'
 
 export const metadata: Metadata = {
   title: "Transaction History | 2racker"
 };
 
 export default function History() {
-  // const [transactions, setTransactions] = useState<AccountDetails[] | null>([])
-  // const [accountData, setAccountData] = useState<PaidTotalProps | null>(null);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       setLoading(true);
-
-  //       const getTransactions = await getAccountDetails()
-  //       setTransactions(getTransactions)
-
-  //       const accountResult = await getAccountData();
-  //       setAccountData(accountResult);
-
-  //     } catch (error) {
-  //       console.error('Error fetching data:', error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   }
-
-  //   fetchData()
-  // }, [])
 
   return (
     <div className='align-center'>
 
       <h1>Transaction History</h1>
 
+      <DataBoard />
       <TransactionTable />
 
       <div className='flex justify-end pt-10'>
