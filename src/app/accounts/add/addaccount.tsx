@@ -17,10 +17,6 @@ export default function AddAccountForm() {
     const [modalStatus, setModalStatus] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
 
-    const user = getCurrentUser()
-  
-    console.log(user)
-
     const {
         register,
         control,
