@@ -12,6 +12,10 @@ export default async function Account() {
   if (error || !user) {
     redirect('/login')
   }
-  
-  return <ProfileForm user={user} />
+
+  return (
+    <div className='container'>
+      <ProfileForm user={user} />
+    </div>
+  )
 }

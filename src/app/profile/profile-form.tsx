@@ -4,6 +4,7 @@ import { createClient } from '@/utils/supabase/client'
 import { type User } from '@supabase/supabase-js'
 import Avatar from './avatar'
 import Spinner from '@/components/spinner/Spinner'
+import Modal from '@/components/Modal'
 
 export default function ProfileForm({ user }: { user: User | null }) {
   const supabase = createClient()
@@ -11,6 +12,9 @@ export default function ProfileForm({ user }: { user: User | null }) {
   const [fullname, setFullname] = useState<string | null>(null)
   const [username, setUsername] = useState<string | null>(null)
   const [avatar_url, setAvatarUrl] = useState<string | null>(null)
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalStatus, setModalStatus] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
   const getProfile = useCallback(async () => {
     try {
@@ -33,8 +37,9 @@ export default function ProfileForm({ user }: { user: User | null }) {
         setAvatarUrl(data.avatar_url)
       }
     } catch (error: any) {
-      console.log(error.message)
-      alert(`${error.message}`)
+      setModalMessage(`Error collecting Profile. ${error.message}`);
+      setModalOpen(true);
+      setModalStatus(false);
     } finally {
       setLoading(false)
     }
@@ -63,16 +68,21 @@ export default function ProfileForm({ user }: { user: User | null }) {
         updated_at: new Date().toISOString(),
       })
       if (error) throw error
-      alert('Profile updated!')
-    } catch (error) {
+      setModalMessage('Profile updated!');
+      setModalOpen(true);
+      setModalStatus(true);
+    } catch (error: any) {
       alert('Error updating the data!')
+      setModalMessage(`Error updating the data! ${error.message}`);
+      setModalOpen(true);
+      setModalStatus(false);
     } finally {
       setLoading(false)
     }
   }
 
   if (loading) return <Spinner />
-  
+
   return (
     <div className="form-widget">
       <div>
@@ -118,6 +128,7 @@ export default function ProfileForm({ user }: { user: User | null }) {
           {loading ? 'Loading ...' : 'Update'}
         </button>
       </div>
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} success={modalStatus} message={modalMessage} redirectUrl={modalStatus ? "/profile" : undefined} />
 
       <div>
         <form action="/auth/signout" method="post">
