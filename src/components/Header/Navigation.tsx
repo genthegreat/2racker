@@ -9,7 +9,7 @@ import { usePathname } from 'next/navigation';
 export const dynamic = 'force-dynamic';
 
 const NavItem = ({ href, children }: { href: any, children: any }) => (
-  <li className="block py-2 px-3 font-medium">
+  <li className="block py-2 px-3 font-medium hover:text-gray-400">
     <Link href={href}>
       {children}
     </Link>
@@ -38,7 +38,7 @@ export default function Navigation() {
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <Link href={user ? "/home" : "/"} className="flex items-center space-x-3 rtl:space-x-reverse">
           <Image src="/logo.png" alt="Logo" width={40} height={50} />
-          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">2racker</span>
+          <span className="self-center text-2xl font-semibold whitespace-nowrap hover:text-gray-400">2racker</span>
         </Link>
         <button data-collapse-toggle="navbar-default" type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-default" aria-expanded={isMenuOpen} onClick={handleToggle}>
           <span className="sr-only">Open main menu</span>
@@ -51,17 +51,18 @@ export default function Navigation() {
             {user && <NavItem href="/accounts">Accounts</NavItem>}
             {user && <NavItem href="/history">Transaction History</NavItem>}
             {user && <NavItem href="/profile">Profile</NavItem>}
+            <NavItem href="/contact">Contact Us</NavItem>
             <li className="block px-3">
               {
                 user
                   ?
                   <form action="/auth/signout" method="post">
-                    <button className="inline-flex items-center justify-center rounded-xl bg-red-700 px-6 py-2 text-center font-medium text-white hover:bg-blue-dark lg:px-6" type="submit">
+                    <button className="inline-flex items-center justify-center rounded-xl bg-red-700 px-6 py-2 text-center font-medium text-white hover:bg-red-800 lg:px-6" type="submit">
                       Sign out
                     </button>
                   </form>
                   :
-                  <Link href="/login" className='inline-flex items-center justify-center rounded-xl bg-green-700 px-6 py-2 text-center font-medium text-white hover:bg-blue-dark lg:px-6'>Sign In</Link>
+                  <Link href="/login" className='inline-flex items-center justify-center rounded-xl bg-green-700 px-6 py-2 text-center font-medium text-white hover:bg-green-800 lg:px-6'>Sign In</Link>
               }
             </li>
           </ul>
