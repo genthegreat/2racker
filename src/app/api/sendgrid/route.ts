@@ -1,4 +1,5 @@
 import { contactSchema } from "@/utils/db/schema";
+import { rateLimitMiddleware } from "@/utils/rateLimiter";
 import sendgrid from "@sendgrid/mail";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -13,6 +14,9 @@ if (!SENDGRID_API_KEY) {
 sendgrid.setApiKey(SENDGRID_API_KEY);
 
 export async function POST(req: NextRequest) {
+  const rateLimitError = await rateLimitMiddleware(req)
+  if (rateLimitError) return rateLimitError;
+  
   try {
     const { name, email, message } = await req.json();
 
