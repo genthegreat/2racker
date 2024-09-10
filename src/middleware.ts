@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/utils/supabase/middleware";
 
 // Public routes
-const publicPaths = ['/', '/login', '/error', '/forgot-password', '/reset-password', '/privacy', '/contact'];
+const publicPaths = ['/', '/login', '/error', '/forgot-password', '/reset-password', '/privacy', '/contact', , '/api/sendgrid'];
 
 export async function middleware(request: NextRequest) {
   // update user's auth session
@@ -14,7 +14,7 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   // Log the request URL and user information for debugging
-  // console.log("Request URL:", request.nextUrl.pathname);
+  console.log("Request URL:", request.nextUrl.pathname);
   // console.log("User:", user);
   // console.log("Middleware Error on get User:", error?.name);
 

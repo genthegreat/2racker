@@ -18,7 +18,7 @@ export default function ContactForm() {
         register,
         control,
         handleSubmit,
-        formState: { errors },
+        formState: { errors, isSubmitting },
     } = useForm<z.output<typeof contactSchema>>({
         resolver: zodResolver(contactSchema),
     });
@@ -27,19 +27,39 @@ export default function ContactForm() {
         const formData = new FormData();
         formData.append("name", String(data.name));
         formData.append("email", String(data.email));
-        formData.append("description", String(data.description));
+        formData.append("message", String(data.message));
 
-        const response = await onCreateAction(formData);
+        // const response = await onCreateAction(formData);
 
-        if (response.status === 201) {
-            setModalMessage(response.message);
-            setModalOpen(true);
-            setModalStatus(true);
-        } else {
-            setModalMessage(`Failed to add project: ${response.message}`);
-            setModalOpen(true);
-            setModalStatus(false);
-        }
+        const res = await fetch("/api/sendgrid", {
+            body: JSON.stringify({
+                email: data.email,
+                fullname: data.name,
+                message: data.message,
+            }),
+            headers: {
+                "Content-Type": "application/json",
+            },
+            method: "POST",
+        });
+
+        const { message } = await res.json();
+        // if (error) {
+        //     console.log(error);
+        //     return;
+        // }
+
+        console.log(message)
+
+        // if (response.status === 201) {
+        //     setModalMessage(response.message);
+        //     setModalOpen(true);
+        //     setModalStatus(true);
+        // } else {
+        //     setModalMessage(`Failed to add project: ${response.message}`);
+        //     setModalOpen(true);
+        //     setModalStatus(false);
+        // }
     }
 
     return (
@@ -68,16 +88,18 @@ export default function ContactForm() {
                     </div>
                 </div>
                 <div className="flex-auto w-full mb-1 text-xs space-y-2">
-                    <label htmlFor="description" className="font-semibold text-gray-600 py-2">Description</label>
+                    <label htmlFor="message" className="font-semibold text-gray-600 py-2">Message</label>
                     <textarea
-                        id="description"
-                        {...register("description")}
+                        id="message"
+                        {...register("message")}
                         className="w-full min-h-[100px] max-h-[300px] h-28 appearance-none block bg-gray-900 text-white border border-gray-900 rounded-lg  py-4 px-4"
                     ></textarea>
-                    {errors.description?.message && <p className="text-red-500">{String(errors.description?.message)}</p>}
+                    {errors.message?.message && <p className="text-red-500">{String(errors.message?.message)}</p>}
                 </div>
                 <div className="mt-5 text-right md:space-x-3 md:block flex flex-col-reverse">
-                    <button type="submit" className="mb-2 md:mb-0 rounded-xl px-5 tracking-wider bg-green-400 text-center font-medium text-gray-900 hover:bg-green-500">Send</button>
+                    <button type="submit" className="mb-2 md:mb-0 rounded-xl px-5 tracking-wider bg-green-400 text-center font-medium text-gray-900 hover:bg-green-500" disabled={isSubmitting}>
+                        {isSubmitting ? "Sending..." : "Send"}
+                    </button>
                 </div>
             </form>
             <DevTool control={control} />

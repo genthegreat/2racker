@@ -81,7 +81,7 @@ export const contactSchema = z.object({
     message: "Name is required",
   }),
   email: z.string().email("email is required"),
-  description: z.string().min(20, {
+  message: z.string().min(20, {
     message: "Description is required. Minimum 20 characters.",
   }),
 });
