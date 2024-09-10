@@ -19,7 +19,7 @@ export const amenitySchema = z.object({
   category: z.string().nullable().optional(),
   default_amount: z.number().nullable().optional(),
   project_id: z.number({
-    message: "Project is Required"
+    message: "Project is Required",
   }),
 });
 
@@ -75,6 +75,16 @@ export const getAccountDetailsArgsSchema = z.object({
 });
 
 export const transactionStatusEnum = z.enum(["success", "failure", "pending"]);
+
+export const contactSchema = z.object({
+  name: z.string().min(1, {
+    message: "Name is required",
+  }),
+  email: z.string().email("email is required"),
+  description: z.string().min(20, {
+    message: "Description is required. Minimum 20 characters.",
+  }),
+});
 
 // Export schemas for all tables
 export const schemas = {

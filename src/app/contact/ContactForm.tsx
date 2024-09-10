@@ -1,0 +1,93 @@
+'use client'
+
+import { useState } from "react";
+import { useForm } from "react-hook-form"
+import { DevTool } from "@hookform/devtools"
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import Modal from "@/components/Modal";
+import { contactSchema } from "@/utils/db/schema";
+import { onCreateAction } from "./actions";
+
+export default function ContactForm() {
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalStatus, setModalStatus] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
+
+    const {
+        register,
+        control,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<z.output<typeof contactSchema>>({
+        resolver: zodResolver(contactSchema),
+    });
+
+    async function onSubmit(data: z.output<typeof contactSchema>) {
+        const formData = new FormData();
+        formData.append("name", String(data.name));
+        formData.append("email", String(data.email));
+        formData.append("description", String(data.description));
+
+        const response = await onCreateAction(formData);
+
+        if (response.status === 201) {
+            setModalMessage(response.message);
+            setModalOpen(true);
+            setModalStatus(true);
+        } else {
+            setModalMessage(`Failed to add project: ${response.message}`);
+            setModalOpen(true);
+            setModalStatus(false);
+        }
+    }
+
+    return (
+        <>
+            <form onSubmit={handleSubmit(onSubmit)} className="form">
+                <div className="md:flex flex-row md:space-x-4 w-full text-xs">
+                    <div className="mb-3 space-y-2 w-full text-xs">
+                        <label htmlFor="name" className="font-semibold text-gray-600 py-2">Name</label>
+                        <input
+                            id="name"
+                            {...register("name")}
+                            className="appearance-none block w-full bg-gray-900 text-white border border-gray-900 rounded-lg h-10 px-4"
+                        />
+                        {errors.name?.message && <p className="text-red-500">{String(errors.name?.message)}</p>}
+                    </div>
+                </div>
+                <div className="md:flex flex-row md:space-x-4 w-full text-xs">
+                    <div className="mb-3 space-y-2 w-full text-xs">
+                        <label htmlFor="email" className="font-semibold text-gray-600 py-2">E-mail</label>
+                        <input
+                            id="email"
+                            {...register("email")}
+                            className="appearance-none block w-full bg-gray-900 text-white border border-gray-900 rounded-lg h-10 px-4"
+                        />
+                        {errors.email?.message && <p className="text-red-500">{String(errors.email?.message)}</p>}
+                    </div>
+                </div>
+                <div className="flex-auto w-full mb-1 text-xs space-y-2">
+                    <label htmlFor="description" className="font-semibold text-gray-600 py-2">Description</label>
+                    <textarea
+                        id="description"
+                        {...register("description")}
+                        className="w-full min-h-[100px] max-h-[300px] h-28 appearance-none block bg-gray-900 text-white border border-gray-900 rounded-lg  py-4 px-4"
+                    ></textarea>
+                    {errors.description?.message && <p className="text-red-500">{String(errors.description?.message)}</p>}
+                </div>
+                <div className="mt-5 text-right md:space-x-3 md:block flex flex-col-reverse">
+                    <button type="submit" className="mb-2 md:mb-0 rounded-xl px-5 tracking-wider bg-green-400 text-center font-medium text-gray-900 hover:bg-green-500">Send</button>
+                </div>
+            </form>
+            <DevTool control={control} />
+            <Modal
+                open={modalOpen}
+                onClose={() => setModalOpen(false)}
+                success={modalStatus}
+                message={modalMessage}
+                redirectUrl={modalStatus ? "/projects" : undefined}
+            />
+        </>
+    );
+}

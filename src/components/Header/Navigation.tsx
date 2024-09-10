@@ -51,6 +51,7 @@ export default function Navigation() {
             {user && <NavItem href="/accounts">Accounts</NavItem>}
             {user && <NavItem href="/history">Transaction History</NavItem>}
             {user && <NavItem href="/profile">Profile</NavItem>}
+            <NavItem href="/contact">Contact Us</NavItem>
             <li className="block px-3">
               {
                 user

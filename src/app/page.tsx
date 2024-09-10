@@ -70,7 +70,7 @@ export default function Home() {
                 <li>
                   <Link
                     href={username ? "/home" : "/login"}
-                    className="inline-flex rounded-md bg-blue-700 px-6 py-3 text-center font-medium text-white hover:bg-blue-dark lg:px-7"
+                    className="inline-flex rounded-md bg-blue-700 px-6 py-3 text-center font-medium text-white hover:bg-blue-900 lg:px-7"
                   >
                     {username ? "Get Started" : "Login"}
                   </Link>
