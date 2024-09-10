@@ -10,13 +10,14 @@ export async function middleware(request: NextRequest) {
 
   // refreshing the auth token
   const {
-    data: { user }, error
+    data: { user }
   } = await supabase.auth.getUser();
 
   // Log the request URL and user information for debugging
-  console.log("Request URL:", request.nextUrl.pathname);
+  // console.log("Request URL:", request.nextUrl.pathname);
   // console.log("User:", user);
   // console.log("Middleware Error on get User:", error?.name);
+  // console.error("Error in middleware:", error)
 
   const isPublicPath = publicPaths.some(path => request.nextUrl.pathname === path);
   // console.log("isPublicPath:", isPublicPath)

@@ -1,3 +1,4 @@
+import { contactSchema } from "@/utils/db/schema";
 import sendgrid from "@sendgrid/mail";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -11,23 +12,57 @@ if (!SENDGRID_API_KEY) {
 
 sendgrid.setApiKey(SENDGRID_API_KEY);
 
-export async function POST(req: NextRequest, res: NextResponse) {
-  console.log("Route has been called.");
+export async function POST(req: NextRequest) {
   try {
+    const { name, email, message } = await req.json();
+
+    // Zod validation
+    const parsed = contactSchema.safeParse({ name, email, message });
+
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: `Invalid data. ${parsed.error.message}` },
+        { status: 400 }
+      );
+    }
+
+    // Profanity check
+    if (parsed.data.message.includes("fuck")) {
+      return NextResponse.json(
+        { error: "Profanity is not allowed." },
+        { status: 400 }
+      );
+    }
+
+    // Send email via SendGrid
     const msg = {
       to: "2racker@princekwesi.website",
       from: "2racker@princekwesi.website",
-      subject: "Sending with SendGrid is Fun",
-      text: "and easy to do anywhere, even with Node.js",
-      html: "<strong>and easy to do anywhere, even with Node.js</strong>",
+      subject: `Feedback from Contact Page`,
+      text: parsed.data.message,
+      html: `<div class="container" style="margin-left: 20px;margin-right: 20px;">
+          <h3>Client Feedback</h3>
+          <div style="font-size: 16px;">
+          <p><strong>Name: </strong> ${parsed.data.name}</p>
+          <p><strong>Email: </strong> ${parsed.data.email}</p>  
+          <p><strong>Message:</strong></p>
+            <p>${parsed.data.message}</p>
+            <br>
+          </div>
+        </div>`,
     };
-
-    console.log("REQ.BODY", req.body);
     await sendgrid.send(msg);
+
+    console.log("Got this far successfully");
   } catch (error: any) {
     console.log(error);
+
+    // Handle sendgrid-specific error or general error
+    const errorMessage =
+      error.response?.body?.errors || error.message || "Internal Server Error";
+
     return NextResponse.json(
-      { message: `Internal Server Error: ${error.response.body}` },
+      { error: errorMessage },
       { status: error.statusCode || 500 }
     );
   }

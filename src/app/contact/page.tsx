@@ -27,7 +27,7 @@ export default function Page() {
                     <div className="hidden px-4 lg:block lg:w-1/12"></div>
                     <div className="w-full px-4 lg:w-6/12">
                         <div className="lg:ml-auto lg:text-right">
-                            <div className="relative inline-block pt-11 lg:pt-0">
+                            <div className="inline-block pt-11 lg:pt-0">
                                 <img
                                     src="/logo.png"
                                     alt="2racker Logo"

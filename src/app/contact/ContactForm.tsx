@@ -7,7 +7,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Modal from "@/components/Modal";
 import { contactSchema } from "@/utils/db/schema";
-import { onCreateAction } from "./actions";
 
 export default function ContactForm() {
     const [modalOpen, setModalOpen] = useState(false);
@@ -29,12 +28,10 @@ export default function ContactForm() {
         formData.append("email", String(data.email));
         formData.append("message", String(data.message));
 
-        // const response = await onCreateAction(formData);
-
         const res = await fetch("/api/sendgrid", {
             body: JSON.stringify({
                 email: data.email,
-                fullname: data.name,
+                name: data.name,
                 message: data.message,
             }),
             headers: {
@@ -43,23 +40,20 @@ export default function ContactForm() {
             method: "POST",
         });
 
-        const { message } = await res.json();
-        // if (error) {
-        //     console.log(error);
-        //     return;
-        // }
+        const { status, error } = await res.json();
 
-        console.log(message)
-
-        // if (response.status === 201) {
-        //     setModalMessage(response.message);
-        //     setModalOpen(true);
-        //     setModalStatus(true);
-        // } else {
-        //     setModalMessage(`Failed to add project: ${response.message}`);
-        //     setModalOpen(true);
-        //     setModalStatus(false);
-        // }
+        console.log(`status returned ${status}`)
+        
+        if (status === 200) {
+            setModalMessage("Form submitted successfully");
+            setModalOpen(true);
+            setModalStatus(true);
+        } else {
+            console.log(error)
+            setModalMessage(`Error: ${error}`);
+            setModalOpen(true);
+            setModalStatus(false);
+        }
     }
 
     return (
@@ -108,7 +102,7 @@ export default function ContactForm() {
                 onClose={() => setModalOpen(false)}
                 success={modalStatus}
                 message={modalMessage}
-                redirectUrl={modalStatus ? "/projects" : undefined}
+                redirectUrl={undefined}
             />
         </>
     );
