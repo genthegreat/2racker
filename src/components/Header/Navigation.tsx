@@ -9,7 +9,7 @@ import { usePathname } from 'next/navigation';
 export const dynamic = 'force-dynamic';
 
 const NavItem = ({ href, children }: { href: any, children: any }) => (
-  <li className="block py-2 px-3 font-medium hover:text-gray-400">
+  <li className="block py-4 px-3 md:py-2 font-medium hover:text-gray-400">
     <Link href={href}>
       {children}
     </Link>

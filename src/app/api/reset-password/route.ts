@@ -28,13 +28,3 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: 'Internal Server Error', error }, { status: 500 });
   }
 }
-
-// Handle GET requests
-export async function GET(request: NextRequest) {
-  const greeting = "Hello World!!";
-  const json = {
-    greeting,
-  };
-
-  return NextResponse.json(json, { status: 200 });
-}
