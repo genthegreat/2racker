@@ -53,7 +53,6 @@ export async function POST(req: NextRequest) {
     };
     await sendgrid.send(msg);
 
-    console.log("Got this far successfully");
   } catch (error: any) {
     console.log(error);
 

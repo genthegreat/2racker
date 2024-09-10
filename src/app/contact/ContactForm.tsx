@@ -40,11 +40,9 @@ export default function ContactForm() {
             method: "POST",
         });
 
-        const { status, error } = await res.json();
+        const { error } = await res.json();
 
-        console.log(`status returned ${status}`)
-        
-        if (status === 200) {
+        if (res.ok) {
             setModalMessage("Form submitted successfully");
             setModalOpen(true);
             setModalStatus(true);
