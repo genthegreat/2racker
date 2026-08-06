@@ -4,9 +4,8 @@ import { createClient } from "@/utils/supabase/server";
 import { FormState } from "@/utils/db/types";
 import { amenitySchema } from "@/utils/db/schema";
 
-const supabase = createClient();
-
 export async function onCreateAction(formData: FormData): Promise<FormState> {
+  const supabase = await createClient();
   const data = {
     amenity_name: formData.get("amenity_name") as string,
     default_amount: Number(formData.get("default_amount")),
@@ -34,6 +33,7 @@ export async function onCreateAction(formData: FormData): Promise<FormState> {
 }
 
 export async function onUpdateAction(formData: FormData): Promise<FormState> {
+  const supabase = await createClient();
   try {
     const amenity_id = Number(formData.get("amenity_id"));
 
@@ -88,6 +88,7 @@ export async function onUpdateAction(formData: FormData): Promise<FormState> {
 }
 
 export async function onDeleteAction(amenity_id: number): Promise<FormState> {
+  const supabase = await createClient();
   const {
     data: { user },
     error,

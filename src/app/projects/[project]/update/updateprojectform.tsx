@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from "react";
 import { onDeleteAction, onUpdateAction } from "../../actions";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { projectSchema } from "@/utils/db/schema";
@@ -182,7 +181,6 @@ export default function UpdateProjectForm({ project }: { project: number }) {
                     </button>
                 </div>
             </form>
-            <DevTool control={control} />
             <Modal
                 open={modalOpen}
                 onClose={() => setModalOpen(false)}

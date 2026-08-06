@@ -6,7 +6,6 @@ import { onDeleteAction, onUpdateAction } from '../../actions';
 import Spinner from '@/components/spinner/Spinner';
 import { useRouter } from 'next/navigation';
 import { useForm } from "react-hook-form";
-import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { amenitySchema } from "@/utils/db/schema";
@@ -177,7 +176,6 @@ export default function AddAmenityForm({ params: { amenity_id } }: { params: { a
                                             <button type="submit" className="mb-2 md:mb-0 bg-green-400 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-green-500" disabled={isSubmitting}>{isSubmitting ? "Updating..." : "Update"}</button>
                                         </div>
                                     </form>
-                                    <DevTool control={control} />
                                     <Modal
                                         open={modalOpen}
                                         onClose={() => setModalOpen(false)}

@@ -3,7 +3,7 @@
 import { createClient } from "@/utils/supabase/server";
 
 export async function forgotPassword(formData: FormData) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const email = formData.get("email") as string;
   const redirectLink = formData.get("redirectLink") as string;

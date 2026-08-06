@@ -5,7 +5,6 @@ import { Account } from "@/utils/db/types";
 import { useEffect, useState } from "react";
 import { onCreateAction } from "../actions";
 import { useForm } from "react-hook-form"
-import { DevTool } from "@hookform/devtools"
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { projectSchema } from "@/utils/db/schema";
@@ -104,7 +103,6 @@ export default function AddProjectForm() {
                     <button type="submit" className="mb-2 md:mb-0 bg-green-400 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-green-500">Add</button>
                 </div>
             </form>
-            <DevTool control={control} />
             <Modal
                 open={modalOpen}
                 onClose={() => setModalOpen(false)}

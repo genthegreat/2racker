@@ -5,9 +5,13 @@ import { type User } from '@supabase/supabase-js'
 import Avatar from './avatar'
 import Spinner from '@/components/spinner/Spinner'
 import Modal from '@/components/Modal'
+import { useAuth } from '@/context/AuthContext'
+import { useRouter } from 'next/navigation'
 
 export default function ProfileForm({ user }: { user: User | null }) {
   const supabase = createClient()
+  const { signOut } = useAuth()
+  const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [fullname, setFullname] = useState<string | null>(null)
   const [username, setUsername] = useState<string | null>(null)
@@ -15,6 +19,7 @@ export default function ProfileForm({ user }: { user: User | null }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalStatus, setModalStatus] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   const getProfile = useCallback(async () => {
     try {
@@ -131,11 +136,24 @@ export default function ProfileForm({ user }: { user: User | null }) {
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} success={modalStatus} message={modalMessage} redirectUrl={modalStatus ? "/profile" : undefined} />
 
       <div>
-        <form action="/auth/signout" method="post">
-          <button className="button block" type="submit">
-            Sign out
-          </button>
-        </form>
+        <button
+          className="button block"
+          type="button"
+          disabled={isSigningOut}
+          onClick={async () => {
+            setIsSigningOut(true);
+            try {
+              await fetch('/auth/signout', { method: 'POST' });
+              await signOut();
+              router.replace('/login');
+              router.refresh();
+            } finally {
+              setIsSigningOut(false);
+            }
+          }}
+        >
+          {isSigningOut ? 'Signing out...' : 'Sign out'}
+        </button>
       </div>
     </div>
   )

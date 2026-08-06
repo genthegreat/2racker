@@ -5,15 +5,16 @@ import { NextRequest, NextResponse } from "next/server";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY as string;
 
-if (!SENDGRID_API_KEY) {
-  throw new Error(
-    "SENDGRID_API_KEY is not defined in the environment variables"
-  );
-}
-
-sendgrid.setApiKey(SENDGRID_API_KEY);
-
 export async function POST(req: NextRequest) {
+  if (!SENDGRID_API_KEY) {
+    return NextResponse.json(
+      { error: "Email service is not configured." },
+      { status: 503 }
+    );
+  }
+
+  sendgrid.setApiKey(SENDGRID_API_KEY);
+
   const rateLimitError = await rateLimitMiddleware(req)
   if (rateLimitError) return rateLimitError;
   

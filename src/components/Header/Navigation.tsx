@@ -4,7 +4,7 @@ import Image from 'next/image';
 import './styles.css'
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,13 +17,11 @@ const NavItem = ({ href, children }: { href: any, children: any }) => (
 );
 
 export default function Navigation() {
-  const { user, event, session } = useAuth();
+  const { user, event, session, signOut } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
   const pathname = usePathname();
-
-  // if (user) {
-  //   console.log('User', user, 'event', event, 'session', session)
-  // }
+  const router = useRouter();
 
   const handleToggle = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -32,6 +30,19 @@ export default function Navigation() {
   useEffect(() => {
     setIsMenuOpen(false);
   }, [pathname, user, session, event]);
+
+  const handleSignOut = async () => {
+    setIsSigningOut(true);
+    try {
+      // Clear server cookies first while the session is still present, then sync the browser client.
+      await fetch('/auth/signout', { method: 'POST' });
+      await signOut();
+      router.replace('/login');
+      router.refresh();
+    } finally {
+      setIsSigningOut(false);
+    }
+  };
 
   return (
     <nav className="bg-gray-900">
@@ -56,11 +67,14 @@ export default function Navigation() {
               {
                 user
                   ?
-                  <form action="/auth/signout" method="post">
-                    <button className="inline-flex items-center justify-center rounded-xl bg-red-700 px-6 py-2 text-center font-medium text-white hover:bg-red-800 lg:px-6" type="submit">
-                      Sign out
-                    </button>
-                  </form>
+                  <button
+                    className="inline-flex items-center justify-center rounded-xl bg-red-700 px-6 py-2 text-center font-medium text-white hover:bg-red-800 lg:px-6 disabled:opacity-60"
+                    type="button"
+                    onClick={handleSignOut}
+                    disabled={isSigningOut}
+                  >
+                    {isSigningOut ? 'Signing out...' : 'Sign out'}
+                  </button>
                   :
                   <Link href="/login" className='inline-flex items-center justify-center rounded-xl bg-green-700 px-6 py-2 text-center font-medium text-white hover:bg-green-800 lg:px-6'>Sign In</Link>
               }

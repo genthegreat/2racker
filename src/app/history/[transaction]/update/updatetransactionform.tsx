@@ -5,7 +5,6 @@ import { Amenity } from '@/utils/db/types';
 import { onDeleteAction, onUpdateAction } from '../../actions';
 import { useRouter } from 'next/navigation';
 import { transactionSchema } from '@/utils/db/schema';
-import { DevTool } from '@hookform/devtools'
 import Modal from "@/components/Modal"
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -228,7 +227,6 @@ export default function UpdateTransactionForm({ transaction }: { transaction: nu
                     <button type="submit" className="mb-2 md:mb-0 bg-green-400 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-green-500" disabled={isSubmitting}>{isSubmitting ? "Updating..." : "Update"}</button>
                 </div>
             </form>
-            <DevTool control={control} />
             <Modal
                 open={modalOpen}
                 onClose={() => setModalOpen(false)}

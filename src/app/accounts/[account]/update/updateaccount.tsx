@@ -6,7 +6,6 @@ import Spinner from '@/components/spinner/Spinner';
 import { accountSchema } from "@/utils/db/schema";
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { DevTool } from "@hookform/devtools";
 import Modal from "@/components/Modal";
 import RadioGroup from "@/components/FormComponents/RadioGroup";
 import { Control, useForm } from "react-hook-form";
@@ -152,7 +151,6 @@ export default function UpdateAccountForm({ account }: { account: number }) {
                     <button type="submit" className="w-auto my-2 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" disabled={isSubmitting}>{isSubmitting ? "Updating..." : "Update"}</button>
                 </div>
             </form>
-            <DevTool control={control} />
             <Modal
                 open={modalOpen}
                 onClose={() => setModalOpen(false)}

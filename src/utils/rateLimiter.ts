@@ -11,7 +11,7 @@ const rateLimiter = {
 
 // Middleware to limit requests per IP
 export const rateLimitMiddleware = async (req: NextRequest) => {
-  const ip = req.ip ?? req.headers.get("x-forwarded-for") ?? "unknown";
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
   const routePath = req.nextUrl.pathname; // Use the request path to differentiate routes
   const key = `${ip}:${routePath}`; // Combine IP and route path to form a unique key
 

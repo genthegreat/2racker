@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react'
 import { getProjects } from '@/utils/db/dbFunctions'
 import { Project } from '@/utils/db/types'
 import { onCreateAction } from '../actions'
-import { DevTool } from '@hookform/devtools'
 import Modal from "@/components/Modal"
 import { amenitySchema } from '@/utils/db/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -114,7 +113,6 @@ export default function AddAmenityForm() {
                     <button type="submit" className="mb-2 md:mb-0 bg-green-400 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-green-500" disabled={isSubmitting}>{isSubmitting ? "Submitting..." : "Add"}</button>
                 </div>
             </form>
-            <DevTool control={control} />
             <Modal
                 open={modalOpen}
                 onClose={() => setModalOpen(false)}

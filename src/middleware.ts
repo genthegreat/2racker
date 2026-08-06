@@ -1,43 +1,45 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/utils/supabase/middleware";
 
-// Public routes
-const publicPaths = ['/', '/login', '/error', '/forgot-password', '/reset-password', '/privacy', '/contact', '/api/sendgrid', '/api/test', '/api/hello'];
+// Authenticated app areas. Everything else is public by default.
+const protectedPrefixes = [
+  "/home",
+  "/accounts",
+  "/projects",
+  "/amenities",
+  "/history",
+  "/profile",
+];
+
+function isProtectedPath(pathname: string) {
+  return protectedPrefixes.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
+  );
+}
 
 export async function middleware(request: NextRequest) {
-  // update user's auth session
+  // Refresh auth cookies on (almost) every request so browser + server stay in sync.
   const { supabase, response } = await updateSession(request);
 
-  // refreshing the auth token
+  // getUser() validates/refreshes the JWT and writes updated cookies via updateSession.
   const {
-    data: { user }
+    data: { user },
   } = await supabase.auth.getUser();
 
-  // Log the request URL and user information for debugging
-  // console.log("Request URL:", request.nextUrl.pathname);
-  // console.log("User:", user);
-  // console.log("Middleware Error on get User:", error?.name);
-  // console.error("Error in middleware:", error)
-
-  const isPublicPath = publicPaths.some(path => request.nextUrl.pathname === path);
-  // console.log("isPublicPath:", isPublicPath)
-
-  if (!user  && !isPublicPath) {
-    console.log('You are not logged in')
-    return NextResponse.redirect(new URL('/login', request.url));
+  // Only gate private app routes; login, auth callbacks, APIs, and marketing stay open.
+  if (isProtectedPath(request.nextUrl.pathname) && !user) {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
-  
+
   return response;
 }
 
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * Feel free to modify this pattern to include more paths.
+     * Broad matcher so Supabase session cookies keep refreshing on public pages too.
+     * Auth redirects are applied separately via protectedPrefixes above.
+     * Skip Next internals and static assets.
      */
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],

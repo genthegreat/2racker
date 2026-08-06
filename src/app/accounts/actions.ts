@@ -4,9 +4,8 @@ import { createClient } from "@/utils/supabase/server";
 import { FormState } from "@/utils/db/types";
 import { accountSchema } from "@/utils/db/schema";
 
-const supabase = createClient();
-
 export async function onCreateAction(data: FormData): Promise<FormState> {
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -51,6 +50,7 @@ export async function onCreateAction(data: FormData): Promise<FormState> {
 }
 
 export async function onUpdateAction(formData: FormData): Promise<FormState> {
+  const supabase = await createClient();
   try {
     const account_id = Number(formData.get("account_id"));
 
@@ -105,6 +105,7 @@ export async function onUpdateAction(formData: FormData): Promise<FormState> {
 }
 
 export async function onDeleteAction(account_id: number): Promise<FormState> {
+  const supabase = await createClient();
   const {
     data: { user },
     error,

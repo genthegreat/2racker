@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useForm } from "react-hook-form"
-import { DevTool } from "@hookform/devtools"
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Modal from "@/components/Modal";
@@ -94,7 +93,6 @@ export default function ContactForm() {
                     </button>
                 </div>
             </form>
-            <DevTool control={control} />
             <Modal
                 open={modalOpen}
                 onClose={() => setModalOpen(false)}
